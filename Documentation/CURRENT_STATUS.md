@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Interface Statistics Completed (Speed Engine Pending Phase 05) |
+| Network Monitoring | Speed Calculation Completed (Formatting Pending Phase 06) |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02, 03 & 04 Unit Tests — 63 assertions passed) |
+| Testing | Completed (Phase 02–05 Unit Tests — 87 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 04 Completed — Ready for Phase 05 (Network Speed Calculation Engine)  
-**Next Action:** Begin Phase 05 implementation.
+**Current Development Phase:** Phase 05 Completed — Ready for Phase 06 (Speed Formatting Engine)  
+**Next Action:** Begin Phase 06 implementation.
 
 ---
 
@@ -90,7 +90,7 @@ All four documents must remain consistent.
 | 02 | Core Models & Application Foundation | Completed |
 | 03 | Network Path Detection | Completed |
 | 04 | Network Interface Statistics | Completed |
-| 05 | Network Speed Calculation Engine | Not Started |
+| 05 | Network Speed Calculation Engine | Completed |
 | 06 | Speed Formatting Engine | Not Started |
 | 07 | Dominant Direction & Switching Logic | Not Started |
 | 08 | Native Menu Bar Integration | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 4 |
+| Completed Phases | 5 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 12 |
-| Overall Implementation Progress | 25.00% |
+| Not Started Phases | 11 |
+| Overall Implementation Progress | 31.25% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,51 +120,52 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 04 — Network Interface Statistics
+### Phase 05 — Network Speed Calculation Engine
 
 **Priority:** Critical  
 **Status:** Completed
 
 #### Objective
 
-Implement a native macOS BSD network interface statistics subsystem retrieving actual cumulative received and transmitted byte counters (`ifi_ibytes`, `ifi_obytes`) via `getifaddrs()` and correlating the active routable interface with verified network path state, establishing an immutable snapshot pipeline without double-counting virtual or tunnel interfaces.
+Implement a reliable, accurate, and testable network speed calculation engine (`NetworkSpeedCalculator`) that calculates raw download and upload speeds in bytes per second (B/s) using consecutive cumulative network interface counter snapshots and actual monotonic elapsed time.
 
 #### Completed Tasks
 
-- [x] Implement native BSD interface statistics model `NetworkInterfaceStatistics` with monotonic timestamps and operational flags.
-- [x] Implement protocol `NetworkInterfaceProviding` and production provider `SystemNetworkInterfaceProvider` using `getifaddrs()`, `AF_LINK`, and `struct if_data`.
-- [x] Guarantee unconditional C memory reclamation via `freeifaddrs()` within Swift `defer` blocks.
-- [x] Implement thread-safe actor-isolated `MockNetworkInterfaceProvider` for deterministic unit testing.
-- [x] Implement `NetworkInterfaceSelector` with strict single-interface selection policy and explicit `SelectionResult` / `SelectionReason`.
-- [x] Enforce loopback exclusion (`lo0`), down-interface exclusion, and priority filtering (Ethernet > Wi-Fi > Cellular > Other).
-- [x] Prevent duplicate traffic double-counting between physical interfaces and virtual tunnel devices (e.g., `utun0`).
-- [x] Integrate interface statistics retrieval and dynamic selection into `NetworkPathManager` actor with automatic re-evaluation on path transitions.
-- [x] Wire snapshot stream propagation into `ApplicationCoordinator` (`@Published currentSnapshot`).
-- [x] Implement comprehensive unit tests across provider, selector, and integration flows (`NetworkInterfaceProviderTests`, `NetworkInterfaceSelectorTests`, `NetworkSnapshotIntegrationTests`).
-- [x] Empirically verify live macOS `getifaddrs()` statistics against `netstat -ib` with 100% byte-for-byte parity on active Wi-Fi (`en0`).
+- [x] Implement `NetworkSpeedCalculator` actor managing calculation baseline and delta computation.
+- [x] Implement immutable `SpeedMeasurement` model capturing download, upload, elapsed time, timestamp, and interface.
+- [x] Implement explicit `SpeedCalculationResult` distinguishing `.calculated`, `.baselineEstablished`, `.baselineReset`, `.sampleRejected`, and `.noActivePath`.
+- [x] Establish calculation baseline from the first valid sample without fabricating initial speed spikes.
+- [x] Calculate actual elapsed time using monotonic nanosecond timestamps (`DispatchTime.now().uptimeNanoseconds`).
+- [x] Calculate download speed independently: $\Delta \text{received} / \Delta t$.
+- [x] Calculate upload speed independently: $\Delta \text{transmitted} / \Delta t$.
+- [x] Reject zero and reversed timestamps safely while preserving the previous valid baseline.
+- [x] Detect unexpected counter decreases and resets, safely establishing a new baseline without unsigned underflow or negative speeds.
+- [x] Reset baseline on interface identity changes (name or index change), preventing artificial cross-interface speed spikes.
+- [x] Invalidate baseline upon network path disconnection and re-establish fresh baseline upon reconnection.
+- [x] Connect speed calculation engine into `ApplicationCoordinator` (`@Published speedResult` and `@Published latestMeasurement`).
+- [x] Implement comprehensive unit tests (23 assertion checks in `NetworkSpeedCalculatorTests`, 9 assertions in coordinator tests, 87 total assertions across 12 suites).
 
 #### Deliverables Produced
 
-- Interface statistics model: `ARRYNetworkCounter/Services/Network/NetworkInterfaceStatistics.swift`.
-- Interface statistics provider: `ARRYNetworkCounter/Services/Network/NetworkInterfaceProvider.swift`.
-- Interface selector: `ARRYNetworkCounter/Services/Network/NetworkInterfaceSelector.swift`.
-- Updated path manager: `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
+- Speed calculation engine: `ARRYNetworkCounter/Services/Monitoring/NetworkSpeedCalculator.swift`.
 - Updated coordinator: `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
-- Phase 04 test suites: `Tests/NetworkInterfaceProviderTests.swift`, `Tests/NetworkInterfaceSelectorTests.swift`, `Tests/NetworkSnapshotIntegrationTests.swift`.
-- Updated test runner: `Tests/TestRunner.swift` (63 assertions passing across 11 suites).
+- Phase 05 test suite: `Tests/NetworkSpeedCalculatorTests.swift`.
+- Updated test runner: `Tests/TestRunner.swift` (87 assertion checks across 12 suites).
+- Architecture Decision Record: `ADR-033 — Counter Discontinuity and Rollover Policy`.
 
 #### Completion Verification
 
-- [x] Received byte counters (`ifi_ibytes`) retrieved accurately and verified against system tools.
-- [x] Transmitted byte counters (`ifi_obytes`) retrieved accurately and verified against system tools.
-- [x] Selected interface correlates reliably with active `NetworkPathState`.
-- [x] Loopback interfaces (`lo0`) strictly excluded from active snapshots.
-- [x] Inactive or unconfigured interfaces excluded.
-- [x] Zero double-counting rule verified: physical interface selected without summing virtual tunnels.
-- [x] 100% of unit tests pass (63 assertions across 11 test suites with 0 failures).
+- [x] Download speed is calculated correctly from actual counter deltas.
+- [x] Upload speed is calculated correctly from actual counter deltas.
+- [x] Monotonic elapsed time is used exclusively, preventing clock adjustment artifacts.
+- [x] First sample establishes baseline without artificial initial throughput.
+- [x] Counter decreases and resets safely establish new baselines with zero unsigned underflow.
+- [x] Interface transitions reset baseline cleanly with no speed spikes.
+- [x] Disconnection invalidates baseline, and reconnection establishes fresh baseline.
+- [x] 100% of unit tests pass (87 assertions across 12 test suites with 0 failures).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 05 — Network Speed Calculation Engine.
+**Next Step:** Proceed to Phase 06 — Speed Formatting Engine.
 
 ---
 
@@ -196,7 +197,10 @@ This section must contain only features that have actually been implemented and 
 - Intelligent interface selector: `NetworkInterfaceSelector` with single-interface selection policy, explicit `SelectionResult` and `SelectionReason`, priority ranking (Ethernet > Wi-Fi > Cellular > Other), loopback exclusion, and virtual tunnel zero-double-counting protection.
 - Live snapshot emission pipeline in `NetworkPathManager` (`sampleCurrentSnapshot()` and `snapshotStream`).
 - Live snapshot observation in `ApplicationCoordinator` (`@Published currentSnapshot`).
-- Automated test suite and test runner: `Tests/`, `Scripts/test.sh`.
+- Network speed calculation engine: `NetworkSpeedCalculator` (Swift actor managing baseline lifecycle, monotonic nanosecond elapsed-time calculations, independent download/upload calculation, and zero underflow protection).
+- Typed speed measurement models: `SpeedMeasurement` (download, upload, elapsedSeconds, monotonicTimeNanoseconds, interface) and `SpeedCalculationResult` (`.calculated`, `.baselineEstablished`, `.baselineReset`, `.sampleRejected`, `.noActivePath`).
+- Integrated speed calculation in `ApplicationCoordinator` (`@Published speedResult` and `@Published latestMeasurement`).
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (87 assertion checks across 12 test suites).
 
 ### Verified Functionality
 
@@ -204,9 +208,10 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing for both Debug and Release bundles.
-- Full Phase 02, Phase 03, and Phase 04 unit test suites pass: 63 assertions verified across 11 test suites with 0 failures in 59.80 ms.
+- Full Phase 02, Phase 03, Phase 04, and Phase 05 unit test suites pass: 87 assertions verified across 12 test suites with 0 failures in 69.92 ms.
 - Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
 - Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
+- Speed calculation verified across normal, fractional, irregular, small intervals, large counters, zero traffic, counter decreases, interface transitions, and disconnection lifecycles.
 
 ### Important Rule
 
@@ -373,6 +378,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 02 | Implemented core models, protocol abstractions, application coordinator, configuration constants, and verified unit test suite | Completed |
 | 2026-11-21 | Phase 03 | Integrated Network.framework, implemented NetworkPathManager and NetworkPathState, connected path observation to ApplicationCoordinator, and verified tests | Completed |
 | 2026-11-21 | Phase 04 | Implemented BSD interface statistics (getifaddrs/if_data), NetworkInterfaceSelector with single-interface policy, snapshot pipeline, live netstat -ib empirical validation, and 11 unit test suites (63 assertions passing) | Completed |
+| 2026-11-21 | Phase 05 | Implemented NetworkSpeedCalculator actor, monotonic elapsed-time arithmetic, independent download/upload calculation, baseline management, counter decrease protection, ADR-033, and 12 unit test suites (87 assertions passing) | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -380,15 +386,14 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 04 is completed and verified. The immediate development sequence for Phase 05 (Network Speed Calculation Engine) is:
+Phase 05 is completed and verified. The immediate development sequence for Phase 06 (Speed Formatting Engine) is:
 
-1. Implement `NetworkSpeedCalculator` actor/engine to compute download and upload speeds from consecutive `NetworkSnapshot` instances.
-2. Calculate elapsed monotonic time between samples ($\Delta t = t_n - t_{n-1}$) with sub-millisecond precision.
-3. Compute received and transmitted byte deltas ($\Delta \text{bytes} = \text{bytes}_n - \text{bytes}_{n-1}$).
-4. Handle counter rollover / 32-bit BSD counter wrap-around scenarios gracefully.
-5. Handle interface transitions, initial sample conditions (delta zero), and zero/negative elapsed intervals.
-6. Connect speed calculation engine to active monitoring pipeline.
-7. Write comprehensive unit tests for standard speed calculation, rapid successive calls, zero intervals, and counter rollover.
+1. Implement `ByteFormatter` / `SpeedFormatter` for human-readable speed strings.
+2. Support units: B/s, KB/s, MB/s, GB/s, TB/s (Decimal base 1000 per ADR-014).
+3. Implement automatic unit selection based on magnitude.
+4. Implement consistent decimal precision (e.g. 1 decimal place above threshold, strip trailing zeros).
+5. Support zero speed representation ("0 KB/s" or "0 B/s").
+6. Write comprehensive unit tests for byte conversions, unit transitions, and boundary values.
 
 ---
 

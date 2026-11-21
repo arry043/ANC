@@ -871,6 +871,36 @@ Optional Launch at Login only starts the application when the user signs in; it 
 
 ---
 
+## ADR-033 — Counter Discontinuity and Rollover Policy
+
+**Status:** Accepted  
+**Category:** Calculation / Networking
+
+### Context
+
+In macOS Darwin BSD network interface statistics (`getifaddrs()`), link-layer byte counters (`struct if_data`) provide 32-bit cumulative counters (`ifi_ibytes` and `ifi_obytes`). When a counter decreases between consecutive samples, two possibilities exist:
+1. A legitimate 32-bit unsigned counter wraparound (exceeding ~4.29 GB).
+2. An interface reset, reboot, driver re-initialization, or network stack flush where the counter restarts from zero.
+
+Without kernel-level sequence numbers or 64-bit hardware registers exposed through `getifaddrs()`, distinguishing a legitimate wraparound from an interface counter reset is inherently ambiguous. If an interface resets from 100 KB down to 0, treating the decrease as a 32-bit wraparound would calculate a false speed spike of ~4.29 GB/s.
+
+### Decision
+
+Any unexpected counter decrease ($C_t < C_{t-1}$) is treated as a counter discontinuity:
+1. Underflow is prevented by detecting the decrease before subtraction.
+2. The current sample establishes a fresh calculation baseline.
+3. The interval returns a baseline reset result (`.baselineReset(reason: .counterDecreased)`).
+4. No speed measurement is emitted for that interval.
+5. Normal speed calculation resumes on the subsequent valid sample.
+
+### Reasoning
+
+- Preserves the core principle: "Never fabricate or estimate speed values."
+- Eliminates multi-gigabyte false throughput spikes caused by network interface resets.
+- At typical 1-second sampling intervals, an unmeasured single-second discontinuity is vastly preferable to displaying a catastrophic 4.29 GB/s false spike in the macOS menu bar.
+
+---
+
 # 9. Decisions Pending Implementation Validation
 
 The following decisions are accepted at the product or architectural level but require implementation-time verification.
@@ -1008,6 +1038,6 @@ Build a small, reliable, privacy-focused native macOS menu bar utility that disp
 **Document:** `PROJECT_DECISIONS.md`  
 **Project:** ARRY Network Counter (ANC)  
 **Organization:** ARRRY  
-**Initial Decision Records:** 32  
+**Initial Decision Records:** 33  
 **Status:** Active  
 **Last Updated:** 2026-11-21
