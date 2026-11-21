@@ -109,6 +109,14 @@ The resulting application bundle will be created at:
 - `build/Debug/ARRY Network Counter.app`
 - `build/Release/ARRY Network Counter.app`
 
+### Running Unit Tests
+
+To execute the unit test suite covering all core models, protocol mocks, and application coordinator:
+
+```bash
+./Scripts/test.sh
+```
+
 ### Running the Application
 
 Launch the built application:
@@ -136,4 +144,5 @@ Full project specifications and technical documentation are maintained in the [`
 ## Current Status & Next Phase
 
 - **Completed:** Phase 01 — Project Initialization & Configuration (native Xcode project established, Swift 6 entry point configured, Universal Binary verified, AppKit/SwiftUI lifecycle connected, menu bar utility metadata validated).
-- **Next Up:** Phase 02 — Core Models & Application Foundation (establishing `NetworkSpeed`, `NetworkSnapshot`, `DisplayMode`, `AppPreferences`, and application coordination protocols).
+- **Completed:** Phase 02 — Core Models & Application Foundation (implemented `NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`, `DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`, `AppPreferences`, `NetworkMonitoring`, `PreferencesStoring`, `ApplicationCoordinator`, `AppConfiguration`, and verified unit test suite).
+- **Next Up:** Phase 03 — Network Path Detection (integrating Apple's `Network.framework` and `NWPathMonitor` for network path awareness).

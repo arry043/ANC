@@ -36,8 +36,8 @@ Each phase must produce a working, testable result before the next dependent pha
 | Phase | Name | Priority | Status |
 |---|---|---|---|
 | 01 | Project Initialization & Configuration | Critical | Completed |
-| 02 | Core Models & Application Foundation | Critical | Not Started |
-| 03 | Network Path Detection | Critical |
+| 02 | Core Models & Application Foundation | Critical | Completed |
+| 03 | Network Path Detection | Critical | Not Started |
 | 04 | Network Interface Statistics | Critical |
 | 05 | Network Speed Calculation Engine | Critical |
 | 06 | Speed Formatting Engine | High |
@@ -101,7 +101,7 @@ Initialize the native macOS application project with the agreed technology stack
 ## Phase 02 — Core Models & Application Foundation
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -109,33 +109,33 @@ Implement the core data models, protocols, and application coordination structur
 
 ### Tasks
 
-- [ ] Implement `NetworkSpeed`.
-- [ ] Implement `NetworkSnapshot`.
-- [ ] Implement `NetworkInterface`.
-- [ ] Implement `DisplayMode`.
-- [ ] Implement `BothDirectionsStyle`.
-- [ ] Implement `NetworkDirection`.
-- [ ] Implement `AppPreferences`.
-- [ ] Define network monitoring protocols.
-- [ ] Define preferences storage protocols.
-- [ ] Implement the application coordinator.
-- [ ] Establish appropriate actor and `MainActor` isolation.
-- [ ] Define shared application configuration constants.
+- [x] Implement `NetworkSpeed`.
+- [x] Implement `NetworkSnapshot`.
+- [x] Implement `NetworkInterface`.
+- [x] Implement `DisplayMode`.
+- [x] Implement `BothDirectionsStyle`.
+- [x] Implement `NetworkDirection`.
+- [x] Implement `AppPreferences`.
+- [x] Define network monitoring protocols.
+- [x] Define preferences storage protocols.
+- [x] Implement the application coordinator.
+- [x] Establish appropriate actor and `MainActor` isolation.
+- [x] Define shared application configuration constants.
 
 ### Deliverables
 
-- Core Swift models.
-- Application coordination foundation.
-- Protocol definitions.
-- Initial model tests.
+- Core Swift models (`NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`, `DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`, `AppPreferences`).
+- Application coordination foundation (`ApplicationCoordinator`, `AppConfiguration`).
+- Protocol definitions (`NetworkMonitoring`, `PreferencesStoring`).
+- Initial model and coordinator unit tests (`Tests/`, `Scripts/test.sh`).
 
 ### Completion Criteria
 
-- [ ] All core models compile.
-- [ ] Models have clearly defined responsibilities.
-- [ ] Display modes are represented using strongly typed models.
-- [ ] No UI-specific logic exists inside network calculation models.
-- [ ] Unit tests pass.
+- [x] All core models compile.
+- [x] Models have clearly defined responsibilities.
+- [x] Display modes are represented using strongly typed models.
+- [x] No UI-specific logic exists inside network calculation models.
+- [x] Unit tests pass (27/27 assertions across 6 test suites).
 
 ---
 
