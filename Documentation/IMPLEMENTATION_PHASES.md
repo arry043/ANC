@@ -342,7 +342,7 @@ Convert raw byte-per-second measurements into readable menu bar values.
 ## Phase 07 — Dominant Direction & Switching Logic
 
 **Priority:** High  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -350,17 +350,17 @@ Implement the common direction-selection engine used by automatic display modes.
 
 ### Tasks
 
-- [ ] Implement `DominantDirectionEngine`.
-- [ ] Compare current download and upload speeds.
-- [ ] Identify the dominant direction.
-- [ ] Implement switching hysteresis.
-- [ ] Implement an absolute noise threshold.
-- [ ] Require confirmation across consecutive valid samples.
-- [ ] Preserve the current direction when speeds are close.
-- [ ] Handle idle traffic.
-- [ ] Use Download as the default idle direction.
-- [ ] Ensure responsive direction changes.
-- [ ] Make thresholds centrally configurable for testing.
+- [x] Implement `DominantDirectionEngine`.
+- [x] Compare current download and upload speeds.
+- [x] Identify the dominant direction.
+- [x] Implement switching hysteresis.
+- [x] Implement an absolute noise threshold.
+- [x] Require confirmation across consecutive valid samples.
+- [x] Preserve the current direction when speeds are close.
+- [x] Handle idle traffic.
+- [x] Use Download as the default idle direction.
+- [x] Ensure responsive direction changes.
+- [x] Make thresholds centrally configurable for testing.
 
 ### Initial Switching Policy
 
@@ -389,12 +389,12 @@ These are initial engineering defaults, not user-facing settings. Validate them 
 
 ### Completion Criteria
 
-- [ ] Correct dominant direction is selected.
-- [ ] Both automatic display modes can use the same engine.
-- [ ] No excessive switching occurs near equal speeds.
-- [ ] Direction changes remain responsive.
-- [ ] Idle behavior is correct.
-- [ ] Unit tests pass.
+- [x] Correct dominant direction is selected.
+- [x] Both automatic display modes can use the same engine.
+- [x] No excessive switching occurs near equal speeds.
+- [x] Direction changes remain responsive.
+- [x] Idle behavior is correct.
+- [x] Unit tests pass.
 
 ---
 

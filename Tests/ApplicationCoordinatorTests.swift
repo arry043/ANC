@@ -101,6 +101,7 @@ public enum ApplicationCoordinatorTests {
         assert(!coordinator.isRunning, "Coordinator must not be running before start()")
         assert(coordinator.preferences == .default, "Initial preferences must equal default")
         assert(coordinator.pathState == .unsatisfied, "Initial pathState must equal unsatisfied")
+        assert(coordinator.dominantDirection == .download, "Initial dominantDirection must be download")
         count += 1
 
         // Test 2: Coordinator start() loads preferences, initiates monitor, and syncs pathState
@@ -169,25 +170,52 @@ public enum ApplicationCoordinatorTests {
             assert(m.downloadBytesPerSecond == 500_000, "Download speed must be 500,000 B/s")
             assert(m.uploadBytesPerSecond == 250_000, "Upload speed must be 250,000 B/s")
             assert(m.elapsedSeconds == 1.0, "Elapsed seconds must be 1.0")
+            assert(coordinator.dominantDirection == .download, "Dominant direction should be download")
         } else {
             assertionFailure("Expected latestMeasurement on coordinator")
         }
         count += 1
 
-        // Test 8: Disconnection clears speed measurement and resets baseline
+        // Test 8: Dominant direction switching via consecutive upload snapshots
+        // snap3: delta DL 10k, UL 1,000k -> candidate is upload (sample 1)
+        let snap3 = NetworkSnapshot(
+            receivedBytes: 1_510_000,
+            transmittedBytes: 1_750_000,
+            monotonicTimeNanoseconds: 3_000_000_000,
+            interface: wifi
+        )
+        await mockMonitor.simulateSnapshotUpdate(snap3)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.dominantDirection == .download, "First upload sample should not trigger switch yet")
+
+        // snap4: delta DL 10k, UL 1,000k -> sample 2 confirms switch to upload
+        let snap4 = NetworkSnapshot(
+            receivedBytes: 1_520_000,
+            transmittedBytes: 2_750_000,
+            monotonicTimeNanoseconds: 4_000_000_000,
+            interface: wifi
+        )
+        await mockMonitor.simulateSnapshotUpdate(snap4)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.dominantDirection == .upload, "Second consecutive upload sample must switch dominant direction to upload")
+        count += 1
+
+        // Test 9: Disconnection clears speed measurement, resets baseline, and reverts dominantDirection to download
         await mockMonitor.simulatePathUpdate(.unsatisfied)
         try? await Task.sleep(nanoseconds: 10_000_000)
         assert(coordinator.pathState == .unsatisfied, "Coordinator pathState must update to unsatisfied")
         assert(coordinator.speedResult == .noActivePath, "Speed result must be noActivePath when disconnected")
         assert(coordinator.latestMeasurement == nil, "latestMeasurement must be nil when disconnected")
+        assert(coordinator.dominantDirection == .download, "dominantDirection must reset to download on disconnection")
         count += 1
 
-        // Test 9: stop() terminates monitoring and clears state
+        // Test 10: stop() terminates monitoring, clears state, and resets dominantDirection
         await coordinator.stop()
         assert(!coordinator.isRunning, "Coordinator must not be running after stop()")
         assert(coordinator.currentSnapshot == nil, "Coordinator currentSnapshot must be nil after stop()")
         assert(coordinator.speedResult == .noActivePath, "Speed result must be noActivePath after stop")
         assert(coordinator.latestMeasurement == nil, "latestMeasurement must be nil after stop")
+        assert(coordinator.dominantDirection == .download, "dominantDirection must be download after stop")
         let stopCount = await mockMonitor.stopCount
         let isMon = await mockMonitor.isMonitoring
         assert(stopCount == 1, "Monitor must receive exactly one stop call")

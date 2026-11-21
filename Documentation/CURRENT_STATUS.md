@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Speed Formatting Completed (Direction Switching Pending Phase 07) |
+| Network Monitoring | Dominant Direction Logic Completed (Phase 07) |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02–06 Unit Tests — 111 assertions passed) |
+| Testing | Completed (Phase 02–07 Unit Tests — 124 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 06 Completed — Ready for Phase 07 (Dominant Direction & Switching Logic)  
-**Next Action:** Begin Phase 07 implementation.
+**Current Development Phase:** Phase 07 Completed — Ready for Phase 08 (Native Menu Bar Integration)  
+**Next Action:** Begin Phase 08 implementation.
 
 ---
 
@@ -92,7 +92,7 @@ All four documents must remain consistent.
 | 04 | Network Interface Statistics | Completed |
 | 05 | Network Speed Calculation Engine | Completed |
 | 06 | Speed Formatting Engine | Completed |
-| 07 | Dominant Direction & Switching Logic | Not Started |
+| 07 | Dominant Direction & Switching Logic | Completed |
 | 08 | Native Menu Bar Integration | Not Started |
 | 09 | Display Modes Implementation | Not Started |
 | 10 | Settings Interface & Preferences | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 6 |
+| Completed Phases | 7 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 10 |
-| Overall Implementation Progress | 37.50% |
+| Not Started Phases | 9 |
+| Overall Implementation Progress | 43.75% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,50 +120,54 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 06 — Speed Formatting Engine
+### Phase 07 — Dominant Direction & Switching Logic
 
 **Priority:** High  
 **Status:** Completed
 
 #### Objective
 
-Implement a reusable formatting engine that converts raw network transfer speeds in bytes per second (`B/s`) into readable strings suitable for menu-bar display, using base-1000 SI decimal scaling, consistent decimal precision (up to 2 decimal places with trailing-zero removal), explicit zero display as `0 KB/s`, and POSIX locale independence.
+Implement a reusable, deterministic decision engine (`DominantDirectionEngine`) responsible for selecting whether Download or Upload is currently the dominant network traffic direction for automatic display modes (`singleDirectionAutomatic` and `combinedArrows`), incorporating 10% relative switching hysteresis, 10 KB/s absolute noise floor suppression, 2 consecutive sample confirmation, download default idle direction, IEEE 754 micro-epsilon handling, and integration with `ApplicationCoordinator`.
 
 #### Completed Tasks
 
-- [x] Implement `ByteFormatter` with base-1000 conversion and structured `FormattedByteSpeed` output.
-- [x] Implement `SpeedFormatter` consuming domain `NetworkSpeed` models.
-- [x] Support decimal units: `B/s`, `KB/s`, `MB/s`, `GB/s`, `TB/s`.
-- [x] Implement automatic unit selection based on original raw speed.
-- [x] Enforce consistent decimal precision: integer for B/s, up to 2 decimal places for KB/s, MB/s, GB/s, TB/s.
-- [x] Remove unnecessary trailing zeros and decimal points (e.g. `1.00 MB/s` -> `1 MB/s`, `1.50 MB/s` -> `1.5 MB/s`).
-- [x] Format zero throughput strictly as `0 KB/s`.
-- [x] Handle small positive values safely without negative zero or scientific notation.
-- [x] Handle values exceeding TB/s scale cleanly in TB/s.
-- [x] Handle negative and non-finite values safely by clamping to `0 KB/s`.
-- [x] Ensure POSIX locale independence using explicit `.` decimal separator.
-- [x] Formulate and document unit boundary rounding policy in `ADR-034`.
-- [x] Implement comprehensive unit tests across 24 assertion checks in `Tests/SpeedFormatterTests.swift`.
+- [x] Implement `DirectionDecision` value model with direction, switch flag, candidate direction, and confirmation count.
+- [x] Implement `DirectionSwitchingConfiguration` with centralized defaults (10% relative margin, 10,000 B/s noise floor, 2 consecutive samples, .download default).
+- [x] Implement `DominantDirectionEngine` actor with thread-safe state evaluation, reset, and configuration updates.
+- [x] Implement 10% relative hysteresis threshold ($S_{\text{opposite}} \ge S_{\text{current}} \times (1 + \text{relativeMargin})$).
+- [x] Implement absolute noise floor threshold ($S_{\text{opposite}} - S_{\text{current}} \ge \text{absoluteThresholdBytesPerSecond}$).
+- [x] Require 2 consecutive qualifying samples before committing a direction switch.
+- [x] Reset pending candidate and streak count immediately if an intermediate sample fails to qualify.
+- [x] Revert immediately to `.download` default when both traffic rates are idle ($\le 0$ B/s).
+- [x] Apply IEEE 754 micro-epsilon ($1\times 10^{-7}$) tolerance to eliminate binary floating-point rounding inaccuracies on exact boundary multiples.
+- [x] Integrate `DominantDirectionEngine` into `ApplicationCoordinator` with `@Published public private(set) var dominantDirection`.
+- [x] Codify hysteresis and noise floor parameters in `ADR-035`.
+- [x] Implement 12 comprehensive unit tests in `Tests/DominantDirectionEngineTests.swift`.
+- [x] Implement live coordinator dominant direction switching and disconnection reset tests in `Tests/ApplicationCoordinatorTests.swift`.
 
 #### Deliverables Produced
 
-- Byte formatter: `ARRYNetworkCounter/Services/Formatting/ByteFormatter.swift`.
-- Speed formatter: `ARRYNetworkCounter/Services/Formatting/SpeedFormatter.swift`.
-- Formatting unit tests: `Tests/SpeedFormatterTests.swift`.
-- Architecture Decision Record: `ADR-034 — Speed Formatting Decimal Precision, Zero-Speed, and Unit Boundary Policy`.
-- Updated test runner: `Tests/TestRunner.swift` (111 assertions passing across 13 suites).
+- Dominant direction engine: `ARRYNetworkCounter/Services/Monitoring/DominantDirectionEngine.swift`.
+- Direction decision and configuration models: `DirectionDecision` and `DirectionSwitchingConfiguration`.
+- Coordinator integration: `ApplicationCoordinator.swift` (`dominantDirection`, initialization, observation task evaluation, reset on disconnection/stop).
+- Architecture Decision Record: `ADR-035 — Dominant Direction Hysteresis and Noise Threshold Parameters`.
+- Unit test suite: `Tests/DominantDirectionEngineTests.swift` (12 assertions).
+- Updated coordinator test suite: `Tests/ApplicationCoordinatorTests.swift` (10 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (124 assertions passing across 14 test suites).
 
 #### Completion Verification
 
-- [x] All supported units (`B/s`, `KB/s`, `MB/s`, `GB/s`, `TB/s`) convert and format accurately.
-- [x] Decimal conversion uses base 1000 per ADR-014.
-- [x] Zero displays strictly as `0 KB/s`.
-- [x] No unnecessary trailing zeros appear in formatted output.
-- [x] Unit boundary tests pass (`999 B/s`, `1 KB/s`, `999,999 B/s -> 1000 KB/s`, `1 MB/s`).
-- [x] 100% of unit tests pass (111 assertions across 13 test suites with 0 failures).
+- [x] Correct dominant direction is selected for clear download and clear upload traffic.
+- [x] Relative margin hysteresis (10%) prevents premature switching.
+- [x] Absolute noise floor (10 KB/s) suppresses trickle traffic and micro-oscillations.
+- [x] Two consecutive samples required to commit direction switch; interrupted streaks reset cleanly.
+- [x] Idle traffic immediately reverts direction to `.download`.
+- [x] Near-equal traffic oscillations remain completely stable without visual flapping.
+- [x] Disconnection and coordinator shutdown safely reset direction to `.download`.
+- [x] 100% of unit tests pass (124 assertions across 14 test suites with 0 failures in 99.94 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 07 — Dominant Direction & Switching Logic.
+**Next Step:** Proceed to Phase 08 — Native Menu Bar Integration.
 
 ---
 
@@ -203,7 +207,13 @@ This section must contain only features that have actually been implemented and 
 - Decimal precision policy: integer display for `B/s`, up to 2 decimal places with trailing zero and trailing decimal separator trimming for `KB/s`, `MB/s`, `GB/s`, `TB/s`.
 - Explicit zero display requirement: zero throughput displays strictly as `0 KB/s`.
 - Unit boundary rounding policy (`ADR-034`): unit selection evaluated on raw speed prior to rounding.
-- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (111 assertion checks across 13 test suites).
+- Dominant direction decision engine: `DominantDirectionEngine` (Swift actor evaluating download and upload rates against hysteresis rules, maintaining candidate streaks, and publishing decisions).
+- Direction decision and switching configuration models: `DirectionDecision` and `DirectionSwitchingConfiguration`.
+- Direction switching hysteresis and noise suppression (`ADR-007`, `ADR-035`): 10% relative switching margin, 10 KB/s absolute noise floor threshold, 2 consecutive sample confirmation, and immediate candidate reset on qualification failure.
+- Direction idle reversion: immediate transition to `.download` default when both traffic rates are idle ($\le 0$ B/s).
+- IEEE 754 micro-epsilon handling ($1\times 10^{-7}$ tolerance) preventing floating-point boundary representation errors.
+- Central coordinator dominant direction integration: `@Published public private(set) var dominantDirection: NetworkDirection` in `ApplicationCoordinator`.
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (124 assertion checks across 14 test suites).
 
 ### Verified Functionality
 
@@ -211,11 +221,12 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing for both Debug and Release bundles.
-- Full Phase 02 through Phase 06 unit test suites pass: 111 assertions verified across 13 test suites with 0 failures in 73.09 ms.
+- Full Phase 02 through Phase 07 unit test suites pass: 124 assertions verified across 14 test suites with 0 failures in 99.94 ms.
 - Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
 - Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
 - Speed calculation verified across normal, fractional, irregular, small intervals, large counters, zero traffic, counter decreases, interface transitions, and disconnection lifecycles.
 - Formatting verified across all units, boundary values, decimal precision, trailing-zero stripping, zero display (`0 KB/s`), and POSIX locale independence.
+- Dominant direction switching verified across clear download/upload dominance, relative margin thresholds, absolute noise floors, consecutive sample confirmation, streak interruption, idle reversion, near-equal oscillation stability, and coordinator lifecycle resets.
 
 ### Important Rule
 
@@ -384,6 +395,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 04 | Implemented BSD interface statistics (getifaddrs/if_data), NetworkInterfaceSelector with single-interface policy, snapshot pipeline, live netstat -ib empirical validation, and 11 unit test suites (63 assertions passing) | Completed |
 | 2026-11-21 | Phase 05 | Implemented NetworkSpeedCalculator actor, monotonic elapsed-time arithmetic, independent download/upload calculation, baseline management, counter decrease protection, ADR-033, and 12 unit test suites (87 assertions passing) | Completed |
 | 2026-11-21 | Phase 06 | Implemented ByteFormatter and SpeedFormatter, base-1000 SI decimal scaling, up to 2 decimal places with trailing zero trimming, 0 KB/s zero display, ADR-034, and 13 unit test suites (111 assertions passing) | Completed |
+| 2026-11-21 | Phase 07 | Implemented DominantDirectionEngine actor, DirectionDecision, DirectionSwitchingConfiguration, 10% relative margin, 10 KB/s noise floor, 2-sample confirmation, download idle default, IEEE 754 micro-epsilon handling, ADR-035, and 14 unit test suites (124 assertions passing) | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -391,13 +403,13 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 06 is completed and verified. The immediate development sequence for Phase 07 (Dominant Direction & Switching Logic) is:
+Phase 07 is completed and verified. The immediate development sequence for Phase 08 (Native Menu Bar Integration) is:
 
-1. Implement `DirectionManager` / dominant direction decision engine.
-2. Implement configurable direction switching hysteresis (ADR-007: 50 KB/s threshold, 3-sample delay).
-3. Implement display speed resolution for `singleDirectionAutomatic` and `combinedArrows` modes.
-4. Support manual direction pinning (`singleDirectionManual` for download or upload).
-5. Write unit tests for direction evaluation, hysteresis threshold, and rapid fluctuation dampening.
+1. Create `MenuBarManager` (`NSStatusItem` lifecycle, ownership, menu bar item creation and destruction).
+2. Create `MenuBarRenderer` (attributed string rendering, dynamic width measurement, system font styling).
+3. Connect `ApplicationCoordinator` published speed and direction states to menu bar item title updates.
+4. Support menu item actions (About, Settings, Quit).
+5. Verify clean display on both light and dark menu bar appearances and various screen resolutions.
 
 ---
 

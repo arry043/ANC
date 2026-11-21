@@ -21,6 +21,9 @@ public final class ApplicationCoordinator: ObservableObject {
     /// Latest calculated speed measurement, if available.
     @Published public private(set) var latestMeasurement: SpeedMeasurement? = nil
 
+    /// Current dominant traffic direction determined by hysteresis switching rules.
+    @Published public private(set) var dominantDirection: NetworkDirection = .download
+
     /// Indicates whether the application monitoring lifecycle is actively running.
     @Published public private(set) var isRunning: Bool = false
 
@@ -32,6 +35,9 @@ public final class ApplicationCoordinator: ObservableObject {
 
     /// Network speed calculation engine.
     private let speedCalculator: NetworkSpeedCalculator
+
+    /// Dominant direction switching hysteresis engine.
+    private let directionEngine: DominantDirectionEngine
 
     /// Observation task tracking asynchronous path changes.
     private var pathObservationTask: Task<Void, Never>?
@@ -45,17 +51,21 @@ public final class ApplicationCoordinator: ObservableObject {
     ///   - preferencesStore: Storage provider conforming to `PreferencesStoring`.
     ///   - networkMonitor: Optional network monitor conforming to `NetworkMonitoring`.
     ///   - speedCalculator: Speed calculation engine conforming to `NetworkSpeedCalculator`.
+    ///   - directionEngine: Direction switching engine conforming to `DominantDirectionEngine`.
     ///   - initialPreferences: Initial preferences to bootstrap state before async load.
     public init(
         preferencesStore: any PreferencesStoring = UserDefaultsPreferencesStore(),
         networkMonitor: (any NetworkMonitoring)? = NetworkPathManager(),
         speedCalculator: NetworkSpeedCalculator = NetworkSpeedCalculator(),
+        directionEngine: DominantDirectionEngine = DominantDirectionEngine(),
         initialPreferences: AppPreferences = .default
     ) {
         self.preferencesStore = preferencesStore
         self.networkMonitor = networkMonitor
         self.speedCalculator = speedCalculator
+        self.directionEngine = directionEngine
         self.preferences = initialPreferences
+        self.dominantDirection = .download
     }
 
     /// Starts the application coordination lifecycle: loads preferences and activates monitoring.
@@ -72,9 +82,16 @@ public final class ApplicationCoordinator: ObservableObject {
                 let result = await speedCalculator.calculateSpeed(from: snap)
                 speedResult = result
                 latestMeasurement = result.measurement
+                if let measurement = result.measurement {
+                    let decision = await directionEngine.evaluate(measurement)
+                    dominantDirection = decision.direction
+                } else {
+                    dominantDirection = .download
+                }
             } else {
                 speedResult = .noActivePath
                 latestMeasurement = nil
+                dominantDirection = .download
             }
 
             do {
@@ -86,8 +103,10 @@ public final class ApplicationCoordinator: ObservableObject {
                         self.pathState = newPathState
                         if newPathState.status != .satisfied {
                             await self.speedCalculator.reset()
+                            await self.directionEngine.reset()
                             self.speedResult = .noActivePath
                             self.latestMeasurement = nil
+                            self.dominantDirection = .download
                         }
                     }
                 }
@@ -102,11 +121,15 @@ public final class ApplicationCoordinator: ObservableObject {
                             self.speedResult = result
                             if let measurement = result.measurement {
                                 self.latestMeasurement = measurement
+                                let decision = await self.directionEngine.evaluate(measurement)
+                                self.dominantDirection = decision.direction
                             }
                         } else {
                             await self.speedCalculator.reset()
+                            await self.directionEngine.reset()
                             self.speedResult = .noActivePath
                             self.latestMeasurement = nil
+                            self.dominantDirection = .download
                         }
                     }
                 }
@@ -131,9 +154,11 @@ public final class ApplicationCoordinator: ObservableObject {
         }
 
         await speedCalculator.reset()
+        await directionEngine.reset()
         speedResult = .noActivePath
         latestMeasurement = nil
         currentSnapshot = nil
+        dominantDirection = .download
         isRunning = false
     }
 
