@@ -1,0 +1,449 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		21676C525748473A1273087D /* ARRYNetworkCounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */; };
+		6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */; };
+		75813E3E5645B891DE6347F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C424DD5BD282234FB7493AB0 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		123A93D7A23347C813403272 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		2ACCA15DBA685FF00D9F22DB /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		3C89DDAAD0F80B9773C70CFD /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARRYNetworkCounterApp.swift; sourceTree = "<group>"; };
+		545C791D5E1159F95C507474 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		7BB4A05FE2AFDD4288C21DE2 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		8BBC8687F659D20EB7730083 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		91635D5C536C6070784B477E /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		C424DD5BD282234FB7493AB0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D0115AE026464BB0D1062A4A /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		E4BA4EBD7F97F40241B45FD8 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		F95C82EE1FE8F2F7ABB046C2 /* ARRYNetworkCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARRYNetworkCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		FF1EFFE2B160B697D2ED7C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		087088FD7FF4D56149668981 /* ARRYNetworkCounter */ = {
+			isa = PBXGroup;
+			children = (
+				FF1EFFE2B160B697D2ED7C46 /* Info.plist */,
+				C55BB1DDD3B445835540913D /* App */,
+				818A65C9C5A08D8862318744 /* Core */,
+				933F6EA85BD12FA88F752E74 /* MenuBar */,
+				2BE32D99B3D3E2C7D62542D1 /* Resources */,
+				7B25561FBDEA27BA13682E6B /* Services */,
+				B886F41A57C5A2C029AC9551 /* Settings */,
+			);
+			path = ARRYNetworkCounter;
+			sourceTree = "<group>";
+		};
+		12FE09F811495CE7E0010184 /* Monitoring */ = {
+			isa = PBXGroup;
+			children = (
+				123A93D7A23347C813403272 /* .gitkeep */,
+			);
+			path = Monitoring;
+			sourceTree = "<group>";
+		};
+		15755D0F00319E798175D40C /* Preferences */ = {
+			isa = PBXGroup;
+			children = (
+				8BBC8687F659D20EB7730083 /* .gitkeep */,
+			);
+			path = Preferences;
+			sourceTree = "<group>";
+		};
+		2BE32D99B3D3E2C7D62542D1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C424DD5BD282234FB7493AB0 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		666DACD9B837A24C83978331 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				7BB4A05FE2AFDD4288C21DE2 /* .gitkeep */,
+			);
+			path = Utilities;
+			sourceTree = "<group>";
+		};
+		6E904914C95018398AFA9E07 = {
+			isa = PBXGroup;
+			children = (
+				087088FD7FF4D56149668981 /* ARRYNetworkCounter */,
+				85AA8ACBD14C25035887B8A8 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		7B25561FBDEA27BA13682E6B /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				12FE09F811495CE7E0010184 /* Monitoring */,
+				B6E54EC9C51990BB6BC25887 /* Network */,
+				15755D0F00319E798175D40C /* Preferences */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		818A65C9C5A08D8862318744 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				D7303405BBBBA2B4A7B0EC86 /* Extensions */,
+				E538CE6F3C18E4E05F3501E8 /* Models */,
+				C6F40CBAE390D98CBB84C1E3 /* Protocols */,
+				666DACD9B837A24C83978331 /* Utilities */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		85AA8ACBD14C25035887B8A8 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F95C82EE1FE8F2F7ABB046C2 /* ARRYNetworkCounter.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		933F6EA85BD12FA88F752E74 /* MenuBar */ = {
+			isa = PBXGroup;
+			children = (
+				E4BA4EBD7F97F40241B45FD8 /* .gitkeep */,
+			);
+			path = MenuBar;
+			sourceTree = "<group>";
+		};
+		B6E54EC9C51990BB6BC25887 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+				545C791D5E1159F95C507474 /* .gitkeep */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		B886F41A57C5A2C029AC9551 /* Settings */ = {
+			isa = PBXGroup;
+			children = (
+				D0115AE026464BB0D1062A4A /* .gitkeep */,
+			);
+			path = Settings;
+			sourceTree = "<group>";
+		};
+		C55BB1DDD3B445835540913D /* App */ = {
+			isa = PBXGroup;
+			children = (
+				FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */,
+				4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C6F40CBAE390D98CBB84C1E3 /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				2ACCA15DBA685FF00D9F22DB /* .gitkeep */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		D7303405BBBBA2B4A7B0EC86 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				3C89DDAAD0F80B9773C70CFD /* .gitkeep */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		E538CE6F3C18E4E05F3501E8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				91635D5C536C6070784B477E /* .gitkeep */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C683353789D4430D204044D7 /* ARRYNetworkCounter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 31D8182A55FD9B00FDB2C014 /* Build configuration list for PBXNativeTarget "ARRYNetworkCounter" */;
+			buildPhases = (
+				886F8DBB2294F95CAC58D1CA /* Sources */,
+				EF0B13D0AB87B37FB0C73BFA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ARRYNetworkCounter;
+			packageProductDependencies = (
+			);
+			productName = ARRYNetworkCounter;
+			productReference = F95C82EE1FE8F2F7ABB046C2 /* ARRYNetworkCounter.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C01E862DA3D1C13EB87FD4BE /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					C683353789D4430D204044D7 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = EB2437CB6829126E8820F745 /* Build configuration list for PBXProject "ARRYNetworkCounter" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 6E904914C95018398AFA9E07;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 85AA8ACBD14C25035887B8A8 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C683353789D4430D204044D7 /* ARRYNetworkCounter */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		EF0B13D0AB87B37FB0C73BFA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				75813E3E5645B891DE6347F4 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		886F8DBB2294F95CAC58D1CA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				21676C525748473A1273087D /* ARRYNetworkCounterApp.swift in Sources */,
+				6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		3478D95F48597F74652ADDFC /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ARRYNetworkCounter/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter;
+				PRODUCT_NAME = "ARRY Network Counter";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		364EA880EEFF2CE579DF2F71 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_KEY_LSUIElement = NO;
+				INFOPLIST_FILE = ARRYNetworkCounter/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter;
+				PRODUCT_NAME = "ARRY Network Counter";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		74E2686AF45DC7C98C1721FD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "arm64 x86_64";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = ARRYNetworkCounter/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter;
+				PRODUCT_NAME = "ARRY Network Counter";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		9FC6C31BC6D21FEF39E0D220 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_KEY_LSUIElement = NO;
+				INFOPLIST_FILE = ARRYNetworkCounter/Info.plist;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter;
+				PRODUCT_NAME = "ARRY Network Counter";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		31D8182A55FD9B00FDB2C014 /* Build configuration list for PBXNativeTarget "ARRYNetworkCounter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				74E2686AF45DC7C98C1721FD /* Debug */,
+				3478D95F48597F74652ADDFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		EB2437CB6829126E8820F745 /* Build configuration list for PBXProject "ARRYNetworkCounter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9FC6C31BC6D21FEF39E0D220 /* Debug */,
+				364EA880EEFF2CE579DF2F71 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C01E862DA3D1C13EB87FD4BE /* Project object */;
+}
