@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Speed Calculation Completed (Formatting Pending Phase 06) |
+| Network Monitoring | Speed Formatting Completed (Direction Switching Pending Phase 07) |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02–05 Unit Tests — 87 assertions passed) |
+| Testing | Completed (Phase 02–06 Unit Tests — 111 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 05 Completed — Ready for Phase 06 (Speed Formatting Engine)  
-**Next Action:** Begin Phase 06 implementation.
+**Current Development Phase:** Phase 06 Completed — Ready for Phase 07 (Dominant Direction & Switching Logic)  
+**Next Action:** Begin Phase 07 implementation.
 
 ---
 
@@ -91,7 +91,7 @@ All four documents must remain consistent.
 | 03 | Network Path Detection | Completed |
 | 04 | Network Interface Statistics | Completed |
 | 05 | Network Speed Calculation Engine | Completed |
-| 06 | Speed Formatting Engine | Not Started |
+| 06 | Speed Formatting Engine | Completed |
 | 07 | Dominant Direction & Switching Logic | Not Started |
 | 08 | Native Menu Bar Integration | Not Started |
 | 09 | Display Modes Implementation | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 5 |
+| Completed Phases | 6 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 11 |
-| Overall Implementation Progress | 31.25% |
+| Not Started Phases | 10 |
+| Overall Implementation Progress | 37.50% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,52 +120,50 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 05 — Network Speed Calculation Engine
+### Phase 06 — Speed Formatting Engine
 
-**Priority:** Critical  
+**Priority:** High  
 **Status:** Completed
 
 #### Objective
 
-Implement a reliable, accurate, and testable network speed calculation engine (`NetworkSpeedCalculator`) that calculates raw download and upload speeds in bytes per second (B/s) using consecutive cumulative network interface counter snapshots and actual monotonic elapsed time.
+Implement a reusable formatting engine that converts raw network transfer speeds in bytes per second (`B/s`) into readable strings suitable for menu-bar display, using base-1000 SI decimal scaling, consistent decimal precision (up to 2 decimal places with trailing-zero removal), explicit zero display as `0 KB/s`, and POSIX locale independence.
 
 #### Completed Tasks
 
-- [x] Implement `NetworkSpeedCalculator` actor managing calculation baseline and delta computation.
-- [x] Implement immutable `SpeedMeasurement` model capturing download, upload, elapsed time, timestamp, and interface.
-- [x] Implement explicit `SpeedCalculationResult` distinguishing `.calculated`, `.baselineEstablished`, `.baselineReset`, `.sampleRejected`, and `.noActivePath`.
-- [x] Establish calculation baseline from the first valid sample without fabricating initial speed spikes.
-- [x] Calculate actual elapsed time using monotonic nanosecond timestamps (`DispatchTime.now().uptimeNanoseconds`).
-- [x] Calculate download speed independently: $\Delta \text{received} / \Delta t$.
-- [x] Calculate upload speed independently: $\Delta \text{transmitted} / \Delta t$.
-- [x] Reject zero and reversed timestamps safely while preserving the previous valid baseline.
-- [x] Detect unexpected counter decreases and resets, safely establishing a new baseline without unsigned underflow or negative speeds.
-- [x] Reset baseline on interface identity changes (name or index change), preventing artificial cross-interface speed spikes.
-- [x] Invalidate baseline upon network path disconnection and re-establish fresh baseline upon reconnection.
-- [x] Connect speed calculation engine into `ApplicationCoordinator` (`@Published speedResult` and `@Published latestMeasurement`).
-- [x] Implement comprehensive unit tests (23 assertion checks in `NetworkSpeedCalculatorTests`, 9 assertions in coordinator tests, 87 total assertions across 12 suites).
+- [x] Implement `ByteFormatter` with base-1000 conversion and structured `FormattedByteSpeed` output.
+- [x] Implement `SpeedFormatter` consuming domain `NetworkSpeed` models.
+- [x] Support decimal units: `B/s`, `KB/s`, `MB/s`, `GB/s`, `TB/s`.
+- [x] Implement automatic unit selection based on original raw speed.
+- [x] Enforce consistent decimal precision: integer for B/s, up to 2 decimal places for KB/s, MB/s, GB/s, TB/s.
+- [x] Remove unnecessary trailing zeros and decimal points (e.g. `1.00 MB/s` -> `1 MB/s`, `1.50 MB/s` -> `1.5 MB/s`).
+- [x] Format zero throughput strictly as `0 KB/s`.
+- [x] Handle small positive values safely without negative zero or scientific notation.
+- [x] Handle values exceeding TB/s scale cleanly in TB/s.
+- [x] Handle negative and non-finite values safely by clamping to `0 KB/s`.
+- [x] Ensure POSIX locale independence using explicit `.` decimal separator.
+- [x] Formulate and document unit boundary rounding policy in `ADR-034`.
+- [x] Implement comprehensive unit tests across 24 assertion checks in `Tests/SpeedFormatterTests.swift`.
 
 #### Deliverables Produced
 
-- Speed calculation engine: `ARRYNetworkCounter/Services/Monitoring/NetworkSpeedCalculator.swift`.
-- Updated coordinator: `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
-- Phase 05 test suite: `Tests/NetworkSpeedCalculatorTests.swift`.
-- Updated test runner: `Tests/TestRunner.swift` (87 assertion checks across 12 suites).
-- Architecture Decision Record: `ADR-033 — Counter Discontinuity and Rollover Policy`.
+- Byte formatter: `ARRYNetworkCounter/Services/Formatting/ByteFormatter.swift`.
+- Speed formatter: `ARRYNetworkCounter/Services/Formatting/SpeedFormatter.swift`.
+- Formatting unit tests: `Tests/SpeedFormatterTests.swift`.
+- Architecture Decision Record: `ADR-034 — Speed Formatting Decimal Precision, Zero-Speed, and Unit Boundary Policy`.
+- Updated test runner: `Tests/TestRunner.swift` (111 assertions passing across 13 suites).
 
 #### Completion Verification
 
-- [x] Download speed is calculated correctly from actual counter deltas.
-- [x] Upload speed is calculated correctly from actual counter deltas.
-- [x] Monotonic elapsed time is used exclusively, preventing clock adjustment artifacts.
-- [x] First sample establishes baseline without artificial initial throughput.
-- [x] Counter decreases and resets safely establish new baselines with zero unsigned underflow.
-- [x] Interface transitions reset baseline cleanly with no speed spikes.
-- [x] Disconnection invalidates baseline, and reconnection establishes fresh baseline.
-- [x] 100% of unit tests pass (87 assertions across 12 test suites with 0 failures).
+- [x] All supported units (`B/s`, `KB/s`, `MB/s`, `GB/s`, `TB/s`) convert and format accurately.
+- [x] Decimal conversion uses base 1000 per ADR-014.
+- [x] Zero displays strictly as `0 KB/s`.
+- [x] No unnecessary trailing zeros appear in formatted output.
+- [x] Unit boundary tests pass (`999 B/s`, `1 KB/s`, `999,999 B/s -> 1000 KB/s`, `1 MB/s`).
+- [x] 100% of unit tests pass (111 assertions across 13 test suites with 0 failures).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 06 — Speed Formatting Engine.
+**Next Step:** Proceed to Phase 07 — Dominant Direction & Switching Logic.
 
 ---
 
@@ -200,7 +198,12 @@ This section must contain only features that have actually been implemented and 
 - Network speed calculation engine: `NetworkSpeedCalculator` (Swift actor managing baseline lifecycle, monotonic nanosecond elapsed-time calculations, independent download/upload calculation, and zero underflow protection).
 - Typed speed measurement models: `SpeedMeasurement` (download, upload, elapsedSeconds, monotonicTimeNanoseconds, interface) and `SpeedCalculationResult` (`.calculated`, `.baselineEstablished`, `.baselineReset`, `.sampleRejected`, `.noActivePath`).
 - Integrated speed calculation in `ApplicationCoordinator` (`@Published speedResult` and `@Published latestMeasurement`).
-- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (87 assertion checks across 12 test suites).
+- Reusable speed formatting engine: `ByteFormatter` and `SpeedFormatter` (stateless value types converting raw speeds to decimal SI units `B/s`, `KB/s`, `MB/s`, `GB/s`, `TB/s`).
+- Structured formatted speed representation: `FormattedByteSpeed` detailing numeric value, selected `SpeedUnit`, formatted string, and display string.
+- Decimal precision policy: integer display for `B/s`, up to 2 decimal places with trailing zero and trailing decimal separator trimming for `KB/s`, `MB/s`, `GB/s`, `TB/s`.
+- Explicit zero display requirement: zero throughput displays strictly as `0 KB/s`.
+- Unit boundary rounding policy (`ADR-034`): unit selection evaluated on raw speed prior to rounding.
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (111 assertion checks across 13 test suites).
 
 ### Verified Functionality
 
@@ -208,10 +211,11 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing for both Debug and Release bundles.
-- Full Phase 02, Phase 03, Phase 04, and Phase 05 unit test suites pass: 87 assertions verified across 12 test suites with 0 failures in 69.92 ms.
+- Full Phase 02 through Phase 06 unit test suites pass: 111 assertions verified across 13 test suites with 0 failures in 73.09 ms.
 - Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
 - Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
 - Speed calculation verified across normal, fractional, irregular, small intervals, large counters, zero traffic, counter decreases, interface transitions, and disconnection lifecycles.
+- Formatting verified across all units, boundary values, decimal precision, trailing-zero stripping, zero display (`0 KB/s`), and POSIX locale independence.
 
 ### Important Rule
 
@@ -379,6 +383,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 03 | Integrated Network.framework, implemented NetworkPathManager and NetworkPathState, connected path observation to ApplicationCoordinator, and verified tests | Completed |
 | 2026-11-21 | Phase 04 | Implemented BSD interface statistics (getifaddrs/if_data), NetworkInterfaceSelector with single-interface policy, snapshot pipeline, live netstat -ib empirical validation, and 11 unit test suites (63 assertions passing) | Completed |
 | 2026-11-21 | Phase 05 | Implemented NetworkSpeedCalculator actor, monotonic elapsed-time arithmetic, independent download/upload calculation, baseline management, counter decrease protection, ADR-033, and 12 unit test suites (87 assertions passing) | Completed |
+| 2026-11-21 | Phase 06 | Implemented ByteFormatter and SpeedFormatter, base-1000 SI decimal scaling, up to 2 decimal places with trailing zero trimming, 0 KB/s zero display, ADR-034, and 13 unit test suites (111 assertions passing) | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -386,14 +391,13 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 05 is completed and verified. The immediate development sequence for Phase 06 (Speed Formatting Engine) is:
+Phase 06 is completed and verified. The immediate development sequence for Phase 07 (Dominant Direction & Switching Logic) is:
 
-1. Implement `ByteFormatter` / `SpeedFormatter` for human-readable speed strings.
-2. Support units: B/s, KB/s, MB/s, GB/s, TB/s (Decimal base 1000 per ADR-014).
-3. Implement automatic unit selection based on magnitude.
-4. Implement consistent decimal precision (e.g. 1 decimal place above threshold, strip trailing zeros).
-5. Support zero speed representation ("0 KB/s" or "0 B/s").
-6. Write comprehensive unit tests for byte conversions, unit transitions, and boundary values.
+1. Implement `DirectionManager` / dominant direction decision engine.
+2. Implement configurable direction switching hysteresis (ADR-007: 50 KB/s threshold, 3-sample delay).
+3. Implement display speed resolution for `singleDirectionAutomatic` and `combinedArrows` modes.
+4. Support manual direction pinning (`singleDirectionManual` for download or upload).
+5. Write unit tests for direction evaluation, hysteresis threshold, and rapid fluctuation dampening.
 
 ---
 
