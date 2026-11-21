@@ -8,22 +8,66 @@
 
 /* Begin PBXBuildFile section */
 		21676C525748473A1273087D /* ARRYNetworkCounterApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */; };
+		3208079173DD5551AF01921B /* NetworkSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */; };
+		462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDD5E97B853363473C09353 /* PreferencesStoring.swift */; };
+		491B24D97FB24A281A16E420 /* NetworkMonitoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */; };
+		4A0B3D0D5470E23C3C2CC2F4 /* NetworkSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */; };
+		51D82B61DE8BC07FC46309F4 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA65B4A2C62BE105145A831 /* AppPreferences.swift */; };
+		54E11E1C159515BCDE4B1890 /* NetworkDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B511E8338A56296272F6046 /* NetworkDirection.swift */; };
+		5AD5A206895B6AF143CA7F75 /* NetworkInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24938E00FD34DE42C41AE5F /* NetworkInterfaceTests.swift */; };
+		692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */; };
 		6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */; };
 		75813E3E5645B891DE6347F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C424DD5BD282234FB7493AB0 /* Assets.xcassets */; };
+		8C630910A54829A3FE79D923 /* ApplicationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */; };
+		9B06A72231C4731820327077 /* DisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E48F3CB8610EA9F8F05A37 /* DisplayMode.swift */; };
+		9CCDC4007616EB0DD4D4A3C6 /* NetworkSpeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959860DC121B37E7C205694C /* NetworkSpeedTests.swift */; };
+		9F26798B9FAAA860D4DFC4F3 /* NetworkSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40FD2DCC77CF7EB499C74CB /* NetworkSpeed.swift */; };
+		BF1FA5E6EDC55A857EC8998B /* DisplayConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */; };
+		CEA8404E100DA7EC1443AA03 /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44F30555B2FC3B9456858A3 /* TestRunner.swift */; };
+		D2D620915B02F380FACC6D02 /* AppPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93387978ED83F555303198AC /* AppPreferencesTests.swift */; };
+		D7E737709426DB82C6B97C50 /* BothDirectionsStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0E3DBC35C60BDC335CF1D4 /* BothDirectionsStyle.swift */; };
+		DA4D86D4E8EBB455EC11652D /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BACA44F08785AC7E1394FFB /* ApplicationCoordinator.swift */; };
+		E2FD512AC78CB4A9E7FBF0F4 /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15E95D58571CAE2B1F4977EC /* AppConfiguration.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		485B75975C848E14B72AD84B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C01E862DA3D1C13EB87FD4BE /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C683353789D4430D204044D7;
+			remoteInfo = ARRYNetworkCounter;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		123A93D7A23347C813403272 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		2ACCA15DBA685FF00D9F22DB /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		15E95D58571CAE2B1F4977EC /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
+		1BA65B4A2C62BE105145A831 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
+		2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayConfigurationTests.swift; sourceTree = "<group>"; };
+		3BACA44F08785AC7E1394FFB /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		3C89DDAAD0F80B9773C70CFD /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARRYNetworkCounterApp.swift; sourceTree = "<group>"; };
 		545C791D5E1159F95C507474 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		7BB4A05FE2AFDD4288C21DE2 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSnapshotTests.swift; sourceTree = "<group>"; };
+		7B511E8338A56296272F6046 /* NetworkDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDirection.swift; sourceTree = "<group>"; };
 		8BBC8687F659D20EB7730083 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
-		91635D5C536C6070784B477E /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSnapshot.swift; sourceTree = "<group>"; };
+		93387978ED83F555303198AC /* AppPreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesTests.swift; sourceTree = "<group>"; };
+		959860DC121B37E7C205694C /* NetworkSpeedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSpeedTests.swift; sourceTree = "<group>"; };
+		A40FD2DCC77CF7EB499C74CB /* NetworkSpeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSpeed.swift; sourceTree = "<group>"; };
+		A44F30555B2FC3B9456858A3 /* TestRunner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRunner.swift; sourceTree = "<group>"; };
+		AE0E3DBC35C60BDC335CF1D4 /* BothDirectionsStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BothDirectionsStyle.swift; sourceTree = "<group>"; };
+		BEDD5E97B853363473C09353 /* PreferencesStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesStoring.swift; sourceTree = "<group>"; };
+		C3E48F3CB8610EA9F8F05A37 /* DisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayMode.swift; sourceTree = "<group>"; };
 		C424DD5BD282234FB7493AB0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D0115AE026464BB0D1062A4A /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		D24938E00FD34DE42C41AE5F /* NetworkInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceTests.swift; sourceTree = "<group>"; };
+		D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoring.swift; sourceTree = "<group>"; };
+		D98C64097B5CE287050ABF46 /* ARRYNetworkCounterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ARRYNetworkCounterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4BA4EBD7F97F40241B45FD8 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
+		EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterface.swift; sourceTree = "<group>"; };
+		F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinatorTests.swift; sourceTree = "<group>"; };
 		F95C82EE1FE8F2F7ABB046C2 /* ARRYNetworkCounter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARRYNetworkCounter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FF1EFFE2B160B697D2ED7C46 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -60,6 +104,20 @@
 			path = Preferences;
 			sourceTree = "<group>";
 		};
+		23FD45002E6546DD4448AE01 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */,
+				93387978ED83F555303198AC /* AppPreferencesTests.swift */,
+				2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */,
+				D24938E00FD34DE42C41AE5F /* NetworkInterfaceTests.swift */,
+				5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */,
+				959860DC121B37E7C205694C /* NetworkSpeedTests.swift */,
+				A44F30555B2FC3B9456858A3 /* TestRunner.swift */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
 		2BE32D99B3D3E2C7D62542D1 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -71,7 +129,7 @@
 		666DACD9B837A24C83978331 /* Utilities */ = {
 			isa = PBXGroup;
 			children = (
-				7BB4A05FE2AFDD4288C21DE2 /* .gitkeep */,
+				15E95D58571CAE2B1F4977EC /* AppConfiguration.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -80,6 +138,7 @@
 			isa = PBXGroup;
 			children = (
 				087088FD7FF4D56149668981 /* ARRYNetworkCounter */,
+				23FD45002E6546DD4448AE01 /* Tests */,
 				85AA8ACBD14C25035887B8A8 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -109,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				F95C82EE1FE8F2F7ABB046C2 /* ARRYNetworkCounter.app */,
+				D98C64097B5CE287050ABF46 /* ARRYNetworkCounterTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -141,6 +201,7 @@
 			isa = PBXGroup;
 			children = (
 				FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */,
+				3BACA44F08785AC7E1394FFB /* ApplicationCoordinator.swift */,
 				4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */,
 			);
 			path = App;
@@ -149,7 +210,8 @@
 		C6F40CBAE390D98CBB84C1E3 /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				2ACCA15DBA685FF00D9F22DB /* .gitkeep */,
+				D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */,
+				BEDD5E97B853363473C09353 /* PreferencesStoring.swift */,
 			);
 			path = Protocols;
 			sourceTree = "<group>";
@@ -165,7 +227,13 @@
 		E538CE6F3C18E4E05F3501E8 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				91635D5C536C6070784B477E /* .gitkeep */,
+				1BA65B4A2C62BE105145A831 /* AppPreferences.swift */,
+				AE0E3DBC35C60BDC335CF1D4 /* BothDirectionsStyle.swift */,
+				C3E48F3CB8610EA9F8F05A37 /* DisplayMode.swift */,
+				7B511E8338A56296272F6046 /* NetworkDirection.swift */,
+				EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */,
+				93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */,
+				A40FD2DCC77CF7EB499C74CB /* NetworkSpeed.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -173,6 +241,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		0DADBE3789C7F6A320B07F21 /* ARRYNetworkCounterTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 719BC579815D04EA3D732BDE /* Build configuration list for PBXNativeTarget "ARRYNetworkCounterTests" */;
+			buildPhases = (
+				A4C2F5E80BD69F369D5A7F7D /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				67902689A9D1EEA4A904E54B /* PBXTargetDependency */,
+			);
+			name = ARRYNetworkCounterTests;
+			packageProductDependencies = (
+			);
+			productName = ARRYNetworkCounterTests;
+			productReference = D98C64097B5CE287050ABF46 /* ARRYNetworkCounterTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		C683353789D4430D204044D7 /* ARRYNetworkCounter */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 31D8182A55FD9B00FDB2C014 /* Build configuration list for PBXNativeTarget "ARRYNetworkCounter" */;
@@ -200,6 +286,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					0DADBE3789C7F6A320B07F21 = {
+						ProvisioningStyle = Automatic;
+					};
 					C683353789D4430D204044D7 = {
 						ProvisioningStyle = Automatic;
 					};
@@ -220,6 +309,7 @@
 			projectRoot = "";
 			targets = (
 				C683353789D4430D204044D7 /* ARRYNetworkCounter */,
+				0DADBE3789C7F6A320B07F21 /* ARRYNetworkCounterTests */,
 			);
 		};
 /* End PBXProject section */
@@ -241,11 +331,44 @@
 			buildActionMask = 2147483647;
 			files = (
 				21676C525748473A1273087D /* ARRYNetworkCounterApp.swift in Sources */,
+				E2FD512AC78CB4A9E7FBF0F4 /* AppConfiguration.swift in Sources */,
 				6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */,
+				51D82B61DE8BC07FC46309F4 /* AppPreferences.swift in Sources */,
+				DA4D86D4E8EBB455EC11652D /* ApplicationCoordinator.swift in Sources */,
+				D7E737709426DB82C6B97C50 /* BothDirectionsStyle.swift in Sources */,
+				9B06A72231C4731820327077 /* DisplayMode.swift in Sources */,
+				54E11E1C159515BCDE4B1890 /* NetworkDirection.swift in Sources */,
+				692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */,
+				491B24D97FB24A281A16E420 /* NetworkMonitoring.swift in Sources */,
+				3208079173DD5551AF01921B /* NetworkSnapshot.swift in Sources */,
+				9F26798B9FAAA860D4DFC4F3 /* NetworkSpeed.swift in Sources */,
+				462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A4C2F5E80BD69F369D5A7F7D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D2D620915B02F380FACC6D02 /* AppPreferencesTests.swift in Sources */,
+				8C630910A54829A3FE79D923 /* ApplicationCoordinatorTests.swift in Sources */,
+				BF1FA5E6EDC55A857EC8998B /* DisplayConfigurationTests.swift in Sources */,
+				5AD5A206895B6AF143CA7F75 /* NetworkInterfaceTests.swift in Sources */,
+				4A0B3D0D5470E23C3C2CC2F4 /* NetworkSnapshotTests.swift in Sources */,
+				9CCDC4007616EB0DD4D4A3C6 /* NetworkSpeedTests.swift in Sources */,
+				CEA8404E100DA7EC1443AA03 /* TestRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		67902689A9D1EEA4A904E54B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C683353789D4430D204044D7 /* ARRYNetworkCounter */;
+			targetProxy = 485B75975C848E14B72AD84B /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		3478D95F48597F74652ADDFC /* Release */ = {
@@ -350,6 +473,24 @@
 			};
 			name = Debug;
 		};
+		8629B0BA09D70BECA0EB47A7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ARRYNetworkCounter.app/Contents/MacOS/ARRYNetworkCounter";
+			};
+			name = Debug;
+		};
 		9FC6C31BC6D21FEF39E0D220 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -422,6 +563,24 @@
 			};
 			name = Debug;
 		};
+		F959D034A9C4831959287C7A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
+				PRODUCT_BUNDLE_IDENTIFIER = in.arrry.networkcounter.tests;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ARRYNetworkCounter.app/Contents/MacOS/ARRYNetworkCounter";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -430,6 +589,15 @@
 			buildConfigurations = (
 				74E2686AF45DC7C98C1721FD /* Debug */,
 				3478D95F48597F74652ADDFC /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		719BC579815D04EA3D732BDE /* Build configuration list for PBXNativeTarget "ARRYNetworkCounterTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8629B0BA09D70BECA0EB47A7 /* Debug */,
+				F959D034A9C4831959287C7A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

@@ -44,8 +44,25 @@ targets:
         INFOPLIST_FILE: "ARRYNetworkCounter/Info.plist"
         ARCHS: "arm64 x86_64"
         ONLY_ACTIVE_ARCH: false
+  ARRYNetworkCounterTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - path: Tests
+        excludes:
+          - "**/.DS_Store"
+    dependencies:
+      - target: ARRYNetworkCounter
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: "in.arrry.networkcounter.tests"
+        MACOSX_DEPLOYMENT_TARGET: "13.0"
+        SWIFT_VERSION: "6.0"
 schemes:
   ARRYNetworkCounter:
     build:
       targets:
         ARRYNetworkCounter: all
+    test:
+      targets:
+        - ARRYNetworkCounterTests

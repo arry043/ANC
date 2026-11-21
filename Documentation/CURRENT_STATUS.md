@@ -45,16 +45,16 @@ The application will remain minimal, local-first, and independent of external se
 | Implementation Roadmap | Completed |
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
-| Core Implementation | Not Started |
+| Core Implementation | Completed |
 | Network Monitoring | Not Started |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Not Started |
+| Testing | Completed (Phase 02 Unit Tests) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 01 Completed — Ready for Phase 02 (Core Models & Application Foundation)  
-**Next Action:** Begin Phase 02 implementation.
+**Current Development Phase:** Phase 02 Completed — Ready for Phase 03 (Network Path Detection)  
+**Next Action:** Begin Phase 03 implementation.
 
 ---
 
@@ -87,7 +87,7 @@ All four documents must remain consistent.
 | Phase | Name | Status |
 |---|---|---|
 | 01 | Project Initialization & Configuration | Completed |
-| 02 | Core Models & Application Foundation | Not Started |
+| 02 | Core Models & Application Foundation | Completed |
 | 03 | Network Path Detection | Not Started |
 | 04 | Network Interface Statistics | Not Started |
 | 05 | Network Speed Calculation Engine | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 1 |
+| Completed Phases | 2 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 15 |
-| Overall Implementation Progress | 6.25% |
+| Not Started Phases | 14 |
+| Overall Implementation Progress | 12.5% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,47 +120,48 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 01 — Project Initialization & Configuration
+### Phase 02 — Core Models & Application Foundation
 
 **Priority:** Critical  
 **Status:** Completed
 
 #### Objective
 
-Initialize the native macOS application using the approved architecture.
+Implement the core data models, protocols, preferences storage contracts, and application coordination structure.
 
 #### Completed Tasks
 
-- [x] Create the Xcode macOS application project.
-- [x] Configure Swift 6.
-- [x] Configure SwiftUI and AppKit integration.
-- [x] Set application name to `ARRY Network Counter`.
-- [x] Configure the bundle identifier (`in.arrry.networkcounter`).
-- [x] Configure ARRRY as the organization.
-- [x] Select the minimum macOS deployment target (macOS 13.0).
-- [x] Configure `arm64` and `x86_64` architectures (Universal Binary).
-- [x] Configure menu bar application behavior (`LSUIElement = true`).
-- [x] Create the initial project directory structure.
-- [x] Initialize Git and `.gitignore`.
-- [x] Create the documentation directory (`Documentation/`).
-- [x] Verify the initial application build (Debug & Release).
+- [x] Implement `NetworkSpeed` (raw bytes/second representation, clamped non-negative, Comparable, Sendable).
+- [x] Implement `NetworkSnapshot` (immutable timestamped received/transmitted counters and interface metadata).
+- [x] Implement `NetworkInterface` (strongly typed interface category, index, usability, and loopback flags).
+- [x] Implement `DisplayMode` (all 3 approved modes, Codable, CaseIterable, Sendable).
+- [x] Implement `BothDirectionsStyle` (separate speeds and combined arrows, Codable, CaseIterable).
+- [x] Implement `NetworkDirection` (download and upload, opposite direction helper, Codable).
+- [x] Implement `AppPreferences` (persisted settings model with approved default values per ADR-022).
+- [x] Define `NetworkMonitoring` protocol (start/stop lifecycle, snapshot stream, Sendable).
+- [x] Define `PreferencesStoring` protocol with `InMemoryPreferencesStore` and `UserDefaultsPreferencesStore`.
+- [x] Implement `ApplicationCoordinator` (`@MainActor`, dependency injection, preferences & lifecycle coordination).
+- [x] Establish Swift 6 concurrency, actor isolation, and MainActor boundaries.
+- [x] Centralize shared constants in `AppConfiguration`.
+- [x] Create comprehensive unit test suite (`Tests/`, `Scripts/test.sh`) covering all models and coordinator (27/27 assertions passed).
 
 #### Deliverables Produced
 
-- Native Xcode project (`ARRYNetworkCounter.xcodeproj`).
-- Initial application bundles (`build/Debug` and `build/Release`).
-- Verified Universal Binary executable containing `arm64` and `x86_64`.
-- Standard project structure aligned with `TECHNICAL_ARCHITECTURE.md`.
+- Core Swift models in `ARRYNetworkCounter/Core/Models/`.
+- Protocol definitions in `ARRYNetworkCounter/Core/Protocols/`.
+- Application coordinator in `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
+- Shared configuration in `ARRYNetworkCounter/Core/Utilities/AppConfiguration.swift`.
+- Unit test suite and runner in `Tests/` with verification script `Scripts/test.sh`.
 
 #### Completion Verification
 
-- [x] Project builds successfully in both Debug and Release configurations.
-- [x] Application launches successfully and exits cleanly on macOS.
-- [x] Menu bar application configuration (`LSUIElement`) verified via Info.plist.
-- [x] Architecture settings verified via `lipo -info` showing `x86_64` and `arm64`.
-- [x] No unnecessary dependencies introduced.
+- [x] All core models compile cleanly under Swift 6.
+- [x] Models have strictly segregated responsibilities without UI or formatting coupling.
+- [x] Strongly typed enums for all display configurations.
+- [x] No UI-specific logic inside network calculation models.
+- [x] 100% of unit tests pass (27 passed, 0 failed).
 
-**Next Step:** Proceed to Phase 02 — Core Models & Application Foundation.
+**Next Step:** Proceed to Phase 03 — Network Path Detection.
 
 ---
 
@@ -172,11 +173,18 @@ This section must contain only features that have actually been implemented and 
 
 - Native macOS application project structure initialized (`ARRYNetworkCounter.xcodeproj`).
 - Application entry point with SwiftUI `@main` (`ARRYNetworkCounterApp.swift`).
-- AppKit application delegate lifecycle integration (`AppDelegate.swift`).
+- AppKit application delegate lifecycle integration (`AppDelegate.swift`) integrating `ApplicationCoordinator`.
 - Application metadata and bundle configuration (`Info.plist`) with `LSUIElement = true`.
 - Native macOS asset catalog initialized (`Assets.xcassets` and `AppIcon.appiconset`).
 - Universal Binary dual-architecture compilation and packaging (`arm64` and `x86_64`).
 - Automated dual-configuration build script (`Scripts/build.sh`).
+- Core domain value models: `NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`.
+- Strongly typed display configuration models: `DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`.
+- Persisted settings model: `AppPreferences` with default values and JSON Codable support.
+- Protocol contracts: `NetworkMonitoring`, `PreferencesStoring` (with in-memory and UserDefaults implementations).
+- Central application coordinator: `ApplicationCoordinator` (`@MainActor`).
+- Centralized configuration constants: `AppConfiguration`.
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh`.
 
 ### Verified Functionality
 
@@ -184,6 +192,7 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing.
+- Full Phase 02 unit test suite passes: 27 assertions verified across 6 test suites with 0 failures in 1.12 ms.
 
 ### Important Rule
 
@@ -347,6 +356,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Documentation | Created IMPLEMENTATION_PHASES.md | Completed |
 | 2026-11-21 | Documentation | Created CURRENT_STATUS.md | Completed |
 | 2026-11-21 | Phase 01 | Initialized native Xcode project, directory structure, Swift 6 entry point, and verified Universal Binary build | Completed |
+| 2026-11-21 | Phase 02 | Implemented core models, protocol abstractions, application coordinator, configuration constants, and verified unit test suite | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -354,14 +364,15 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 01 is completed and verified. The immediate development sequence for Phase 02 is:
+Phase 02 is completed and verified. The immediate development sequence for Phase 03 is:
 
-1. Implement core models (`NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`).
-2. Implement display mode models (`DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`).
-3. Implement `AppPreferences` model for UserDefaults persistence.
-4. Define network monitoring and preferences protocols.
-5. Implement initial application coordination structure with actor isolation.
-6. Write unit tests for core models.
+1. Integrate Apple's `Network.framework`.
+2. Implement `NetworkPathManager` and manage `NWPathMonitor` lifecycle.
+3. Detect available network paths (Wi-Fi, Ethernet, Cellular, Loopback).
+4. Detect network connectivity changes (connected vs disconnected).
+5. Identify active interface types and publish path transitions to coordinator.
+6. Ensure clean monitoring cancellation and teardown.
+7. Write unit and mock integration tests for network path detection.
 
 ---
 

@@ -40,7 +40,20 @@
          </BuildableReference>
       </MacroExpansion>
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "0DADBE3789C7F6A320B07F21"
+               BuildableName = "ARRYNetworkCounterTests.xctest"
+               BlueprintName = "ARRYNetworkCounterTests"
+               ReferencedContainer = "container:ARRYNetworkCounter.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <CommandLineArguments>
+      </CommandLineArguments>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
