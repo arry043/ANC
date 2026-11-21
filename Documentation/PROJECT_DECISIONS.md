@@ -955,6 +955,38 @@ ADR-007 established that automatic direction switching must use hysteresis to pr
 
 ---
 
+## ADR-036 — Native Menu Bar Status Item Attribution and Typographic Standards
+
+**Status:** Accepted  
+**Category:** UI / Rendering
+
+### Context
+
+The application renders real-time network throughput directly into the macOS menu bar via an `NSStatusItem`. The display must maintain high contrast across macOS Light and Dark appearance modes, avoid layout jitter/wobble as numeric speeds fluctuate, and visually differentiate incoming (download) and outgoing (upload) throughput.
+
+### Decision
+
+1. **Direction Indicators & Semantic Colors:**
+   - Download is represented by `↓` styled with vibrant green (`#30B86B` / `srgbRed: 0x30/255, green: 0xB8/255, blue: 0x6B/255`).
+   - Upload is represented by `↑` styled with vibrant blue (`#3988E8` / `srgbRed: 0x39/255, green: 0x88/255, blue: 0xE8/255`).
+2. **Typography & Monospaced Digits:**
+   - Direction arrows use `NSFont.systemFont(ofSize: 11.5, weight: .semibold)` to guarantee crisp glyph geometry.
+   - Numeric speeds use `NSFont.monospacedDigitSystemFont(ofSize: 11.5, weight: .medium)`. Monospaced digits ensure that horizontal width remains stable as digits change between narrow glyphs (such as '1') and wide glyphs (such as '8'), eliminating horizontal jitter in the menu bar.
+3. **Appearance Compatibility:**
+   - Numerical speed text uses dynamic `NSColor.headerTextColor` which automatically adapts to dark backgrounds, light backgrounds, and menu bar translucency.
+4. **AppKit Status Item Sizing:**
+   - The status item uses `NSStatusItem.variableLength` and renders directly to `button.attributedTitle`.
+5. **Context Menu:**
+   - Attaches native `NSMenu` with `Settings...` (`Cmd+,`) and `Quit ARRY Network Counter` (`Cmd+Q`).
+
+### Consequences
+
+- Clear, readable, and visually balanced status item across Light Mode and Dark Mode.
+- No horizontal visual jitter as speeds change.
+- Strict native macOS menu bar integration without third-party frameworks.
+
+---
+
 # 9. Decisions Pending Implementation Validation
 
 The following decisions are accepted at the product or architectural level but require implementation-time verification.
@@ -1092,6 +1124,6 @@ Build a small, reliable, privacy-focused native macOS menu bar utility that disp
 **Document:** `PROJECT_DECISIONS.md`  
 **Project:** ARRY Network Counter (ANC)  
 **Organization:** ARRRY  
-**Initial Decision Records:** 35  
+**Initial Decision Records:** 36  
 **Status:** Active  
 **Last Updated:** 2026-11-21

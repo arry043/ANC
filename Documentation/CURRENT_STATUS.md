@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Dominant Direction Logic Completed (Phase 07) |
-| Menu Bar Integration | Not Started |
+| Network Monitoring | Completed |
+| Menu Bar Integration | Completed (Phase 08) |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02–07 Unit Tests — 124 assertions passed) |
+| Testing | Completed (Phase 02–08 Unit Tests — 140 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 07 Completed — Ready for Phase 08 (Native Menu Bar Integration)  
-**Next Action:** Begin Phase 08 implementation.
+**Current Development Phase:** Phase 08 Completed — Ready for Phase 09 (Display Modes Implementation)  
+**Next Action:** Begin Phase 09 implementation.
 
 ---
 
@@ -93,7 +93,7 @@ All four documents must remain consistent.
 | 05 | Network Speed Calculation Engine | Completed |
 | 06 | Speed Formatting Engine | Completed |
 | 07 | Dominant Direction & Switching Logic | Completed |
-| 08 | Native Menu Bar Integration | Not Started |
+| 08 | Native Menu Bar Integration | Completed |
 | 09 | Display Modes Implementation | Not Started |
 | 10 | Settings Interface & Preferences | Not Started |
 | 11 | Application Lifecycle & Launch at Login | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 7 |
+| Completed Phases | 8 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 9 |
-| Overall Implementation Progress | 43.75% |
+| Not Started Phases | 8 |
+| Overall Implementation Progress | 50.00% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,54 +120,61 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 07 — Dominant Direction & Switching Logic
+### Phase 08 — Native Menu Bar Integration
 
-**Priority:** High  
+**Priority:** Critical  
 **Status:** Completed
 
 #### Objective
 
-Implement a reusable, deterministic decision engine (`DominantDirectionEngine`) responsible for selecting whether Download or Upload is currently the dominant network traffic direction for automatic display modes (`singleDirectionAutomatic` and `combinedArrows`), incorporating 10% relative switching hysteresis, 10 KB/s absolute noise floor suppression, 2 consecutive sample confirmation, download default idle direction, IEEE 754 micro-epsilon handling, and integration with `ApplicationCoordinator`.
+Implement a native macOS menu bar status item (`NSStatusItem`) using AppKit, providing real-time, easily understandable network speed indication directly in the menu bar, integrated with `ApplicationCoordinator`, `SpeedFormatter`, and `DominantDirectionEngine`, styled with green download arrows (`↓`), blue upload arrows (`↑`), monospaced digits, light/dark appearance compatibility, context menu (Settings, Quit), and official ARRRY Network Counter branding.
 
 #### Completed Tasks
 
-- [x] Implement `DirectionDecision` value model with direction, switch flag, candidate direction, and confirmation count.
-- [x] Implement `DirectionSwitchingConfiguration` with centralized defaults (10% relative margin, 10,000 B/s noise floor, 2 consecutive samples, .download default).
-- [x] Implement `DominantDirectionEngine` actor with thread-safe state evaluation, reset, and configuration updates.
-- [x] Implement 10% relative hysteresis threshold ($S_{\text{opposite}} \ge S_{\text{current}} \times (1 + \text{relativeMargin})$).
-- [x] Implement absolute noise floor threshold ($S_{\text{opposite}} - S_{\text{current}} \ge \text{absoluteThresholdBytesPerSecond}$).
-- [x] Require 2 consecutive qualifying samples before committing a direction switch.
-- [x] Reset pending candidate and streak count immediately if an intermediate sample fails to qualify.
-- [x] Revert immediately to `.download` default when both traffic rates are idle ($\le 0$ B/s).
-- [x] Apply IEEE 754 micro-epsilon ($1\times 10^{-7}$) tolerance to eliminate binary floating-point rounding inaccuracies on exact boundary multiples.
-- [x] Integrate `DominantDirectionEngine` into `ApplicationCoordinator` with `@Published public private(set) var dominantDirection`.
-- [x] Codify hysteresis and noise floor parameters in `ADR-035`.
-- [x] Implement 12 comprehensive unit tests in `Tests/DominantDirectionEngineTests.swift`.
-- [x] Implement live coordinator dominant direction switching and disconnection reset tests in `Tests/ApplicationCoordinatorTests.swift`.
+- [x] Implement `MenuBarAppearance` with semantic colors (green `#30B86B`, blue `#3988E8`, dynamic `headerTextColor`), symbols (`↓`, `↑`), and monospaced digit typography.
+- [x] Implement `MenuBarContent` immutable display model representing active speeds, dominant direction, display mode, and connection status.
+- [x] Implement `MenuBarRenderer` converting display content into styled `NSAttributedString` instances and plain text representations.
+- [x] Implement `MenuBarMenuBuilder` creating native macOS `NSMenu` with `Settings...` (`Cmd+,`), separator, and `Quit ARRY Network Counter` (`Cmd+Q`).
+- [x] Implement `MenuBarManager` (`@MainActor`) managing `NSStatusItem.variableLength` lifecycle, Combine-driven coordinator observation, diff-based redraw suppression, button attributed title updates, accessibility labels, and clean removal on stop.
+- [x] Integrate `MenuBarManager` into `AppDelegate` lifecycle (`applicationDidFinishLaunching` and `applicationWillTerminate`).
+- [x] Integrate official ARRRY Network Counter application logo (`media_1795277151727_cc894535.jpg`) into `AppIcon.appiconset` (10 standard macOS resolutions), compiled `AppIcon.icns` via `iconutil`, and `AppLogo.imageset` for in-app UI branding.
+- [x] Configure `Info.plist` with `CFBundleIconFile` and `CFBundleIconName` pointing to `AppIcon`.
+- [x] Update `Scripts/build.sh` to copy `AppIcon.icns` into application bundle resources.
+- [x] Formulate and document menu bar attribution and typographic standards in `ADR-036`.
+- [x] Implement 10 comprehensive unit tests in `Tests/MenuBarRendererTests.swift`.
+- [x] Implement 6 comprehensive unit tests in `Tests/MenuBarManagerTests.swift`.
+- [x] Expand test harness in `Tests/TestRunner.swift` (140 assertions passing across 16 test suites).
 
 #### Deliverables Produced
 
-- Dominant direction engine: `ARRYNetworkCounter/Services/Monitoring/DominantDirectionEngine.swift`.
-- Direction decision and configuration models: `DirectionDecision` and `DirectionSwitchingConfiguration`.
-- Coordinator integration: `ApplicationCoordinator.swift` (`dominantDirection`, initialization, observation task evaluation, reset on disconnection/stop).
-- Architecture Decision Record: `ADR-035 — Dominant Direction Hysteresis and Noise Threshold Parameters`.
-- Unit test suite: `Tests/DominantDirectionEngineTests.swift` (12 assertions).
-- Updated coordinator test suite: `Tests/ApplicationCoordinatorTests.swift` (10 assertions).
-- Updated test runner: `Tests/TestRunner.swift` (124 assertions passing across 14 test suites).
+- Menu bar appearance: `ARRYNetworkCounter/MenuBar/MenuBarAppearance.swift`.
+- Menu bar display model: `ARRYNetworkCounter/MenuBar/MenuBarContent.swift`.
+- Menu bar renderer: `ARRYNetworkCounter/MenuBar/MenuBarRenderer.swift`.
+- Menu bar menu builder: `ARRYNetworkCounter/MenuBar/MenuBarMenuBuilder.swift`.
+- Menu bar manager: `ARRYNetworkCounter/MenuBar/MenuBarManager.swift`.
+- Application delegate integration: `ARRYNetworkCounter/App/AppDelegate.swift`.
+- Official app icon: `AppIcon.icns` (1024x1024 with all resolutions) and `Assets.xcassets/AppIcon.appiconset/`.
+- Official branding logo: `Assets.xcassets/AppLogo.imageset/AppLogo.png`.
+- Architecture Decision Record: `ADR-036 — Native Menu Bar Status Item Attribution and Typographic Standards`.
+- Unit test suites: `Tests/MenuBarRendererTests.swift` (10 assertions) and `Tests/MenuBarManagerTests.swift` (6 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (140 assertions passing across 16 test suites).
 
 #### Completion Verification
 
-- [x] Correct dominant direction is selected for clear download and clear upload traffic.
-- [x] Relative margin hysteresis (10%) prevents premature switching.
-- [x] Absolute noise floor (10 KB/s) suppresses trickle traffic and micro-oscillations.
-- [x] Two consecutive samples required to commit direction switch; interrupted streaks reset cleanly.
-- [x] Idle traffic immediately reverts direction to `.download`.
-- [x] Near-equal traffic oscillations remain completely stable without visual flapping.
-- [x] Disconnection and coordinator shutdown safely reset direction to `.download`.
-- [x] 100% of unit tests pass (124 assertions across 14 test suites with 0 failures in 99.94 ms).
+- [x] Status item appears on application launch using `NSStatusItem.variableLength`.
+- [x] Download arrow renders in vibrant green (`#30B86B`).
+- [x] Upload arrow renders in vibrant blue (`#3988E8`).
+- [x] Speed values use existing `SpeedFormatter` with monospaced digit typography.
+- [x] Text adapts cleanly to macOS Light Mode, Dark Mode, and menu bar translucency.
+- [x] Status item updates dynamically from coordinator without opening any window.
+- [x] Native context menu functions: Settings action and Quit action.
+- [x] Status item is removed cleanly from `NSStatusBar.system` on termination.
+- [x] No Dock icon appears during normal operation (`LSUIElement = true`).
+- [x] Official ARRRY Network Counter icon integrated across all resolutions and verified in bundle.
+- [x] 100% of unit tests pass (140 assertions across 16 test suites with 0 failures in 195.66 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 08 — Native Menu Bar Integration.
+**Next Step:** Proceed to Phase 09 — Display Modes Implementation.
 
 ---
 
@@ -213,7 +220,14 @@ This section must contain only features that have actually been implemented and 
 - Direction idle reversion: immediate transition to `.download` default when both traffic rates are idle ($\le 0$ B/s).
 - IEEE 754 micro-epsilon handling ($1\times 10^{-7}$ tolerance) preventing floating-point boundary representation errors.
 - Central coordinator dominant direction integration: `@Published public private(set) var dominantDirection: NetworkDirection` in `ApplicationCoordinator`.
-- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (124 assertion checks across 14 test suites).
+- Native menu bar appearance styling: `MenuBarAppearance` (green `#30B86B` for `↓`, blue `#3988E8` for `↑`, dynamic `headerTextColor`, monospaced digit typography `NSFont.monospacedDigitSystemFont`).
+- Menu bar display model: `MenuBarContent` (immutable `Sendable` representation of display modes, styles, speeds, and direction).
+- Menu bar renderer: `MenuBarRenderer` (stateless conversion of `MenuBarContent` to `NSAttributedString` and unadorned accessibility plain text).
+- Menu bar menu builder: `MenuBarMenuBuilder` (native context menu with `Settings...`, separator, and `Quit ARRY Network Counter`).
+- Menu bar manager: `MenuBarManager` (`@MainActor` managing `NSStatusItem.variableLength` lifecycle, Combine observation, diff-based redraw suppression, button updates, and cleanup).
+- Application delegate integration: `AppDelegate` (owning `MenuBarManager` and coordinating start/stop lifecycles).
+- Official ARRRY Network Counter application logo: `AppIcon.icns` (1024x1024 with all 10 standard resolutions), `Assets.xcassets/AppIcon.appiconset/`, and `Assets.xcassets/AppLogo.imageset/`.
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (140 assertion checks across 16 test suites).
 
 ### Verified Functionality
 
@@ -221,12 +235,14 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing for both Debug and Release bundles.
-- Full Phase 02 through Phase 07 unit test suites pass: 124 assertions verified across 14 test suites with 0 failures in 99.94 ms.
+- Full Phase 02 through Phase 08 unit test suites pass: 140 assertions verified across 16 test suites with 0 failures in 195.66 ms.
 - Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
 - Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
 - Speed calculation verified across normal, fractional, irregular, small intervals, large counters, zero traffic, counter decreases, interface transitions, and disconnection lifecycles.
 - Formatting verified across all units, boundary values, decimal precision, trailing-zero stripping, zero display (`0 KB/s`), and POSIX locale independence.
 - Dominant direction switching verified across clear download/upload dominance, relative margin thresholds, absolute noise floors, consecutive sample confirmation, streak interruption, idle reversion, near-equal oscillation stability, and coordinator lifecycle resets.
+- Menu bar rendering verified across all display modes, combined arrows, separate speeds, manual direction selection, automatic direction selection, idle fallback, and disconnected fallback.
+- Menu bar status item lifecycle verified: singleton creation, idempotent starts, menu configuration, button updates, and clean removal on stop.
 
 ### Important Rule
 
@@ -396,6 +412,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 05 | Implemented NetworkSpeedCalculator actor, monotonic elapsed-time arithmetic, independent download/upload calculation, baseline management, counter decrease protection, ADR-033, and 12 unit test suites (87 assertions passing) | Completed |
 | 2026-11-21 | Phase 06 | Implemented ByteFormatter and SpeedFormatter, base-1000 SI decimal scaling, up to 2 decimal places with trailing zero trimming, 0 KB/s zero display, ADR-034, and 13 unit test suites (111 assertions passing) | Completed |
 | 2026-11-21 | Phase 07 | Implemented DominantDirectionEngine actor, DirectionDecision, DirectionSwitchingConfiguration, 10% relative margin, 10 KB/s noise floor, 2-sample confirmation, download idle default, IEEE 754 micro-epsilon handling, ADR-035, and 14 unit test suites (124 assertions passing) | Completed |
+| 2026-11-21 | Phase 08 | Implemented native NSStatusItem integration via MenuBarManager, MenuBarRenderer, MenuBarContent, MenuBarMenuBuilder, MenuBarAppearance, official logo and AppIcon.icns integration, ADR-036, and 16 unit test suites (140 assertions passing) | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -403,13 +420,13 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 07 is completed and verified. The immediate development sequence for Phase 08 (Native Menu Bar Integration) is:
+Phase 08 is completed and verified. The immediate development sequence for Phase 09 (Display Modes Implementation) is:
 
-1. Create `MenuBarManager` (`NSStatusItem` lifecycle, ownership, menu bar item creation and destruction).
-2. Create `MenuBarRenderer` (attributed string rendering, dynamic width measurement, system font styling).
-3. Connect `ApplicationCoordinator` published speed and direction states to menu bar item title updates.
-4. Support menu item actions (About, Settings, Quit).
-5. Verify clean display on both light and dark menu bar appearances and various screen resolutions.
+1. Wire full user preferences switching for all three display modes (`bothDirections`, `singleDirectionManual`, `singleDirectionAutomatic`).
+2. Implement seamless dynamic switching between `separateSpeeds` and `combinedArrows` within `bothDirections`.
+3. Support manual direction selection toggling (`download` vs `upload`) with immediate UI reflection.
+4. Verify dynamic transitions between display modes without restarting monitoring or recreating the status item.
+5. Expand unit tests for display mode transitions and configuration state transformations.
 
 ---
 

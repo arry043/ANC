@@ -786,6 +786,27 @@ The rendering layer should not calculate network speeds itself.
 
 It should receive already calculated and formatted measurements.
 
+### 12.1 Native Menu Bar Subsystem (Phase 08)
+
+The menu bar subsystem is implemented in AppKit, isolated to `@MainActor`, and structured into five focused components:
+
+1. **`MenuBarAppearance`:** Defines typographic and color styling.
+   - Download indicator: Green `↓` (`#30B86B` / `srgbRed: 0x30/255, green: 0xB8/255, blue: 0x6B/255`).
+   - Upload indicator: Blue `↑` (`#3988E8` / `srgbRed: 0x39/255, green: 0x88/255, blue: 0xE8/255`).
+   - Numerical speeds: `NSFont.monospacedDigitSystemFont(ofSize: 11.5, weight: .medium)`. Monospaced digits ensure strict horizontal layout stability as numbers fluctuate.
+   - Text color: Dynamic `NSColor.headerTextColor` adapting automatically to macOS Light Mode, Dark Mode, and menu bar translucency.
+2. **`MenuBarContent`:** Immutable, thread-safe value type (`Sendable`, `Equatable`, `Hashable`) containing active speeds, dominant direction, display mode, and connection status.
+3. **`MenuBarRenderer`:** Stateless renderer converting `MenuBarContent` into an `NSAttributedString` with colored arrows and formatted speed text. Provides `renderPlainText(content:)` for accessibility labels and testing.
+4. **`MenuBarMenuBuilder`:** Constructs the native context menu attached to `statusItem.menu`:
+   - `Settings...` (`Cmd+,`)
+   - Separator
+   - `Quit ARRY Network Counter` (`Cmd+Q`)
+5. **`MenuBarManager`:** `@MainActor` lifecycle manager owning the `NSStatusItem.variableLength`:
+   - Subscribes to `ApplicationCoordinator` published state via Combine (`$latestMeasurement`, `$dominantDirection`, `$pathState`, `$preferences`).
+   - Performs diffing against `lastRenderedContent` to eliminate redundant redraws.
+   - Updates `button.attributedTitle` and accessibility labels dynamically.
+   - Removes the status item cleanly from `NSStatusBar.system` on `stop()`.
+
 ---
 
 ## 13. Settings Architecture

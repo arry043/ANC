@@ -11,6 +11,21 @@ public struct SpeedFormatter: Sendable {
     /// Underlying byte formatter providing decimal scaling and precision rules.
     private let byteFormatter: ByteFormatter
 
+    /// Formats a `NetworkSpeed` value into a complete display string using the shared formatter.
+    public static func format(_ speed: NetworkSpeed) -> String {
+        shared.format(speed)
+    }
+
+    /// Formats a raw `bytesPerSecond` value into a complete display string using the shared formatter.
+    public static func format(bytesPerSecond: Double) -> String {
+        shared.format(bytesPerSecond: bytesPerSecond)
+    }
+
+    /// Formats a `NetworkSpeed` into a structured `FormattedByteSpeed` using the shared formatter.
+    public static func formatDetails(_ speed: NetworkSpeed) -> FormattedByteSpeed {
+        shared.formatDetails(speed)
+    }
+
     /// Creates a new `SpeedFormatter`.
     ///
     /// - Parameter byteFormatter: The `ByteFormatter` instance to use (defaults to `.shared`).

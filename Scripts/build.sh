@@ -55,6 +55,10 @@ echo "Copying Info.plist and resources..."
 cp "$PROJECT_ROOT/ARRYNetworkCounter/Info.plist" "$CONTENTS_DIR/Info.plist"
 echo -n "APPL????" > "$CONTENTS_DIR/PkgInfo"
 
+if [ -f "$PROJECT_ROOT/ARRYNetworkCounter/Resources/AppIcon.icns" ]; then
+    cp "$PROJECT_ROOT/ARRYNetworkCounter/Resources/AppIcon.icns" "$RESOURCES_DIR/AppIcon.icns"
+fi
+
 if [ -d "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Assets.xcassets" ]; then
     cp -R "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Assets.xcassets" "$RESOURCES_DIR/"
 fi

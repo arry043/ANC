@@ -401,7 +401,7 @@ These are initial engineering defaults, not user-facing settings. Validate them 
 ## Phase 08 — Native Menu Bar Integration
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -409,22 +409,22 @@ Implement the native macOS menu bar status item using AppKit.
 
 ### Tasks
 
-- [ ] Implement `MenuBarManager`.
-- [ ] Create an `NSStatusItem`.
-- [ ] Implement `MenuBarRenderer`.
-- [ ] Render download arrows.
-- [ ] Render upload arrows.
-- [ ] Apply direction-specific arrow colors.
-- [ ] Render speed text.
-- [ ] Configure readable font sizing.
-- [ ] Support Light Mode.
-- [ ] Support Dark Mode.
-- [ ] Configure status item sizing.
-- [ ] Update menu bar content dynamically.
-- [ ] Create the minimal native context menu.
-- [ ] Add Settings menu item.
-- [ ] Add Quit menu item.
-- [ ] Ensure the status item is removed on termination.
+- [x] Implement `MenuBarManager`.
+- [x] Create an `NSStatusItem`.
+- [x] Implement `MenuBarRenderer`.
+- [x] Render download arrows.
+- [x] Render upload arrows.
+- [x] Apply direction-specific arrow colors.
+- [x] Render speed text.
+- [x] Configure readable font sizing.
+- [x] Support Light Mode.
+- [x] Support Dark Mode.
+- [x] Configure status item sizing.
+- [x] Update menu bar content dynamically.
+- [x] Create the minimal native context menu.
+- [x] Add Settings menu item.
+- [x] Add Quit menu item.
+- [x] Ensure the status item is removed on termination.
 
 ### Display Examples
 
@@ -446,14 +446,14 @@ Implement the native macOS menu bar status item using AppKit.
 
 ### Completion Criteria
 
-- [ ] Menu bar item appears after application launch.
-- [ ] Arrows and text render correctly.
-- [ ] Download arrow is green.
-- [ ] Upload arrow is blue.
-- [ ] Text is readable in both appearance modes.
-- [ ] Menu bar updates without opening a window.
-- [ ] Settings and Quit actions work.
-- [ ] No unnecessary Dock icon appears during normal operation.
+- [x] Menu bar item appears after application launch.
+- [x] Arrows and text render correctly.
+- [x] Download arrow is green.
+- [x] Upload arrow is blue.
+- [x] Text is readable in both appearance modes.
+- [x] Menu bar updates without opening a window.
+- [x] Settings and Quit actions work.
+- [x] No unnecessary Dock icon appears during normal operation.
 
 ---
 
