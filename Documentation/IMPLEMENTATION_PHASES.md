@@ -40,8 +40,8 @@ Each phase must produce a working, testable result before the next dependent pha
 | 03 | Network Path Detection | Critical | Completed |
 | 04 | Network Interface Statistics | Critical | Completed |
 | 05 | Network Speed Calculation Engine | Critical | Completed |
-| 06 | Speed Formatting Engine | High | Not Started |
-| 07 | Dominant Direction & Switching Logic | High |
+| 06 | Speed Formatting Engine | High | Completed |
+| 07 | Dominant Direction & Switching Logic | High | Not Started |
 | 08 | Native Menu Bar Integration | Critical |
 | 09 | Display Modes Implementation | Critical |
 | 10 | Settings Interface & Preferences | High |
@@ -290,7 +290,7 @@ Elapsed Seconds
 ## Phase 06 — Speed Formatting Engine
 
 **Priority:** High  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -298,19 +298,19 @@ Convert raw byte-per-second measurements into readable menu bar values.
 
 ### Tasks
 
-- [ ] Implement `ByteFormatter`.
-- [ ] Implement `SpeedFormatter`.
-- [ ] Support KB/s.
-- [ ] Support MB/s.
-- [ ] Support GB/s.
-- [ ] Support TB/s.
-- [ ] Implement automatic unit selection.
-- [ ] Implement consistent decimal precision.
-- [ ] Remove unnecessary trailing zeros.
-- [ ] Handle zero speed.
-- [ ] Handle very small values.
-- [ ] Handle very large values.
-- [ ] Prevent negative formatted values.
+- [x] Implement `ByteFormatter`.
+- [x] Implement `SpeedFormatter`.
+- [x] Support KB/s.
+- [x] Support MB/s.
+- [x] Support GB/s.
+- [x] Support TB/s.
+- [x] Implement automatic unit selection.
+- [x] Implement consistent decimal precision.
+- [x] Remove unnecessary trailing zeros.
+- [x] Handle zero speed.
+- [x] Handle very small values.
+- [x] Handle very large values.
+- [x] Prevent negative formatted values.
 
 ### Formatting Examples
 
@@ -324,18 +324,18 @@ Convert raw byte-per-second measurements into readable menu bar values.
 
 ### Deliverables
 
-- Reusable speed formatter.
-- Consistent unit conversion.
-- Formatting unit tests.
+- Reusable speed formatter (`ByteFormatter.swift` and `SpeedFormatter.swift`).
+- Consistent unit conversion (SI base 1000 per ADR-014).
+- Formatting unit tests (`SpeedFormatterTests.swift`).
 
 ### Completion Criteria
 
-- [ ] All supported units work correctly.
-- [ ] Decimal conversion uses base 1000.
-- [ ] Output is readable.
-- [ ] Zero is displayed as `0 KB/s`.
-- [ ] No unnecessary trailing zeros.
-- [ ] Unit boundary tests pass.
+- [x] All supported units work correctly.
+- [x] Decimal conversion uses base 1000.
+- [x] Output is readable.
+- [x] Zero is displayed as `0 KB/s`.
+- [x] No unnecessary trailing zeros.
+- [x] Unit boundary tests pass.
 
 ---
 

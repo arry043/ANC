@@ -901,6 +901,31 @@ Any unexpected counter decrease ($C_t < C_{t-1}$) is treated as a counter discon
 
 ---
 
+## ADR-034 — Speed Formatting Decimal Precision, Zero-Speed, and Unit Boundary Policy
+
+**Status:** Accepted  
+**Category:** Formatting / UI
+
+### Context
+
+Network speeds must be presented concisely in the macOS menu bar. The formatting engine must handle unit selection across 12 orders of magnitude (B/s to TB/s), decimal precision, zero throughput, and edge conditions near boundary thresholds (e.g. `999,999 B/s`).
+
+### Decision
+
+1. **SI Decimal Scaling (Base 1000):** Speeds are scaled using decimal SI factors ($10^3, 10^6, 10^9, 10^{12}$) per ADR-014. Binary IEC prefixes (`KiB/s`) are not used.
+2. **Zero Display Rule:** Zero throughput is explicitly formatted as `0 KB/s` across all display modes.
+3. **Decimal Precision & Trailing Zeros:** B/s uses integer precision (`%.0f`). KB/s, MB/s, GB/s, and TB/s use up to 2 decimal places (`%.2f`), with all trailing zeros and redundant decimal points stripped (`1.50` $\to$ `1.5`, `1.00` $\to$ `1`).
+4. **Unit Boundary Policy:** Unit selection is evaluated against the raw unrounded speed prior to decimal rounding. For values immediately below a unit boundary (such as `999,999 B/s`), the selected unit is `KB/s`, which rounds to `1000 KB/s`. When raw throughput reaches $1,000,000 \text{ B/s}$, it transitions cleanly to `1 MB/s`.
+5. **Locale Independence:** All formatting uses `Locale(identifier: "en_US_POSIX")` ensuring a consistent `.` decimal point without thousands commas regardless of the host system language.
+
+### Reasoning
+
+- Preserves menu-bar horizontal real estate by stripping trailing zeros.
+- Eliminates unit flickering near boundary values.
+- Ensures identical, predictable formatting across diverse macOS user locales.
+
+---
+
 # 9. Decisions Pending Implementation Validation
 
 The following decisions are accepted at the product or architectural level but require implementation-time verification.
@@ -1038,6 +1063,6 @@ Build a small, reliable, privacy-focused native macOS menu bar utility that disp
 **Document:** `PROJECT_DECISIONS.md`  
 **Project:** ARRY Network Counter (ANC)  
 **Organization:** ARRRY  
-**Initial Decision Records:** 33  
+**Initial Decision Records:** 34  
 **Status:** Active  
 **Last Updated:** 2026-11-21

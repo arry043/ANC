@@ -14,10 +14,12 @@
 		24E4BCF6B767306D10E0B31D /* NetworkInterfaceSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25117C57A5F18D46018CC6B1 /* NetworkInterfaceSelectorTests.swift */; };
 		3208079173DD5551AF01921B /* NetworkSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */; };
 		462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDD5E97B853363473C09353 /* PreferencesStoring.swift */; };
+		4829622905B53D70650CC6CE /* SpeedFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ED1F14B95B0AF31150291D /* SpeedFormatterTests.swift */; };
 		491B24D97FB24A281A16E420 /* NetworkMonitoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */; };
 		4A0B3D0D5470E23C3C2CC2F4 /* NetworkSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */; };
 		51D82B61DE8BC07FC46309F4 /* AppPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA65B4A2C62BE105145A831 /* AppPreferences.swift */; };
 		54E11E1C159515BCDE4B1890 /* NetworkDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B511E8338A56296272F6046 /* NetworkDirection.swift */; };
+		55E65BBCFB4F9D332CD5267B /* SpeedFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7D0E91A962B6BFC1A060490 /* SpeedFormatter.swift */; };
 		5AD5A206895B6AF143CA7F75 /* NetworkInterfaceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D24938E00FD34DE42C41AE5F /* NetworkInterfaceTests.swift */; };
 		6058163ECFD738585C4392F6 /* NetworkPathManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CB8B68E5CADBA8DD63AD07 /* NetworkPathManagerTests.swift */; };
 		692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */; };
@@ -30,6 +32,7 @@
 		9CCDC4007616EB0DD4D4A3C6 /* NetworkSpeedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 959860DC121B37E7C205694C /* NetworkSpeedTests.swift */; };
 		9F26798B9FAAA860D4DFC4F3 /* NetworkSpeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = A40FD2DCC77CF7EB499C74CB /* NetworkSpeed.swift */; };
 		A172D822D0E9A11673E1217B /* NetworkInterfaceStatistics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC9280D875A80A60098F558 /* NetworkInterfaceStatistics.swift */; };
+		A1A053101C34A9A25FC936CC /* ByteFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = B517496DBDF3AF01A63AEE44 /* ByteFormatter.swift */; };
 		BF1FA5E6EDC55A857EC8998B /* DisplayConfigurationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */; };
 		C0EBF6DCE871054988E39A8D /* NetworkPathState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4B44B1AD9E972BC34D57A1 /* NetworkPathState.swift */; };
 		C845C7FDB340409F089B612F /* NetworkPathStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFF693857BC2B1228CAB86 /* NetworkPathStateTests.swift */; };
@@ -58,6 +61,7 @@
 		15E95D58571CAE2B1F4977EC /* AppConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfiguration.swift; sourceTree = "<group>"; };
 		19AF767A3D2EB1E7F9CA07C6 /* NetworkInterfaceSelector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceSelector.swift; sourceTree = "<group>"; };
 		1BA65B4A2C62BE105145A831 /* AppPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferences.swift; sourceTree = "<group>"; };
+		22ED1F14B95B0AF31150291D /* SpeedFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatterTests.swift; sourceTree = "<group>"; };
 		25117C57A5F18D46018CC6B1 /* NetworkInterfaceSelectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceSelectorTests.swift; sourceTree = "<group>"; };
 		2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayConfigurationTests.swift; sourceTree = "<group>"; };
 		2F4B44B1AD9E972BC34D57A1 /* NetworkPathState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathState.swift; sourceTree = "<group>"; };
@@ -80,6 +84,8 @@
 		AA1CC2D54C65F034C20CDE6F /* NetworkSnapshotIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSnapshotIntegrationTests.swift; sourceTree = "<group>"; };
 		AE0E3DBC35C60BDC335CF1D4 /* BothDirectionsStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BothDirectionsStyle.swift; sourceTree = "<group>"; };
 		B3CB8B68E5CADBA8DD63AD07 /* NetworkPathManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathManagerTests.swift; sourceTree = "<group>"; };
+		B517496DBDF3AF01A63AEE44 /* ByteFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ByteFormatter.swift; sourceTree = "<group>"; };
+		B7D0E91A962B6BFC1A060490 /* SpeedFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatter.swift; sourceTree = "<group>"; };
 		BEDD5E97B853363473C09353 /* PreferencesStoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesStoring.swift; sourceTree = "<group>"; };
 		C3E48F3CB8610EA9F8F05A37 /* DisplayMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayMode.swift; sourceTree = "<group>"; };
 		C424DD5BD282234FB7493AB0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -143,6 +149,7 @@
 				5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */,
 				E3A6074823391665BF8CA5DA /* NetworkSpeedCalculatorTests.swift */,
 				959860DC121B37E7C205694C /* NetworkSpeedTests.swift */,
+				22ED1F14B95B0AF31150291D /* SpeedFormatterTests.swift */,
 				A44F30555B2FC3B9456858A3 /* TestRunner.swift */,
 			);
 			path = Tests;
@@ -176,6 +183,7 @@
 		7B25561FBDEA27BA13682E6B /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				D51FC5087E34166610B87EC2 /* Formatting */,
 				12FE09F811495CE7E0010184 /* Monitoring */,
 				B6E54EC9C51990BB6BC25887 /* Network */,
 				15755D0F00319E798175D40C /* Preferences */,
@@ -248,6 +256,15 @@
 				BEDD5E97B853363473C09353 /* PreferencesStoring.swift */,
 			);
 			path = Protocols;
+			sourceTree = "<group>";
+		};
+		D51FC5087E34166610B87EC2 /* Formatting */ = {
+			isa = PBXGroup;
+			children = (
+				B517496DBDF3AF01A63AEE44 /* ByteFormatter.swift */,
+				B7D0E91A962B6BFC1A060490 /* SpeedFormatter.swift */,
+			);
+			path = Formatting;
 			sourceTree = "<group>";
 		};
 		D7303405BBBBA2B4A7B0EC86 /* Extensions */ = {
@@ -370,6 +387,7 @@
 				51D82B61DE8BC07FC46309F4 /* AppPreferences.swift in Sources */,
 				DA4D86D4E8EBB455EC11652D /* ApplicationCoordinator.swift in Sources */,
 				D7E737709426DB82C6B97C50 /* BothDirectionsStyle.swift in Sources */,
+				A1A053101C34A9A25FC936CC /* ByteFormatter.swift in Sources */,
 				9B06A72231C4731820327077 /* DisplayMode.swift in Sources */,
 				54E11E1C159515BCDE4B1890 /* NetworkDirection.swift in Sources */,
 				692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */,
@@ -383,6 +401,7 @@
 				9F26798B9FAAA860D4DFC4F3 /* NetworkSpeed.swift in Sources */,
 				D00ECCAD06639C357C04EADF /* NetworkSpeedCalculator.swift in Sources */,
 				462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */,
+				55E65BBCFB4F9D332CD5267B /* SpeedFormatter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -402,6 +421,7 @@
 				4A0B3D0D5470E23C3C2CC2F4 /* NetworkSnapshotTests.swift in Sources */,
 				7E1F648C34A35CBA3F8D3D11 /* NetworkSpeedCalculatorTests.swift in Sources */,
 				9CCDC4007616EB0DD4D4A3C6 /* NetworkSpeedTests.swift in Sources */,
+				4829622905B53D70650CC6CE /* SpeedFormatterTests.swift in Sources */,
 				CEA8404E100DA7EC1443AA03 /* TestRunner.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

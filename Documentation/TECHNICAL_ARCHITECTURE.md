@@ -657,45 +657,58 @@ Display = Upload Speed
 
 ## 11. Speed Formatting Architecture
 
-Use a dedicated formatter for consistent speed representation.
+The formatting engine converts raw network speeds into human-readable strings for menu-bar presentation. It is implemented by two stateless value types:
 
-### Supported Units
+- `ByteFormatter` (`ARRYNetworkCounter/Services/Formatting/ByteFormatter.swift`): Handles base-1000 unit scaling, boundary evaluation, decimal formatting, trailing-zero stripping, and returns structured `FormattedByteSpeed` models.
+- `SpeedFormatter` (`ARRYNetworkCounter/Services/Formatting/SpeedFormatter.swift`): High-level façade consuming domain `NetworkSpeed` models and delegating conversion to `ByteFormatter`.
 
-ANC uses decimal byte-based units.
+### 11.1 Supported Units
 
-| Unit | Conversion |
-|---|---:|
-| KB/s | 1,000 Bytes/s |
-| MB/s | 1,000,000 Bytes/s |
-| GB/s | 1,000,000,000 Bytes/s |
-| TB/s | 1,000,000,000,000 Bytes/s |
+ANC adheres strictly to decimal byte-based units using SI base-1000 scaling per ADR-014:
 
-Do not use bits per second.
+| Unit | Conversion Scale | Multiplier |
+|---|---:|---:|
+| `B/s` | 1 Byte/s | $10^0$ |
+| `KB/s` | 1,000 Bytes/s | $10^3$ |
+| `MB/s` | 1,000,000 Bytes/s | $10^6$ |
+| `GB/s` | 1,000,000,000 Bytes/s | $10^9$ |
+| `TB/s` | 1,000,000,000,000 Bytes/s | $10^{12}$ |
 
-### Automatic Unit Selection
+Bits per second (`bps`, `Mbps`) and binary IEC prefixes (`KiB/s`, `MiB/s`) are not used.
 
-The formatter should select the most readable unit based on the current speed.
+### 11.2 Automatic Unit Selection
 
-Examples:
+The unit is selected based on the magnitude of the original raw speed value:
 
-| Bytes per Second | Display |
-|---:|---|
-| 0 | 0 KB/s |
-| 450,250 | 450.25 KB/s |
-| 2,450,000 | 2.45 MB/s |
-| 1,250,000,000 | 1.25 GB/s |
-| 1,200,000,000,000 | 1.20 TB/s |
+$$\text{Unit} = \begin{cases} 
+\text{KB/s} & \text{if } \text{speed} = 0 \text{ or non-finite} \\
+\text{B/s} & \text{if } 0 < \text{speed} < 1\,000 \\
+\text{KB/s} & \text{if } 1\,000 \le \text{speed} < 1\,000\,000 \\
+\text{MB/s} & \text{if } 1\,000\,000 \le \text{speed} < 1\,000\,000\,000 \\
+\text{GB/s} & \text{if } 1\,000\,000\,000 \le \text{speed} < 1\,000\,000\,000\,000 \\
+\text{TB/s} & \text{if } \text{speed} \ge 1\,000\,000\,000\,000
+\end{cases}$$
 
-### Formatting Rules
+Values above $10^{12}$ B/s continue in `TB/s` (e.g. `10 TB/s`).
 
-- Avoid unnecessary trailing zeros.
-- Keep precision readable.
-- Use consistent decimal formatting.
-- Never display negative values.
-- Display zero as `0 KB/s`.
-- Avoid unnecessary unit changes around conversion boundaries.
+### 11.3 Decimal Precision & Trailing Zero Removal
 
-Use a dedicated `ByteFormatter` or `SpeedFormatter` rather than duplicating formatting logic in UI components.
+- **`B/s`:** Formatted as an integer (`%.0f`). Positive fractional values below 1 B/s clamp to at least `1 B/s` to distinguish positive activity from zero.
+- **`KB/s`, `MB/s`, `GB/s`, `TB/s`:** Formatted with up to 2 decimal places (`%.2f`).
+- **Trailing Zero Removal:** Any trailing zeros after the decimal point are removed (`1.50` $\to$ `1.5`, `1.00` $\to$ `1`). If all fractional digits are removed, the decimal point is also stripped (`1.` $\to$ `1`).
+- **Locale Independence:** Formatting uses `Locale(identifier: "en_US_POSIX")` ensuring the decimal separator is always a period (`.`) regardless of system locale. No thousands separators or commas are emitted.
+
+### 11.4 Zero-Speed Requirement
+
+Zero network throughput is explicitly formatted as:
+```text
+0 KB/s
+```
+This is a product requirement across all display modes. Negative or non-finite inputs (`NaN`, `±Infinity`) safely fall back to `0 KB/s`.
+
+### 11.5 Unit Boundary Rounding Policy (ADR-034)
+
+Unit selection is determined using the raw unrounded speed before decimal rounding. For values immediately below a unit boundary (such as `999,999 B/s`), rounding the scaled KB/s value ($999.999 \to 1000$) produces `1000 KB/s`. When the raw speed reaches $1,000,000 \text{ B/s}$, it transitions cleanly to `1 MB/s`.
 
 ---
 
