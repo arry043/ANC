@@ -556,39 +556,54 @@ If a faster internal sampling interval is needed for responsive direction switch
 
 ## 10. Dominant Direction Engine
 
-Both Automatic mode and Combined Arrows mode require a common direction-selection engine.
+Both Automatic mode (`singleDirectionAutomatic`) and Combined Arrows mode (`bothDirections` + `combinedArrows`) require a common direction-selection engine.
 
 ### 10.1 Dominant Direction
 
-The dominant direction is determined by comparing the current download and upload speeds.
+The dominant direction is determined by evaluating the current download and upload speeds against hysteresis rules.
 
 ```text
-If Download Speed > Upload Speed:
+If Download Speed > Upload Speed (and satisfies hysteresis):
     Dominant Direction = Download
 
-If Upload Speed > Download Speed:
+If Upload Speed > Download Speed (and satisfies hysteresis):
     Dominant Direction = Upload
 ```
 
-However, directly switching on every tiny difference can cause visual flickering.
+Directly switching on every tiny difference causes visual flickering. Therefore, ANC implements strict switching hysteresis codified in ADR-007 and ADR-035.
 
-Therefore, ANC should implement switching hysteresis.
+### 10.2 Switching Hysteresis & Parameters (ADR-007, ADR-035)
 
-### 10.2 Switching Hysteresis
+The production configuration implemented in `DominantDirectionEngine` uses the following rules:
 
-Recommended initial behavior:
+1. **Relative Margin:** The opposite direction must exceed the current speed by at least 10% (`relativeMargin = 0.10`):
+   $$S_{\text{opposite}} \ge S_{\text{current}} \times (1 + \text{relativeMargin})$$
+2. **Absolute Noise Threshold:** The difference $(S_{\text{opposite}} - S_{\text{current}})$ must equal or exceed 10,000 bytes per second (`absoluteThresholdBytesPerSecond = 10_000.0` B/s, or 10 KB/s), suppressing micro-throughput noise.
+3. **Consecutive Sample Confirmation:** The opposite direction must satisfy both requirements for two consecutive valid samples (`requiredConsecutiveSamples = 2`) before the engine commits a direction switch (`didSwitch = true`).
+4. **Streak Interruption:** If a candidate direction is pending and the subsequent sample fails to qualify, the pending candidate and streak count are immediately cleared to 0.
+5. **Idle Reversion:** When both download and upload speeds are zero (or non-positive), the engine immediately reverts to `.download` and clears any pending candidates. If the engine was previously in `.upload`, this transition is reported with `didSwitch = true`.
+6. **IEEE 754 Micro-Epsilon:** A micro-epsilon of $1\times 10^{-7}$ is applied during floating-point comparison to prevent binary rounding inaccuracies on exact boundary multiples.
 
-- The new direction should exceed the current direction by approximately 10%.
-- The difference should also exceed a small absolute noise threshold.
-- Require confirmation across two consecutive valid samples.
-- Keep the existing direction while speeds are close.
-- Use Download as the default direction when both directions are idle.
+### 10.3 Swift 6 Concurrency Architecture
 
-These values should be centralized in the direction engine so they can be tuned during testing.
+`DominantDirectionEngine` is implemented as an independent Swift `actor` in `ARRYNetworkCounter/Services/Monitoring/DominantDirectionEngine.swift`:
 
-The purpose is to prevent rapid switching when download and upload speeds are nearly equal.
+```swift
+public actor DominantDirectionEngine {
+    public private(set) var configuration: DirectionSwitchingConfiguration
+    public private(set) var currentDirection: NetworkDirection
+    public private(set) var pendingCandidate: NetworkDirection?
+    public private(set) var consecutiveCandidateCount: Int
 
-The switching algorithm must remain responsive and should not introduce unnecessary multi-second delays.
+    public func evaluate(_ measurement: SpeedMeasurement) -> DirectionDecision
+    public func reset()
+    public func updateConfiguration(_ newConfiguration: DirectionSwitchingConfiguration)
+}
+```
+
+The resulting `DirectionDecision` is an immutable `Sendable` value type containing `direction: NetworkDirection`, `didSwitch: Bool`, `candidateDirection: NetworkDirection?`, and `confirmationCount: Int`.
+
+`ApplicationCoordinator` manages a shared `DominantDirectionEngine` instance, publishing `@Published public private(set) var dominantDirection: NetworkDirection` on `@MainActor` for UI and renderer consumption.
 
 ### 10.3 Combined Arrows Mode
 

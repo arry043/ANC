@@ -926,6 +926,35 @@ Network speeds must be presented concisely in the macOS menu bar. The formatting
 
 ---
 
+## ADR-035 — Dominant Direction Hysteresis and Noise Threshold Parameters
+
+**Status:** Accepted  
+**Category:** Algorithm / Product
+
+### Context
+
+ADR-007 established that automatic direction switching must use hysteresis to prevent rapid visual flapping in the menu bar, noting initial targets of approximately 10% relative switching margin, a small absolute noise threshold, two consecutive valid sample confirmations, and Download as the default idle direction. Phase 07 requires establishing and implementing the concrete parameter values, mathematical qualification rules, floating-point tolerances, and lifecycle behaviors within `DominantDirectionEngine`.
+
+### Decision
+
+1. **Relative Margin:** The opposite direction must exceed the current direction by at least 10% (`relativeMargin = 0.10`), expressed as:
+   $$S_{\text{opposite}} \ge S_{\text{current}} \times (1 + \text{relativeMargin})$$
+2. **Absolute Noise Threshold:** The difference between the opposite speed and current speed must equal or exceed 10,000 bytes per second (`absoluteThresholdBytesPerSecond = 10_000.0` B/s, or 10 KB/s), preventing micro-rate noise or trickle traffic from triggering spurious candidate evaluations.
+3. **Consecutive Sample Confirmation:** The opposite direction must satisfy both the relative margin and absolute noise threshold for two consecutive valid samples (`requiredConsecutiveSamples = 2`) before the engine commits a direction switch (`didSwitch = true`).
+4. **Transient Fluctuation Rejection:** If an opposite direction candidate is pending and a subsequent sample fails to qualify, the pending candidate and streak count are immediately cleared, keeping the current direction stable.
+5. **Idle Reversion:** When both download and upload speeds are zero (or non-positive), the engine immediately reverts to `.download` and clears any pending candidates. If the engine was previously in `.upload`, this transition is reported with `didSwitch = true`.
+6. **Floating-Point Micro-Epsilon:** A micro-epsilon of $1\times 10^{-7}$ is applied during IEEE 754 floating-point comparison to prevent binary rounding inaccuracies on exact boundary multiples (such as $100{,}000 \times 1.10$).
+7. **Thread Safety & Lifecycle:** `DominantDirectionEngine` is implemented as an actor and maintains internal state across calls, resetting to `.download` on explicit `.reset()`, path disconnection, or monitoring shutdown.
+
+### Consequences
+
+- Menu bar display remains calm and readable under rapidly oscillating or near-equal network traffic.
+- Legitimate traffic shifts (such as starting a large file upload) transition smoothly within two seconds.
+- Idle network states predictably display the download arrow/speed.
+- Parameters are encapsulated in `DirectionSwitchingConfiguration` and easily tuned or injected for unit testing.
+
+---
+
 # 9. Decisions Pending Implementation Validation
 
 The following decisions are accepted at the product or architectural level but require implementation-time verification.
@@ -935,7 +964,7 @@ The following decisions are accepted at the product or architectural level but r
 | P-001 | Minimum macOS version | Confirm API availability and compatibility |
 | P-002 | Interface selection | Validate Wi-Fi, Ethernet, VPN, and virtual interfaces |
 | P-003 | Counter retrieval | Verify `getifaddrs()` counter behavior on supported macOS versions |
-| P-004 | Hysteresis parameters | Tune thresholds through real traffic testing |
+| P-004 | Hysteresis parameters | Validated and codified in ADR-035 and `DominantDirectionEngine` |
 | P-005 | Internal sampling frequency | Validate responsiveness and resource consumption |
 | P-006 | App Sandbox | Verify compatibility with the chosen counter access and distribution configuration |
 | P-007 | Universal Binary | Verify both architecture slices and deployment compatibility |
@@ -1063,6 +1092,6 @@ Build a small, reliable, privacy-focused native macOS menu bar utility that disp
 **Document:** `PROJECT_DECISIONS.md`  
 **Project:** ARRY Network Counter (ANC)  
 **Organization:** ARRRY  
-**Initial Decision Records:** 34  
+**Initial Decision Records:** 35  
 **Status:** Active  
 **Last Updated:** 2026-11-21
