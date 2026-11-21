@@ -392,64 +392,53 @@ Implemented via `NetworkPathManager` leveraging Apple's `Network.framework` and 
 
 ### 7.2 Interface Statistics
 
-Use macOS system network interface statistics.
+The application retrieves cumulative network counters directly from macOS BSD kernel interfaces via `getifaddrs()`.
 
-The proposed implementation is based on:
+The implementation consists of:
 
-- `getifaddrs()`
-- `AF_LINK` interface records.
-- `struct if_data`
-- `ifi_ibytes`
-- `ifi_obytes`
+- `NetworkInterfaceStatistics`: Strongly typed immutable model encapsulating cumulative `receivedBytes` (`ifi_ibytes`), `transmittedBytes` (`ifi_obytes`), interface name, kernel index, hardware classification, operational flags (`IFF_UP`, `IFF_RUNNING`, `IFF_LOOPBACK`), wall-clock timestamp, and high-resolution monotonic nanosecond timestamps (`DispatchTime.now().uptimeNanoseconds`).
+- `NetworkInterfaceProviding`: Protocol contract defining asynchronous interface statistics enumeration for dependency injection and testing.
+- `SystemNetworkInterfaceProvider`: Production implementation parsing `AF_LINK` records and casting `ifa_data` to `struct if_data`.
+- `MockNetworkInterfaceProvider`: Thread-safe actor-isolated mock provider for deterministic unit testing.
 
-These counters represent received and transmitted bytes for a network interface.
-
-The application should retrieve:
-
-```text
-Received Bytes  = ifi_ibytes
-Transmitted Bytes = ifi_obytes
+Memory safety guarantee:
+```swift
+var ifap: UnsafeMutablePointer<ifaddrs>? = nil
+let status = getifaddrs(&ifap)
+guard status == 0, let first = ifap else {
+    throw NetworkInterfaceProviderError.enumerationFailed(errno: errno)
+}
+defer {
+    freeifaddrs(first)
+}
 ```
 
-The implementation must safely handle the underlying C structures and memory returned by `getifaddrs()`.
-
-Always release the allocated interface list using `freeifaddrs()`.
+The `freeifaddrs()` call is guaranteed to execute unconditionally via Swift's `defer` statement on every execution and error exit path.
 
 ### 7.3 Interface Selection
 
-The application must not blindly sum every interface returned by the operating system.
+The application enforces a strict single-interface selection policy to completely eliminate traffic double-counting:
 
-macOS can expose multiple interfaces, including:
-
-- Wi-Fi interfaces.
-- Ethernet interfaces.
-- USB network interfaces.
-- VPN interfaces.
-- Loopback interfaces.
-- Virtual interfaces.
-- Bridge interfaces.
-- Other system-managed interfaces.
-
-Summing all counters can double-count traffic when virtual, tunnel, and underlying physical interfaces represent overlapping traffic.
-
-The interface selector should:
-
-1. Identify the currently usable network path.
-2. Determine the relevant interface associated with that path.
-3. Match the selected interface to its system statistics.
-4. Exclude loopback and unsuitable interfaces.
-5. Avoid adding overlapping virtual and physical interface counters.
-6. Re-evaluate the selected interface when the network path changes.
+1. **Zero Double-Counting Rule:** ANC never sums or aggregates multiple interfaces. Blindly aggregating physical (`en0`) and tunnel (`utun0`) interfaces would double-count all routed traffic.
+2. **Loopback Exclusion:** Device `lo0` is strictly excluded from active throughput measurement.
+3. **Operational State Validation:** Only interfaces with both `IFF_UP` and `IFF_RUNNING` set are considered usable.
+4. **Network Path Correlation:** The selector correlates candidate interfaces against the active `NetworkPathState`.
 
 ### 7.4 Interface Selection Strategy
 
-Use `NWPathMonitor` to identify the preferred active network path and its associated interface characteristics.
+`NetworkInterfaceSelector` executes a deterministic multi-stage selection algorithm:
 
-Use the available interface information to select the appropriate interface statistics.
+1. **Path Connectivity Check:** If `pathState.status != .satisfied`, returns `.noActivePath`.
+2. **Usable Interface Filtering:** Filters out loopback and non-operational interfaces. If none remain, returns `.noUsableInterfaces`.
+3. **Active Path Interface Match:** Matches `pathState.activeInterfaceName` directly against usable interfaces (`reason: .activePathInterface`).
+4. **Active Path Type Match:** If interface name is absent, matches `pathState.activeInterfaceType` against usable non-virtual interfaces (`reason: .activeInterfaceTypeMatch`).
+5. **Deterministic Usable Fallback:** Prioritizes physical interfaces by type (`Ethernet > Wi-Fi > Cellular > Other`) and name (`reason: .primaryUsableFallback`).
 
-Do not assume that `en0` is always Wi-Fi or that a particular interface name is permanent.
-
-The implementation should support interface changes such as:
+The result is expressed via an explicit `SelectionResult`:
+- `.selected(NetworkInterfaceStatistics, reason: SelectionReason)`
+- `.noActivePath`
+- `.noMatchingInterface(requestedName: String?)`
+- `.noUsableInterfaces`
 
 ```text
 Wi-Fi → Ethernet

@@ -38,8 +38,8 @@ Each phase must produce a working, testable result before the next dependent pha
 | 01 | Project Initialization & Configuration | Critical | Completed |
 | 02 | Core Models & Application Foundation | Critical | Completed |
 | 03 | Network Path Detection | Critical | Completed |
-| 04 | Network Interface Statistics | Critical | Not Started |
-| 05 | Network Speed Calculation Engine | Critical |
+| 04 | Network Interface Statistics | Critical | Completed |
+| 05 | Network Speed Calculation Engine | Critical | Not Started |
 | 06 | Speed Formatting Engine | High |
 | 07 | Dominant Direction & Switching Logic | High |
 | 08 | Native Menu Bar Integration | Critical |
@@ -183,7 +183,7 @@ Implement native macOS network path monitoring and connectivity change detection
 ## Phase 04 — Network Interface Statistics
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -191,36 +191,36 @@ Retrieve actual received and transmitted byte counters from macOS network interf
 
 ### Tasks
 
-- [ ] Implement `NetworkInterfaceProvider`.
-- [ ] Integrate `getifaddrs()`.
-- [ ] Retrieve `AF_LINK` interface records.
-- [ ] Read `ifi_ibytes`.
-- [ ] Read `ifi_obytes`.
-- [ ] Implement safe access to the underlying system structures.
-- [ ] Release allocated interface resources correctly.
-- [ ] Implement `NetworkInterfaceSelector`.
-- [ ] Identify the interface associated with the usable network path.
-- [ ] Exclude loopback interfaces.
-- [ ] Handle missing or unavailable interfaces.
-- [ ] Avoid blindly summing overlapping physical and virtual interfaces.
-- [ ] Handle VPN and other virtual interfaces explicitly.
-- [ ] Re-evaluate the selected interface after network changes.
+- [x] Implement `NetworkInterfaceProvider`.
+- [x] Integrate `getifaddrs()`.
+- [x] Retrieve `AF_LINK` interface records.
+- [x] Read `ifi_ibytes`.
+- [x] Read `ifi_obytes`.
+- [x] Implement safe access to the underlying system structures.
+- [x] Release allocated interface resources correctly.
+- [x] Implement `NetworkInterfaceSelector`.
+- [x] Identify the interface associated with the usable network path.
+- [x] Exclude loopback interfaces.
+- [x] Handle missing or unavailable interfaces.
+- [x] Avoid blindly summing overlapping physical and virtual interfaces.
+- [x] Handle VPN and other virtual interfaces explicitly.
+- [x] Re-evaluate the selected interface after network changes.
 
 ### Deliverables
 
-- Actual network interface byte-counter provider.
-- Interface selection mechanism.
-- Network snapshot data.
+- Actual network interface byte-counter provider (`NetworkInterfaceProvider.swift`).
+- Interface selection mechanism (`NetworkInterfaceSelector.swift`).
+- Network snapshot data pipeline (`NetworkSnapshot` and `NetworkInterfaceStatistics`).
 
 ### Completion Criteria
 
-- [ ] Received byte counters are retrieved correctly.
-- [ ] Transmitted byte counters are retrieved correctly.
-- [ ] The selected interface is associated with the current network path.
-- [ ] Loopback traffic is excluded.
-- [ ] Interface changes are handled safely.
-- [ ] Counter retrieval failures do not crash the application.
-- [ ] No duplicate traffic counting from blindly aggregating interfaces.
+- [x] Received byte counters are retrieved correctly.
+- [x] Transmitted byte counters are retrieved correctly.
+- [x] The selected interface is associated with the current network path.
+- [x] Loopback traffic is excluded.
+- [x] Interface changes are handled safely.
+- [x] Counter retrieval failures do not crash the application.
+- [x] No duplicate traffic counting from blindly aggregating interfaces.
 
 **Important:** Verify the interface selection strategy on real macOS configurations, particularly Wi-Fi, Ethernet, VPN, and virtual interfaces. Do not assume interface names or counter semantics without testing.
 

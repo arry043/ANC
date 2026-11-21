@@ -30,6 +30,7 @@ public actor MockNetworkMonitor: NetworkMonitoring {
     public var stopCount: Int = 0
 
     private var pathContinuations: [UUID: AsyncStream<NetworkPathState>.Continuation] = [:]
+    private var snapshotContinuations: [UUID: AsyncStream<NetworkSnapshot>.Continuation] = [:]
 
     public var pathStateStream: AsyncStream<NetworkPathState> {
         AsyncStream { continuation in
@@ -40,13 +41,28 @@ public actor MockNetworkMonitor: NetworkMonitoring {
     }
 
     public var snapshotStream: AsyncStream<NetworkSnapshot> {
-        AsyncStream { _ in }
+        AsyncStream { continuation in
+            let id = UUID()
+            if let snap = self.currentSnapshot {
+                continuation.yield(snap)
+            }
+            self.snapshotContinuations[id] = continuation
+        }
     }
 
     public func simulatePathUpdate(_ state: NetworkPathState) {
         currentPathState = state
         for continuation in pathContinuations.values {
             continuation.yield(state)
+        }
+    }
+
+    public func simulateSnapshotUpdate(_ snapshot: NetworkSnapshot?) {
+        currentSnapshot = snapshot
+        if let snap = snapshot {
+            for continuation in snapshotContinuations.values {
+                continuation.yield(snap)
+            }
         }
     }
 
@@ -62,6 +78,10 @@ public actor MockNetworkMonitor: NetworkMonitoring {
             continuation.finish()
         }
         pathContinuations.removeAll()
+        for continuation in snapshotContinuations.values {
+            continuation.finish()
+        }
+        snapshotContinuations.removeAll()
     }
 }
 
@@ -126,9 +146,23 @@ public enum ApplicationCoordinatorTests {
         assert(coordinator.pathState == .unsatisfied, "Coordinator pathState must update to unsatisfied")
         count += 1
 
-        // Test 7: stop() terminates monitoring
+        // Test 7: Snapshot propagation from monitor to coordinator
+        let testSnapshot = NetworkSnapshot(
+            receivedBytes: 99_999,
+            transmittedBytes: 88_888,
+            timestamp: Date(),
+            monotonicTimeNanoseconds: 1_000_000,
+            interface: NetworkInterface(name: "en0", type: .wifi, isUsable: true)
+        )
+        await mockMonitor.simulateSnapshotUpdate(testSnapshot)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.currentSnapshot?.receivedBytes == 99_999, "Coordinator currentSnapshot must update")
+        count += 1
+
+        // Test 8: stop() terminates monitoring and clears snapshot
         await coordinator.stop()
         assert(!coordinator.isRunning, "Coordinator must not be running after stop()")
+        assert(coordinator.currentSnapshot == nil, "Coordinator currentSnapshot must be nil after stop()")
         let stopCount = await mockMonitor.stopCount
         let isMon = await mockMonitor.isMonitoring
         assert(stopCount == 1, "Monitor must receive exactly one stop call")
