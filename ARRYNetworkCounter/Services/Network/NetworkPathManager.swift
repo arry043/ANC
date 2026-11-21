@@ -89,10 +89,10 @@ public final class MockPathMonitorProvider: PathMonitorProviding, @unchecked Sen
     }
 }
 
-/// Actor managing native macOS network path monitoring using Apple's Network.framework.
+/// Actor managing native macOS network path monitoring and interface statistics.
 ///
-/// `NetworkPathManager` oversees the `NWPathMonitor` lifecycle, serializes path updates on an isolated queue,
-/// converts system paths into immutable `NetworkPathState` values, and suppresses redundant consecutive states.
+/// `NetworkPathManager` oversees the `NWPathMonitor` lifecycle, retrieves BSD interface statistics,
+/// correlates active network paths with relevant system interfaces, and emits immutable snapshots.
 public actor NetworkPathManager: NetworkMonitoring {
     /// Indicates whether active network path monitoring is currently running.
     public private(set) var isMonitoring: Bool = false
@@ -100,11 +100,20 @@ public actor NetworkPathManager: NetworkMonitoring {
     /// The most recent network path state.
     public private(set) var currentPathState: NetworkPathState
 
-    /// Most recent network measurement snapshot (reserved for Phase 04/05 counter integration).
+    /// Most recent network measurement snapshot containing cumulative byte counters.
     public private(set) var currentSnapshot: NetworkSnapshot? = nil
+
+    /// The most recent interface selection result.
+    public private(set) var currentSelectionResult: NetworkInterfaceSelector.SelectionResult = .noActivePath
 
     /// Underlying path provider (defaults to `SystemPathMonitorProvider`).
     private let provider: any PathMonitorProviding
+
+    /// Underlying interface statistics provider (defaults to `SystemNetworkInterfaceProvider`).
+    private let interfaceProvider: any NetworkInterfaceProviding
+
+    /// Interface selector matching path state to interface statistics.
+    private let interfaceSelector: NetworkInterfaceSelector
 
     /// Dedicated serial queue for path monitor callbacks.
     private let monitorQueue = DispatchQueue(label: "in.arrry.networkcounter.pathmonitor", qos: .utility)
@@ -122,12 +131,18 @@ public actor NetworkPathManager: NetworkMonitoring {
     ///
     /// - Parameters:
     ///   - provider: The path monitor provider (defaults to `SystemPathMonitorProvider`).
+    ///   - interfaceProvider: The interface statistics provider (defaults to `SystemNetworkInterfaceProvider`).
+    ///   - interfaceSelector: The interface selector (defaults to `NetworkInterfaceSelector`).
     ///   - initialState: Initial path state before monitoring begins (defaults to `.unsatisfied`).
     public init(
         provider: any PathMonitorProviding = SystemPathMonitorProvider(),
+        interfaceProvider: any NetworkInterfaceProviding = SystemNetworkInterfaceProvider(),
+        interfaceSelector: NetworkInterfaceSelector = NetworkInterfaceSelector(),
         initialState: NetworkPathState = .unsatisfied
     ) {
         self.provider = provider
+        self.interfaceProvider = interfaceProvider
+        self.interfaceSelector = interfaceSelector
         self.currentPathState = initialState
     }
 
@@ -163,7 +178,7 @@ public actor NetworkPathManager: NetworkMonitoring {
         }
     }
 
-    /// Initiates network path monitoring. Idempotent if already monitoring.
+    /// Initiates network path monitoring and initial interface snapshot evaluation.
     public func startMonitoring() async throws {
         guard !isMonitoring else { return }
 
@@ -176,15 +191,21 @@ public actor NetworkPathManager: NetworkMonitoring {
                 await self?.handlePathUpdate(newState, sessionID: session)
             }
         }
+
+        // Initial snapshot evaluation
+        _ = try? await sampleCurrentSnapshot()
     }
 
-    /// Halts active network path monitoring and invalidates active streams. Idempotent.
+    /// Halts active network path monitoring, resets snapshots, and invalidates active streams.
     public func stopMonitoring() async {
         guard isMonitoring else { return }
 
         isMonitoring = false
         currentSessionID &+= 1
         provider.cancelMonitoring()
+
+        currentSnapshot = nil
+        currentSelectionResult = .noActivePath
 
         for continuation in pathContinuations.values {
             continuation.finish()
@@ -197,10 +218,38 @@ public actor NetworkPathManager: NetworkMonitoring {
         snapshotContinuations.removeAll()
     }
 
+    /// Samples fresh interface statistics, re-evaluates the active interface, and emits an updated snapshot.
+    @discardableResult
+    public func sampleCurrentSnapshot() async throws -> NetworkSnapshot? {
+        guard isMonitoring else { return nil }
+
+        let stats = try await interfaceProvider.currentInterfaceStatistics()
+        let result = interfaceSelector.selectInterface(pathState: currentPathState, statistics: stats)
+        self.currentSelectionResult = result
+
+        if case .selected(let selectedStats, _) = result {
+            let snapshot = NetworkSnapshot(
+                receivedBytes: selectedStats.receivedBytes,
+                transmittedBytes: selectedStats.transmittedBytes,
+                timestamp: selectedStats.timestamp,
+                monotonicTimeNanoseconds: selectedStats.monotonicTimeNanoseconds,
+                interface: selectedStats.toNetworkInterface()
+            )
+            self.currentSnapshot = snapshot
+            for continuation in snapshotContinuations.values {
+                continuation.yield(snapshot)
+            }
+            return snapshot
+        } else {
+            self.currentSnapshot = nil
+            return nil
+        }
+    }
+
     /// Processes an incoming path state update from the provider.
     ///
-    /// Discards updates from stale sessions or identical consecutive states.
-    public func handlePathUpdate(_ newState: NetworkPathState, sessionID: UInt64) {
+    /// Re-evaluates interface selection and emits updated path state and snapshots.
+    public func handlePathUpdate(_ newState: NetworkPathState, sessionID: UInt64) async {
         guard isMonitoring, sessionID == currentSessionID else {
             return
         }
@@ -215,6 +264,9 @@ public actor NetworkPathManager: NetworkMonitoring {
         for continuation in pathContinuations.values {
             continuation.yield(newState)
         }
+
+        // Re-evaluate interface selection following path state transition
+        _ = try? await sampleCurrentSnapshot()
     }
 
     private func removePathContinuation(id: UUID) {

@@ -6,7 +6,8 @@ A lightweight native macOS menu bar utility designed to display real-time networ
 **Platform:** macOS (macOS 13.0+)  
 **Technology Stack:** Swift 6, SwiftUI, AppKit  
 **Architecture:** Universal Binary (`arm64`, `x86_64`)  
-**Current Development Phase:** Phase 01 — Project Initialization & Configuration (Completed)
+**Current Development Phase:** Phase 04 — Network Interface Statistics (Completed)  
+**Next Phase:** Phase 05 — Network Speed Calculation Engine
 
 ---
 

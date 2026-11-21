@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Path Detection Completed (Counters Pending Phase 04) |
+| Network Monitoring | Interface Statistics Completed (Speed Engine Pending Phase 05) |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02 & Phase 03 Unit Tests) |
+| Testing | Completed (Phase 02, 03 & 04 Unit Tests — 63 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 03 Completed — Ready for Phase 04 (Network Interface Statistics)  
-**Next Action:** Begin Phase 04 implementation.
+**Current Development Phase:** Phase 04 Completed — Ready for Phase 05 (Network Speed Calculation Engine)  
+**Next Action:** Begin Phase 05 implementation.
 
 ---
 
@@ -89,7 +89,7 @@ All four documents must remain consistent.
 | 01 | Project Initialization & Configuration | Completed |
 | 02 | Core Models & Application Foundation | Completed |
 | 03 | Network Path Detection | Completed |
-| 04 | Network Interface Statistics | Not Started |
+| 04 | Network Interface Statistics | Completed |
 | 05 | Network Speed Calculation Engine | Not Started |
 | 06 | Speed Formatting Engine | Not Started |
 | 07 | Dominant Direction & Switching Logic | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 3 |
+| Completed Phases | 4 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 13 |
-| Overall Implementation Progress | 18.75% |
+| Not Started Phases | 12 |
+| Overall Implementation Progress | 25.00% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,44 +120,51 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 03 — Network Path Detection
+### Phase 04 — Network Interface Statistics
 
 **Priority:** Critical  
 **Status:** Completed
 
 #### Objective
 
-Implement native macOS network path monitoring using Apple's Network.framework (`NWPathMonitor`) to detect connectivity, identify available interface types, and publish network path changes safely to the application coordination layer.
+Implement a native macOS BSD network interface statistics subsystem retrieving actual cumulative received and transmitted byte counters (`ifi_ibytes`, `ifi_obytes`) via `getifaddrs()` and correlating the active routable interface with verified network path state, establishing an immutable snapshot pipeline without double-counting virtual or tunnel interfaces.
 
 #### Completed Tasks
 
-- [x] Integrate Apple's `Network.framework`.
-- [x] Implement `NetworkPathState` (connectivity status: satisfied, unsatisfied, requiresConnection; interface categories; expensive/constrained flags).
-- [x] Implement `NetworkPathManager` (actor managing `NWPathMonitor` lifecycle, serial queue callbacks, duplicate suppression, session tokens).
-- [x] Implement `PathMonitorProviding` protocol with `SystemPathMonitorProvider` and `MockPathMonitorProvider`.
-- [x] Extend `NetworkMonitoring` protocol with `currentPathState` and `pathStateStream`.
-- [x] Integrate live network path state observation into `ApplicationCoordinator` (`@Published pathState`).
-- [x] Implement comprehensive unit tests covering path state, manager lifecycle, and coordinator integration (`Tests/NetworkPathStateTests.swift`, `Tests/NetworkPathManagerTests.swift`).
-- [x] Verify strict concurrency diagnostics and build both Debug and Release Universal Binary bundles.
+- [x] Implement native BSD interface statistics model `NetworkInterfaceStatistics` with monotonic timestamps and operational flags.
+- [x] Implement protocol `NetworkInterfaceProviding` and production provider `SystemNetworkInterfaceProvider` using `getifaddrs()`, `AF_LINK`, and `struct if_data`.
+- [x] Guarantee unconditional C memory reclamation via `freeifaddrs()` within Swift `defer` blocks.
+- [x] Implement thread-safe actor-isolated `MockNetworkInterfaceProvider` for deterministic unit testing.
+- [x] Implement `NetworkInterfaceSelector` with strict single-interface selection policy and explicit `SelectionResult` / `SelectionReason`.
+- [x] Enforce loopback exclusion (`lo0`), down-interface exclusion, and priority filtering (Ethernet > Wi-Fi > Cellular > Other).
+- [x] Prevent duplicate traffic double-counting between physical interfaces and virtual tunnel devices (e.g., `utun0`).
+- [x] Integrate interface statistics retrieval and dynamic selection into `NetworkPathManager` actor with automatic re-evaluation on path transitions.
+- [x] Wire snapshot stream propagation into `ApplicationCoordinator` (`@Published currentSnapshot`).
+- [x] Implement comprehensive unit tests across provider, selector, and integration flows (`NetworkInterfaceProviderTests`, `NetworkInterfaceSelectorTests`, `NetworkSnapshotIntegrationTests`).
+- [x] Empirically verify live macOS `getifaddrs()` statistics against `netstat -ib` with 100% byte-for-byte parity on active Wi-Fi (`en0`).
 
 #### Deliverables Produced
 
-- Network path state model in `ARRYNetworkCounter/Services/Network/NetworkPathState.swift`.
-- Network path manager in `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
-- Extended `NetworkMonitoring` contract in `ARRYNetworkCounter/Core/Protocols/NetworkMonitoring.swift`.
-- Updated `ApplicationCoordinator` in `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
-- Unit test suites executing 44 assertion checks with 100% pass rate.
+- Interface statistics model: `ARRYNetworkCounter/Services/Network/NetworkInterfaceStatistics.swift`.
+- Interface statistics provider: `ARRYNetworkCounter/Services/Network/NetworkInterfaceProvider.swift`.
+- Interface selector: `ARRYNetworkCounter/Services/Network/NetworkInterfaceSelector.swift`.
+- Updated path manager: `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
+- Updated coordinator: `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
+- Phase 04 test suites: `Tests/NetworkInterfaceProviderTests.swift`, `Tests/NetworkInterfaceSelectorTests.swift`, `Tests/NetworkSnapshotIntegrationTests.swift`.
+- Updated test runner: `Tests/TestRunner.swift` (63 assertions passing across 11 suites).
 
 #### Completion Verification
 
-- [x] Wi-Fi and Ethernet interface categories correctly detected and mapped.
-- [x] Disconnection and reconnection states correctly detected and propagated.
-- [x] Duplicate consecutive state suppression verified.
-- [x] Stale callback rejection verified via session tokens.
-- [x] Idempotent start/stop monitoring verified.
-- [x] 100% of unit tests pass (44 passed, 0 failed).
+- [x] Received byte counters (`ifi_ibytes`) retrieved accurately and verified against system tools.
+- [x] Transmitted byte counters (`ifi_obytes`) retrieved accurately and verified against system tools.
+- [x] Selected interface correlates reliably with active `NetworkPathState`.
+- [x] Loopback interfaces (`lo0`) strictly excluded from active snapshots.
+- [x] Inactive or unconfigured interfaces excluded.
+- [x] Zero double-counting rule verified: physical interface selected without summing virtual tunnels.
+- [x] 100% of unit tests pass (63 assertions across 11 test suites with 0 failures).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 04 — Network Interface Statistics.
+**Next Step:** Proceed to Phase 05 — Network Speed Calculation Engine.
 
 ---
 
@@ -181,9 +188,14 @@ This section must contain only features that have actually been implemented and 
 - Central application coordinator: `ApplicationCoordinator` (`@MainActor`).
 - Centralized configuration constants: `AppConfiguration`.
 - Native macOS network path awareness: `NetworkPathState` (connectivity status, interface categorization, expensive/constrained flags).
-- Native macOS network path manager: `NetworkPathManager` (actor managing `NWPathMonitor` lifecycle, serial queue callbacks, duplicate state suppression, session-based stale callback rejection).
+- Native macOS network path manager: `NetworkPathManager` (actor managing `NWPathMonitor` lifecycle, serial queue callbacks, duplicate state suppression, session-based stale callback rejection, and interface statistics coordination).
 - Protocol-driven path monitoring provider: `PathMonitorProviding` with `SystemPathMonitorProvider` and `MockPathMonitorProvider`.
 - Live path update streaming and `@Published pathState` observation in `ApplicationCoordinator`.
+- Native BSD interface statistics model: `NetworkInterfaceStatistics` (`ifi_ibytes`, `ifi_obytes`, monotonic nanosecond timestamps, operational flags, loopback/virtual identification).
+- Protocol-driven interface statistics provider: `NetworkInterfaceProviding` with `SystemNetworkInterfaceProvider` (`getifaddrs()`, `AF_LINK`, `struct if_data`, unconditional `freeifaddrs()`) and thread-safe actor-isolated `MockNetworkInterfaceProvider`.
+- Intelligent interface selector: `NetworkInterfaceSelector` with single-interface selection policy, explicit `SelectionResult` and `SelectionReason`, priority ranking (Ethernet > Wi-Fi > Cellular > Other), loopback exclusion, and virtual tunnel zero-double-counting protection.
+- Live snapshot emission pipeline in `NetworkPathManager` (`sampleCurrentSnapshot()` and `snapshotStream`).
+- Live snapshot observation in `ApplicationCoordinator` (`@Published currentSnapshot`).
 - Automated test suite and test runner: `Tests/`, `Scripts/test.sh`.
 
 ### Verified Functionality
@@ -191,8 +203,10 @@ This section must contain only features that have actually been implemented and 
 - Debug and Release application bundles build cleanly without warnings or errors.
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
-- Application launch verified on macOS without crashing.
-- Full Phase 02 and Phase 03 unit test suites pass: 44 assertions verified across 8 test suites with 0 failures in 25.88 ms.
+- Application launch verified on macOS without crashing for both Debug and Release bundles.
+- Full Phase 02, Phase 03, and Phase 04 unit test suites pass: 63 assertions verified across 11 test suites with 0 failures in 59.80 ms.
+- Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
+- Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
 
 ### Important Rule
 
@@ -358,6 +372,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 01 | Initialized native Xcode project, directory structure, Swift 6 entry point, and verified Universal Binary build | Completed |
 | 2026-11-21 | Phase 02 | Implemented core models, protocol abstractions, application coordinator, configuration constants, and verified unit test suite | Completed |
 | 2026-11-21 | Phase 03 | Integrated Network.framework, implemented NetworkPathManager and NetworkPathState, connected path observation to ApplicationCoordinator, and verified tests | Completed |
+| 2026-11-21 | Phase 04 | Implemented BSD interface statistics (getifaddrs/if_data), NetworkInterfaceSelector with single-interface policy, snapshot pipeline, live netstat -ib empirical validation, and 11 unit test suites (63 assertions passing) | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -365,14 +380,15 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 03 is completed and verified. The immediate development sequence for Phase 04 is:
+Phase 04 is completed and verified. The immediate development sequence for Phase 05 (Network Speed Calculation Engine) is:
 
-1. Implement `NetworkInterfaceProvider` to read received and transmitted byte counters (`getifaddrs()`, `AF_LINK`, `struct if_data`, `ifi_ibytes`, `ifi_obytes`).
-2. Implement safe C memory management and resource deallocation (`freeifaddrs()`).
-3. Implement `NetworkInterfaceSelector` to correlate active routable interfaces with path state.
-4. Filter loopback, inactive, and duplicate virtual/tunnel interfaces.
-5. Create network snapshot provider producing verified `NetworkSnapshot` instances.
-6. Write unit and integration tests for interface statistics retrieval and filtering.
+1. Implement `NetworkSpeedCalculator` actor/engine to compute download and upload speeds from consecutive `NetworkSnapshot` instances.
+2. Calculate elapsed monotonic time between samples ($\Delta t = t_n - t_{n-1}$) with sub-millisecond precision.
+3. Compute received and transmitted byte deltas ($\Delta \text{bytes} = \text{bytes}_n - \text{bytes}_{n-1}$).
+4. Handle counter rollover / 32-bit BSD counter wrap-around scenarios gracefully.
+5. Handle interface transitions, initial sample conditions (delta zero), and zero/negative elapsed intervals.
+6. Connect speed calculation engine to active monitoring pipeline.
+7. Write comprehensive unit tests for standard speed calculation, rapid successive calls, zero intervals, and counter rollover.
 
 ---
 

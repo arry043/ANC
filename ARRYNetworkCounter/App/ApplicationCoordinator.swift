@@ -12,6 +12,9 @@ public final class ApplicationCoordinator: ObservableObject {
     /// Current network path state published for UI presentation and subsystem coordination.
     @Published public private(set) var pathState: NetworkPathState = .unsatisfied
 
+    /// Current network measurement snapshot containing cumulative byte counters.
+    @Published public private(set) var currentSnapshot: NetworkSnapshot? = nil
+
     /// Indicates whether the application monitoring lifecycle is actively running.
     @Published public private(set) var isRunning: Bool = false
 
@@ -23,6 +26,9 @@ public final class ApplicationCoordinator: ObservableObject {
 
     /// Observation task tracking asynchronous path changes.
     private var pathObservationTask: Task<Void, Never>?
+
+    /// Observation task tracking asynchronous snapshot updates.
+    private var snapshotObservationTask: Task<Void, Never>?
 
     /// Creates a new `ApplicationCoordinator`.
     ///
@@ -44,25 +50,33 @@ public final class ApplicationCoordinator: ObservableObject {
     public func start() async {
         guard !isRunning else { return }
 
+        isRunning = true
         preferences = await preferencesStore.loadPreferences()
 
         if let monitor = networkMonitor {
             pathState = await monitor.currentPathState
+            currentSnapshot = await monitor.currentSnapshot
             do {
                 try await monitor.startMonitoring()
-                let stream = await monitor.pathStateStream
+                let pathStream = await monitor.pathStateStream
                 pathObservationTask = Task { [weak self] in
-                    for await newPathState in stream {
-                        guard let self = self, self.isRunning else { break }
+                    for await newPathState in pathStream {
+                        guard !Task.isCancelled, let self = self, self.isRunning else { break }
                         self.pathState = newPathState
+                    }
+                }
+
+                let snapshotStream = await monitor.snapshotStream
+                snapshotObservationTask = Task { [weak self] in
+                    for await newSnapshot in snapshotStream {
+                        guard !Task.isCancelled, let self = self, self.isRunning else { break }
+                        self.currentSnapshot = newSnapshot
                     }
                 }
             } catch {
                 // Safe recovery if monitor fails to start
             }
         }
-
-        isRunning = true
     }
 
     /// Stops the application coordination lifecycle and halts active monitoring.
@@ -72,10 +86,14 @@ public final class ApplicationCoordinator: ObservableObject {
         pathObservationTask?.cancel()
         pathObservationTask = nil
 
+        snapshotObservationTask?.cancel()
+        snapshotObservationTask = nil
+
         if let monitor = networkMonitor {
             await monitor.stopMonitoring()
         }
 
+        currentSnapshot = nil
         isRunning = false
     }
 

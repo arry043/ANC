@@ -82,13 +82,43 @@ struct TestRunner {
             totalFailed += 1
         }
 
-        // 8. ApplicationCoordinatorTests (Phase 02 & Phase 03)
+        // 8. ApplicationCoordinatorTests (Phase 02, 03 & 04)
         do {
             let passed = try await ApplicationCoordinatorTests.run()
-            print("  [PASS] ApplicationCoordinatorTests: \(passed) assertion checks passed")
+            print("  [PASS] ApplicationCoordinatorTests:        \(passed) assertion checks passed")
             totalPassed += passed
         } catch {
-            print("  [FAIL] ApplicationCoordinatorTests: Failed with error: \(error)")
+            print("  [FAIL] ApplicationCoordinatorTests:        Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 9. NetworkInterfaceProviderTests (Phase 04)
+        do {
+            let passed = try await NetworkInterfaceProviderTests.run()
+            print("  [PASS] NetworkInterfaceProviderTests:       \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkInterfaceProviderTests:       Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 10. NetworkInterfaceSelectorTests (Phase 04)
+        do {
+            let passed = try NetworkInterfaceSelectorTests.run()
+            print("  [PASS] NetworkInterfaceSelectorTests:       \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkInterfaceSelectorTests:       Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 11. NetworkSnapshotIntegrationTests (Phase 04)
+        do {
+            let passed = try await NetworkSnapshotIntegrationTests.run()
+            print("  [PASS] NetworkSnapshotIntegrationTests:     \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkSnapshotIntegrationTests:     Failed with error: \(error)")
             totalFailed += 1
         }
 
@@ -97,7 +127,7 @@ struct TestRunner {
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 8 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 11 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")
