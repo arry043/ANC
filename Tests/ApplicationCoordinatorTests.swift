@@ -140,29 +140,54 @@ public enum ApplicationCoordinatorTests {
         assert(coordinator.pathState == .satisfiedWiFi, "Coordinator pathState must update to satisfiedWiFi")
         count += 1
 
-        // Test 6: Disconnection propagation
+        // Test 6: Snapshot propagation from monitor to coordinator with satisfied path
+        let wifi = NetworkInterface(name: "en0", index: 1, type: .wifi, isUsable: true)
+        let snap1 = NetworkSnapshot(
+            receivedBytes: 1_000_000,
+            transmittedBytes: 500_000,
+            monotonicTimeNanoseconds: 1_000_000_000,
+            interface: wifi
+        )
+        await mockMonitor.simulateSnapshotUpdate(snap1)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.currentSnapshot?.receivedBytes == 1_000_000, "Coordinator currentSnapshot must update")
+        assert(coordinator.speedResult == .baselineEstablished, "First snapshot establishes baseline")
+        assert(coordinator.latestMeasurement == nil, "Initial baseline produces no speed measurement")
+        count += 1
+
+        // Test 7: Second snapshot calculates speed and updates latestMeasurement
+        let snap2 = NetworkSnapshot(
+            receivedBytes: 1_500_000,
+            transmittedBytes: 750_000,
+            monotonicTimeNanoseconds: 2_000_000_000, // 1s later
+            interface: wifi
+        )
+        await mockMonitor.simulateSnapshotUpdate(snap2)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.speedResult.isCalculated, "Second snapshot must calculate speed")
+        if let m = coordinator.latestMeasurement {
+            assert(m.downloadBytesPerSecond == 500_000, "Download speed must be 500,000 B/s")
+            assert(m.uploadBytesPerSecond == 250_000, "Upload speed must be 250,000 B/s")
+            assert(m.elapsedSeconds == 1.0, "Elapsed seconds must be 1.0")
+        } else {
+            assertionFailure("Expected latestMeasurement on coordinator")
+        }
+        count += 1
+
+        // Test 8: Disconnection clears speed measurement and resets baseline
         await mockMonitor.simulatePathUpdate(.unsatisfied)
         try? await Task.sleep(nanoseconds: 10_000_000)
         assert(coordinator.pathState == .unsatisfied, "Coordinator pathState must update to unsatisfied")
+        assert(coordinator.speedResult == .noActivePath, "Speed result must be noActivePath when disconnected")
+        assert(coordinator.latestMeasurement == nil, "latestMeasurement must be nil when disconnected")
         count += 1
 
-        // Test 7: Snapshot propagation from monitor to coordinator
-        let testSnapshot = NetworkSnapshot(
-            receivedBytes: 99_999,
-            transmittedBytes: 88_888,
-            timestamp: Date(),
-            monotonicTimeNanoseconds: 1_000_000,
-            interface: NetworkInterface(name: "en0", type: .wifi, isUsable: true)
-        )
-        await mockMonitor.simulateSnapshotUpdate(testSnapshot)
-        try? await Task.sleep(nanoseconds: 10_000_000)
-        assert(coordinator.currentSnapshot?.receivedBytes == 99_999, "Coordinator currentSnapshot must update")
-        count += 1
-
-        // Test 8: stop() terminates monitoring and clears snapshot
+        // Test 9: stop() terminates monitoring and clears state
         await coordinator.stop()
         assert(!coordinator.isRunning, "Coordinator must not be running after stop()")
         assert(coordinator.currentSnapshot == nil, "Coordinator currentSnapshot must be nil after stop()")
+        assert(coordinator.speedResult == .noActivePath, "Speed result must be noActivePath after stop")
+        assert(coordinator.latestMeasurement == nil, "latestMeasurement must be nil after stop")
         let stopCount = await mockMonitor.stopCount
         let isMon = await mockMonitor.isMonitoring
         assert(stopCount == 1, "Monitor must receive exactly one stop call")

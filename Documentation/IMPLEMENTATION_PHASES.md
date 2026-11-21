@@ -39,8 +39,8 @@ Each phase must produce a working, testable result before the next dependent pha
 | 02 | Core Models & Application Foundation | Critical | Completed |
 | 03 | Network Path Detection | Critical | Completed |
 | 04 | Network Interface Statistics | Critical | Completed |
-| 05 | Network Speed Calculation Engine | Critical | Not Started |
-| 06 | Speed Formatting Engine | High |
+| 05 | Network Speed Calculation Engine | Critical | Completed |
+| 06 | Speed Formatting Engine | High | Not Started |
 | 07 | Dominant Direction & Switching Logic | High |
 | 08 | Native Menu Bar Integration | Critical |
 | 09 | Display Modes Implementation | Critical |
@@ -229,7 +229,7 @@ Retrieve actual received and transmitted byte counters from macOS network interf
 ## Phase 05 — Network Speed Calculation Engine
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -237,22 +237,22 @@ Implement accurate download and upload speed calculations using consecutive netw
 
 ### Tasks
 
-- [ ] Implement `NetworkSpeedCalculator`.
-- [ ] Capture the initial network snapshot.
-- [ ] Store the previous received byte count.
-- [ ] Store the previous transmitted byte count.
-- [ ] Record monotonic sample timestamps.
-- [ ] Calculate actual elapsed time.
-- [ ] Calculate download speed.
-- [ ] Calculate upload speed.
-- [ ] Handle the first sample.
-- [ ] Handle zero elapsed time.
-- [ ] Handle negative or invalid elapsed intervals.
-- [ ] Handle counter decreases and resets.
-- [ ] Reset the baseline when the selected interface changes.
-- [ ] Reset the baseline after disconnection.
-- [ ] Resume calculation after reconnection.
-- [ ] Ensure no negative speed is produced.
+- [x] Implement `NetworkSpeedCalculator`.
+- [x] Capture the initial network snapshot.
+- [x] Store the previous received byte count.
+- [x] Store the previous transmitted byte count.
+- [x] Record monotonic sample timestamps.
+- [x] Calculate actual elapsed time.
+- [x] Calculate download speed.
+- [x] Calculate upload speed.
+- [x] Handle the first sample.
+- [x] Handle zero elapsed time.
+- [x] Handle negative or invalid elapsed intervals.
+- [x] Handle counter decreases and resets.
+- [x] Reset the baseline when the selected interface changes.
+- [x] Reset the baseline after disconnection.
+- [x] Resume calculation after reconnection.
+- [x] Ensure no negative speed is produced.
 
 ### Calculation
 
@@ -270,20 +270,20 @@ Elapsed Seconds
 
 ### Deliverables
 
-- Working speed calculation engine.
-- Reliable network speed measurements.
-- Unit tests for calculation scenarios.
+- Working speed calculation engine (`NetworkSpeedCalculator.swift`).
+- Reliable network speed measurements (`SpeedMeasurement` and `SpeedCalculationResult`).
+- Unit tests for calculation scenarios (`NetworkSpeedCalculatorTests.swift`).
 
 ### Completion Criteria
 
-- [ ] Download speed is calculated correctly.
-- [ ] Upload speed is calculated correctly.
-- [ ] Actual elapsed time is used.
-- [ ] First sample establishes a baseline.
-- [ ] Counter resets do not produce negative values.
-- [ ] Interface changes do not produce artificial speed spikes.
-- [ ] Reconnection establishes a new baseline.
-- [ ] Unit tests pass.
+- [x] Download speed is calculated correctly.
+- [x] Upload speed is calculated correctly.
+- [x] Actual elapsed time is used.
+- [x] First sample establishes a baseline.
+- [x] Counter resets do not produce negative values.
+- [x] Interface changes do not produce artificial speed spikes.
+- [x] Reconnection establishes a new baseline.
+- [x] Unit tests pass.
 
 ---
 

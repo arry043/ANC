@@ -23,6 +23,7 @@
 		692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */; };
 		6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */; };
 		75813E3E5645B891DE6347F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C424DD5BD282234FB7493AB0 /* Assets.xcassets */; };
+		7E1F648C34A35CBA3F8D3D11 /* NetworkSpeedCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6074823391665BF8CA5DA /* NetworkSpeedCalculatorTests.swift */; };
 		892AB3A34E37A93D6C1A8583 /* NetworkInterfaceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AF767A3D2EB1E7F9CA07C6 /* NetworkInterfaceSelector.swift */; };
 		8C630910A54829A3FE79D923 /* ApplicationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */; };
 		9B06A72231C4731820327077 /* DisplayMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3E48F3CB8610EA9F8F05A37 /* DisplayMode.swift */; };
@@ -33,6 +34,7 @@
 		C0EBF6DCE871054988E39A8D /* NetworkPathState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F4B44B1AD9E972BC34D57A1 /* NetworkPathState.swift */; };
 		C845C7FDB340409F089B612F /* NetworkPathStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 05FFF693857BC2B1228CAB86 /* NetworkPathStateTests.swift */; };
 		CEA8404E100DA7EC1443AA03 /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A44F30555B2FC3B9456858A3 /* TestRunner.swift */; };
+		D00ECCAD06639C357C04EADF /* NetworkSpeedCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BC39C23F989A480E7D1194A /* NetworkSpeedCalculator.swift */; };
 		D2D620915B02F380FACC6D02 /* AppPreferencesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93387978ED83F555303198AC /* AppPreferencesTests.swift */; };
 		D7E737709426DB82C6B97C50 /* BothDirectionsStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE0E3DBC35C60BDC335CF1D4 /* BothDirectionsStyle.swift */; };
 		DA4D86D4E8EBB455EC11652D /* ApplicationCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BACA44F08785AC7E1394FFB /* ApplicationCoordinator.swift */; };
@@ -68,6 +70,7 @@
 		5BC9280D875A80A60098F558 /* NetworkInterfaceStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceStatistics.swift; sourceTree = "<group>"; };
 		6D6F16E2A6EB41B135FA50C1 /* NetworkInterfaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceProvider.swift; sourceTree = "<group>"; };
 		7B511E8338A56296272F6046 /* NetworkDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDirection.swift; sourceTree = "<group>"; };
+		7BC39C23F989A480E7D1194A /* NetworkSpeedCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSpeedCalculator.swift; sourceTree = "<group>"; };
 		8BBC8687F659D20EB7730083 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSnapshot.swift; sourceTree = "<group>"; };
 		93387978ED83F555303198AC /* AppPreferencesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPreferencesTests.swift; sourceTree = "<group>"; };
@@ -84,6 +87,7 @@
 		D24938E00FD34DE42C41AE5F /* NetworkInterfaceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceTests.swift; sourceTree = "<group>"; };
 		D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkMonitoring.swift; sourceTree = "<group>"; };
 		D98C64097B5CE287050ABF46 /* ARRYNetworkCounterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ARRYNetworkCounterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E3A6074823391665BF8CA5DA /* NetworkSpeedCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSpeedCalculatorTests.swift; sourceTree = "<group>"; };
 		E4BA4EBD7F97F40241B45FD8 /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterface.swift; sourceTree = "<group>"; };
 		F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinatorTests.swift; sourceTree = "<group>"; };
@@ -111,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				123A93D7A23347C813403272 /* .gitkeep */,
+				7BC39C23F989A480E7D1194A /* NetworkSpeedCalculator.swift */,
 			);
 			path = Monitoring;
 			sourceTree = "<group>";
@@ -136,6 +141,7 @@
 				05FFF693857BC2B1228CAB86 /* NetworkPathStateTests.swift */,
 				AA1CC2D54C65F034C20CDE6F /* NetworkSnapshotIntegrationTests.swift */,
 				5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */,
+				E3A6074823391665BF8CA5DA /* NetworkSpeedCalculatorTests.swift */,
 				959860DC121B37E7C205694C /* NetworkSpeedTests.swift */,
 				A44F30555B2FC3B9456858A3 /* TestRunner.swift */,
 			);
@@ -375,6 +381,7 @@
 				C0EBF6DCE871054988E39A8D /* NetworkPathState.swift in Sources */,
 				3208079173DD5551AF01921B /* NetworkSnapshot.swift in Sources */,
 				9F26798B9FAAA860D4DFC4F3 /* NetworkSpeed.swift in Sources */,
+				D00ECCAD06639C357C04EADF /* NetworkSpeedCalculator.swift in Sources */,
 				462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -393,6 +400,7 @@
 				C845C7FDB340409F089B612F /* NetworkPathStateTests.swift in Sources */,
 				1AE37309EDA92CCC21CE8270 /* NetworkSnapshotIntegrationTests.swift in Sources */,
 				4A0B3D0D5470E23C3C2CC2F4 /* NetworkSnapshotTests.swift in Sources */,
+				7E1F648C34A35CBA3F8D3D11 /* NetworkSpeedCalculatorTests.swift in Sources */,
 				9CCDC4007616EB0DD4D4A3C6 /* NetworkSpeedTests.swift in Sources */,
 				CEA8404E100DA7EC1443AA03 /* TestRunner.swift in Sources */,
 			);

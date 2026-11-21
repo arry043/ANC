@@ -463,107 +463,62 @@ The application should document this measurement boundary rather than claim that
 
 ## 8. Network Speed Calculation
 
-### 8.1 Calculation Formula
+The speed calculation engine is implemented by `NetworkSpeedCalculator` (`ARRYNetworkCounter/Services/Monitoring/NetworkSpeedCalculator.swift`).
 
-The application calculates speed using the difference between two consecutive byte-counter snapshots.
+### 8.1 Calculation Engine Architecture
 
-**Download Speed**
+`NetworkSpeedCalculator` is a Swift actor that isolates calculation state, consumes consecutive `NetworkSnapshot` instances, and produces immutable `SpeedCalculationResult` values.
 
-```text
-Download Speed =
-(Current Received Bytes - Previous Received Bytes)
-/
-Elapsed Time in Seconds
-```
+Key structures:
+- `SpeedMeasurement`: Holds calculated `download: NetworkSpeed`, `upload: NetworkSpeed`, `elapsedSeconds: Double`, `monotonicTimeNanoseconds: UInt64`, and `interface: NetworkInterface?`.
+- `SpeedCalculationResult`:
+  - `.calculated(SpeedMeasurement)`
+  - `.baselineEstablished`
+  - `.baselineReset(reason: BaselineResetReason)` (`interfaceChanged`, `counterDecreased`, `disconnected`, `manualReset`)
+  - `.sampleRejected(reason: SampleRejectionReason)` (`zeroElapsedNanoseconds`, `reversedTimestamp`, `nonFiniteElapsedSeconds`)
+  - `.noActivePath`
 
-**Upload Speed**
+### 8.2 Calculation Formulas
 
-```text
-Upload Speed =
-(Current Transmitted Bytes - Previous Transmitted Bytes)
-/
-Elapsed Time in Seconds
-```
+Speed calculations are performed strictly from counter deltas and monotonic elapsed time:
 
-The result is measured in bytes per second.
+$$\text{Elapsed Seconds} = \frac{\text{Current Monotonic Nanos} - \text{Previous Monotonic Nanos}}{1\,000\,000\,000}$$
 
-### 8.2 Example
+$$\text{Download Speed} = \frac{\text{Current Received Bytes} - \text{Previous Received Bytes}}{\text{Elapsed Seconds}}$$
 
-Suppose:
+$$\text{Upload Speed} = \frac{\text{Current Transmitted Bytes} - \text{Previous Transmitted Bytes}}{\text{Elapsed Seconds}}$$
 
-```text
-Previous Received Bytes = 10,000,000
-Current Received Bytes  = 12,500,000
+Calculated speeds are stored directly in `NetworkSpeed` in bytes per second (B/s). Download and upload calculations are independent.
 
-Previous Transmitted Bytes = 5,000,000
-Current Transmitted Bytes  = 5,500,000
+### 8.3 Monotonic Clock & Timing Safety
 
-Elapsed Time = 1 second
-```
+To prevent timing artifacts from system clock synchronization, daylight saving shifts, or NTP adjustments:
+- Samples use continuous monotonic timestamps (`DispatchTime.now().uptimeNanoseconds`).
+- If elapsed nanoseconds $\le 0$, the sample is rejected (`.zeroElapsedNanoseconds` or `.reversedTimestamp`) and the existing baseline is preserved.
+- Elapsed time is validated to be strictly positive and finite before division.
 
-Then:
+### 8.4 Counter Decrease and Discontinuity Handling
 
-```text
-Download Speed = 2,500,000 Bytes/s
+When a counter decreases (`current.receivedBytes < previous.receivedBytes` or `current.transmittedBytes < previous.transmittedBytes`):
+1. Underflow is prevented by detecting the condition before subtraction.
+2. The current snapshot becomes the new baseline.
+3. The calculator returns `.baselineReset(reason: .counterDecreased)`.
+4. No speed is emitted for that interval, preventing artificial multi-gigabyte speed spikes (see ADR-033).
+5. Normal calculation resumes on the subsequent sample.
 
-Upload Speed = 500,000 Bytes/s
-```
+### 8.5 Interface Transition Handling
 
-Formatted output:
+Before computing deltas, the calculator validates interface continuity via `haveSameInterfaceIdentity(previous:, current:)`:
+- Compares interface name (and index, if present).
+- If the interface changes (e.g. `en0` to `en1`, or interface disappears), the baseline is reset with `.baselineReset(reason: .interfaceChanged)`.
+- No speed spike is produced across different interfaces.
 
-```text
-↓ 2.5 MB/s
-↑ 500 KB/s
-```
+### 8.6 Lifecycle and Disconnection Management
 
-### 8.3 Actual Elapsed Time
-
-Do not assume every sampling operation executes at exactly one-second intervals.
-
-Use a monotonic clock, such as Swift's `ContinuousClock`, to calculate actual elapsed time.
-
-This avoids incorrect results caused by:
-
-- Scheduler delays.
-- CPU load.
-- Application suspension.
-- Temporary execution delays.
-
-### 8.4 Counter Reset Handling
-
-The implementation must handle cases where the current counter is lower than the previous counter.
-
-Possible causes include:
-
-- Interface recreation.
-- System counter reset.
-- Network interface change.
-- Counter discontinuity.
-- Reconnection.
-
-When a counter decreases:
-
-1. Do not calculate a negative speed.
-2. Treat the current snapshot as a new baseline.
-3. Return zero or an unavailable measurement for that interval.
-4. Resume normal calculations from the next valid sample.
-
-### 8.5 First Sample
-
-The first valid sample establishes the initial baseline.
-
-Do not calculate speed until a subsequent valid sample is available.
-
-This prevents displaying incorrect initial speeds.
-
-### 8.6 Disconnected State
-
-When no usable network path exists:
-
-- Display zero speed.
-- Reset or invalidate the previous sampling baseline.
-- Wait for a valid network path.
-- Establish a fresh baseline after reconnection.
+- **First Sample:** Establishes the initial baseline and returns `.baselineEstablished`. No speed is calculated.
+- **Disconnection:** When `NetworkPathState.status != .satisfied`, the coordinator calls `speedCalculator.reset()`, clearing the baseline and publishing `.noActivePath`.
+- **Reconnection:** The first snapshot following reconnection establishes a fresh baseline.
+- **Stop Monitoring:** Halts active tasks, resets the calculator baseline, and clears published state.
 
 ---
 

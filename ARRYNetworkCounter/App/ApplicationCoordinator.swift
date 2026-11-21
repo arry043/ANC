@@ -15,6 +15,12 @@ public final class ApplicationCoordinator: ObservableObject {
     /// Current network measurement snapshot containing cumulative byte counters.
     @Published public private(set) var currentSnapshot: NetworkSnapshot? = nil
 
+    /// Current network speed calculation result.
+    @Published public private(set) var speedResult: SpeedCalculationResult = .noActivePath
+
+    /// Latest calculated speed measurement, if available.
+    @Published public private(set) var latestMeasurement: SpeedMeasurement? = nil
+
     /// Indicates whether the application monitoring lifecycle is actively running.
     @Published public private(set) var isRunning: Bool = false
 
@@ -23,6 +29,9 @@ public final class ApplicationCoordinator: ObservableObject {
 
     /// Network monitor instance injected for lifecycle management.
     private let networkMonitor: (any NetworkMonitoring)?
+
+    /// Network speed calculation engine.
+    private let speedCalculator: NetworkSpeedCalculator
 
     /// Observation task tracking asynchronous path changes.
     private var pathObservationTask: Task<Void, Never>?
@@ -35,14 +44,17 @@ public final class ApplicationCoordinator: ObservableObject {
     /// - Parameters:
     ///   - preferencesStore: Storage provider conforming to `PreferencesStoring`.
     ///   - networkMonitor: Optional network monitor conforming to `NetworkMonitoring`.
+    ///   - speedCalculator: Speed calculation engine conforming to `NetworkSpeedCalculator`.
     ///   - initialPreferences: Initial preferences to bootstrap state before async load.
     public init(
         preferencesStore: any PreferencesStoring = UserDefaultsPreferencesStore(),
         networkMonitor: (any NetworkMonitoring)? = NetworkPathManager(),
+        speedCalculator: NetworkSpeedCalculator = NetworkSpeedCalculator(),
         initialPreferences: AppPreferences = .default
     ) {
         self.preferencesStore = preferencesStore
         self.networkMonitor = networkMonitor
+        self.speedCalculator = speedCalculator
         self.preferences = initialPreferences
     }
 
@@ -56,6 +68,15 @@ public final class ApplicationCoordinator: ObservableObject {
         if let monitor = networkMonitor {
             pathState = await monitor.currentPathState
             currentSnapshot = await monitor.currentSnapshot
+            if pathState.status == .satisfied, let snap = currentSnapshot {
+                let result = await speedCalculator.calculateSpeed(from: snap)
+                speedResult = result
+                latestMeasurement = result.measurement
+            } else {
+                speedResult = .noActivePath
+                latestMeasurement = nil
+            }
+
             do {
                 try await monitor.startMonitoring()
                 let pathStream = await monitor.pathStateStream
@@ -63,6 +84,11 @@ public final class ApplicationCoordinator: ObservableObject {
                     for await newPathState in pathStream {
                         guard !Task.isCancelled, let self = self, self.isRunning else { break }
                         self.pathState = newPathState
+                        if newPathState.status != .satisfied {
+                            await self.speedCalculator.reset()
+                            self.speedResult = .noActivePath
+                            self.latestMeasurement = nil
+                        }
                     }
                 }
 
@@ -71,6 +97,17 @@ public final class ApplicationCoordinator: ObservableObject {
                     for await newSnapshot in snapshotStream {
                         guard !Task.isCancelled, let self = self, self.isRunning else { break }
                         self.currentSnapshot = newSnapshot
+                        if self.pathState.status == .satisfied {
+                            let result = await self.speedCalculator.calculateSpeed(from: newSnapshot)
+                            self.speedResult = result
+                            if let measurement = result.measurement {
+                                self.latestMeasurement = measurement
+                            }
+                        } else {
+                            await self.speedCalculator.reset()
+                            self.speedResult = .noActivePath
+                            self.latestMeasurement = nil
+                        }
                     }
                 }
             } catch {
@@ -93,6 +130,9 @@ public final class ApplicationCoordinator: ObservableObject {
             await monitor.stopMonitoring()
         }
 
+        await speedCalculator.reset()
+        speedResult = .noActivePath
+        latestMeasurement = nil
         currentSnapshot = nil
         isRunning = false
     }

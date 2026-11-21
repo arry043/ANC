@@ -122,12 +122,22 @@ struct TestRunner {
             totalFailed += 1
         }
 
+        // 12. NetworkSpeedCalculatorTests (Phase 05)
+        do {
+            let passed = try await NetworkSpeedCalculatorTests.run()
+            print("  [PASS] NetworkSpeedCalculatorTests:         \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkSpeedCalculatorTests:         Failed with error: \(error)")
+            totalFailed += 1
+        }
+
         let endTime = DispatchTime.now()
         let elapsedMilliseconds = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 11 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 12 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")
