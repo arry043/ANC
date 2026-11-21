@@ -1,0 +1,1120 @@
+# IMPLEMENTATION_PHASES.md
+
+# ARRY Network Counter (ANC)
+
+**Organization:** ARRRY  
+**Application:** ARRY Network Counter  
+**Short Name:** ANC  
+**Platform:** macOS  
+**Technology:** Swift 6, SwiftUI, AppKit  
+**Distribution:** DMG  
+**Development Approach:** Phase-Based Implementation  
+**Status:** Ready for Development
+
+---
+
+## 1. Development Overview
+
+ARRY Network Counter will be developed through clearly defined implementation phases.
+
+Each phase must produce a working, testable result before the next dependent phase begins.
+
+### Development Principles
+
+- Follow `PROJECT_REQUIREMENTS.md` as the product specification.
+- Follow `TECHNICAL_ARCHITECTURE.md` as the implementation blueprint.
+- Preserve the minimal product scope.
+- Prefer native Apple frameworks.
+- Avoid unnecessary dependencies.
+- Write modular, maintainable, and testable Swift code.
+- Test each component before integrating it.
+- Do not leave placeholder implementations in completed phases.
+- Do not mark a phase complete without satisfying its acceptance criteria.
+
+### Phase Summary
+
+| Phase | Name | Priority |
+|---|---|---|
+| 01 | Project Initialization & Configuration | Critical |
+| 02 | Core Models & Application Foundation | Critical |
+| 03 | Network Path Detection | Critical |
+| 04 | Network Interface Statistics | Critical |
+| 05 | Network Speed Calculation Engine | Critical |
+| 06 | Speed Formatting Engine | High |
+| 07 | Dominant Direction & Switching Logic | High |
+| 08 | Native Menu Bar Integration | Critical |
+| 09 | Display Modes Implementation | Critical |
+| 10 | Settings Interface & Preferences | High |
+| 11 | Application Lifecycle & Launch at Login | High |
+| 12 | Documentation & About Section | Medium |
+| 13 | Error Handling & Performance Optimization | High |
+| 14 | Comprehensive Testing & Compatibility | Critical |
+| 15 | Universal Binary & DMG Packaging | Critical |
+| 16 | Final Release & Deployment Verification | Critical |
+
+---
+
+# 2. Implementation Phases
+
+## Phase 01 — Project Initialization & Configuration
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Initialize the native macOS application project with the agreed technology stack and development structure.
+
+### Tasks
+
+- [ ] Create a new native macOS application in Xcode.
+- [ ] Configure Swift 6.
+- [ ] Configure SwiftUI and AppKit integration.
+- [ ] Set the application name to `ARRY Network Counter`.
+- [ ] Configure the bundle identifier.
+- [ ] Configure ARRRY as the organization.
+- [ ] Set the application deployment target.
+- [ ] Configure Universal Binary architectures (`arm64`, `x86_64`).
+- [ ] Configure the application as a menu bar utility.
+- [ ] Configure the initial asset catalog.
+- [ ] Establish the project directory structure.
+- [ ] Initialize Git and `.gitignore`.
+- [ ] Create the documentation directory.
+- [ ] Verify the initial application build.
+
+### Deliverables
+
+- Working Xcode project.
+- Configured Swift development environment.
+- Initial application bundle.
+- Established project structure.
+
+### Completion Criteria
+
+- [ ] Project builds successfully.
+- [ ] Application launches on the development Mac.
+- [ ] No unnecessary third-party dependencies.
+- [ ] Project configuration matches the architecture document.
+
+---
+
+## Phase 02 — Core Models & Application Foundation
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Implement the core data models, protocols, and application coordination structure.
+
+### Tasks
+
+- [ ] Implement `NetworkSpeed`.
+- [ ] Implement `NetworkSnapshot`.
+- [ ] Implement `NetworkInterface`.
+- [ ] Implement `DisplayMode`.
+- [ ] Implement `BothDirectionsStyle`.
+- [ ] Implement `NetworkDirection`.
+- [ ] Implement `AppPreferences`.
+- [ ] Define network monitoring protocols.
+- [ ] Define preferences storage protocols.
+- [ ] Implement the application coordinator.
+- [ ] Establish appropriate actor and `MainActor` isolation.
+- [ ] Define shared application configuration constants.
+
+### Deliverables
+
+- Core Swift models.
+- Application coordination foundation.
+- Protocol definitions.
+- Initial model tests.
+
+### Completion Criteria
+
+- [ ] All core models compile.
+- [ ] Models have clearly defined responsibilities.
+- [ ] Display modes are represented using strongly typed models.
+- [ ] No UI-specific logic exists inside network calculation models.
+- [ ] Unit tests pass.
+
+---
+
+## Phase 03 — Network Path Detection
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Implement native macOS network path monitoring and connectivity change detection.
+
+### Tasks
+
+- [ ] Integrate Apple's `Network.framework`.
+- [ ] Implement `NetworkPathManager`.
+- [ ] Implement `NWPathMonitor` lifecycle management.
+- [ ] Detect available network paths.
+- [ ] Detect network connectivity changes.
+- [ ] Identify available interface types.
+- [ ] Handle connected and disconnected states.
+- [ ] Handle network path changes.
+- [ ] Publish path changes to the monitoring coordinator.
+- [ ] Ensure monitoring can be stopped cleanly.
+
+### Deliverables
+
+- Working network path monitor.
+- Connectivity state management.
+- Interface information available to the selection layer.
+
+### Completion Criteria
+
+- [ ] Wi-Fi connectivity is detected.
+- [ ] Ethernet connectivity is detected where available.
+- [ ] Disconnection is detected.
+- [ ] Reconnection is detected.
+- [ ] Interface changes trigger re-evaluation.
+- [ ] No duplicate monitoring instances are created.
+- [ ] Monitoring shuts down cleanly.
+
+---
+
+## Phase 04 — Network Interface Statistics
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Retrieve actual received and transmitted byte counters from macOS network interfaces.
+
+### Tasks
+
+- [ ] Implement `NetworkInterfaceProvider`.
+- [ ] Integrate `getifaddrs()`.
+- [ ] Retrieve `AF_LINK` interface records.
+- [ ] Read `ifi_ibytes`.
+- [ ] Read `ifi_obytes`.
+- [ ] Implement safe access to the underlying system structures.
+- [ ] Release allocated interface resources correctly.
+- [ ] Implement `NetworkInterfaceSelector`.
+- [ ] Identify the interface associated with the usable network path.
+- [ ] Exclude loopback interfaces.
+- [ ] Handle missing or unavailable interfaces.
+- [ ] Avoid blindly summing overlapping physical and virtual interfaces.
+- [ ] Handle VPN and other virtual interfaces explicitly.
+- [ ] Re-evaluate the selected interface after network changes.
+
+### Deliverables
+
+- Actual network interface byte-counter provider.
+- Interface selection mechanism.
+- Network snapshot data.
+
+### Completion Criteria
+
+- [ ] Received byte counters are retrieved correctly.
+- [ ] Transmitted byte counters are retrieved correctly.
+- [ ] The selected interface is associated with the current network path.
+- [ ] Loopback traffic is excluded.
+- [ ] Interface changes are handled safely.
+- [ ] Counter retrieval failures do not crash the application.
+- [ ] No duplicate traffic counting from blindly aggregating interfaces.
+
+**Important:** Verify the interface selection strategy on real macOS configurations, particularly Wi-Fi, Ethernet, VPN, and virtual interfaces. Do not assume interface names or counter semantics without testing.
+
+---
+
+## Phase 05 — Network Speed Calculation Engine
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Implement accurate download and upload speed calculations using consecutive network counter snapshots.
+
+### Tasks
+
+- [ ] Implement `NetworkSpeedCalculator`.
+- [ ] Capture the initial network snapshot.
+- [ ] Store the previous received byte count.
+- [ ] Store the previous transmitted byte count.
+- [ ] Record monotonic sample timestamps.
+- [ ] Calculate actual elapsed time.
+- [ ] Calculate download speed.
+- [ ] Calculate upload speed.
+- [ ] Handle the first sample.
+- [ ] Handle zero elapsed time.
+- [ ] Handle negative or invalid elapsed intervals.
+- [ ] Handle counter decreases and resets.
+- [ ] Reset the baseline when the selected interface changes.
+- [ ] Reset the baseline after disconnection.
+- [ ] Resume calculation after reconnection.
+- [ ] Ensure no negative speed is produced.
+
+### Calculation
+
+```text
+Download Speed =
+(Current Received Bytes - Previous Received Bytes)
+/
+Elapsed Seconds
+
+Upload Speed =
+(Current Transmitted Bytes - Previous Transmitted Bytes)
+/
+Elapsed Seconds
+```
+
+### Deliverables
+
+- Working speed calculation engine.
+- Reliable network speed measurements.
+- Unit tests for calculation scenarios.
+
+### Completion Criteria
+
+- [ ] Download speed is calculated correctly.
+- [ ] Upload speed is calculated correctly.
+- [ ] Actual elapsed time is used.
+- [ ] First sample establishes a baseline.
+- [ ] Counter resets do not produce negative values.
+- [ ] Interface changes do not produce artificial speed spikes.
+- [ ] Reconnection establishes a new baseline.
+- [ ] Unit tests pass.
+
+---
+
+## Phase 06 — Speed Formatting Engine
+
+**Priority:** High  
+**Status:** Not Started
+
+### Objective
+
+Convert raw byte-per-second measurements into readable menu bar values.
+
+### Tasks
+
+- [ ] Implement `ByteFormatter`.
+- [ ] Implement `SpeedFormatter`.
+- [ ] Support KB/s.
+- [ ] Support MB/s.
+- [ ] Support GB/s.
+- [ ] Support TB/s.
+- [ ] Implement automatic unit selection.
+- [ ] Implement consistent decimal precision.
+- [ ] Remove unnecessary trailing zeros.
+- [ ] Handle zero speed.
+- [ ] Handle very small values.
+- [ ] Handle very large values.
+- [ ] Prevent negative formatted values.
+
+### Formatting Examples
+
+| Raw Speed | Expected Display |
+|---:|---|
+| 0 B/s | 0 KB/s |
+| 450,250 B/s | 450.25 KB/s |
+| 2,450,000 B/s | 2.45 MB/s |
+| 1,250,000,000 B/s | 1.25 GB/s |
+| 1,200,000,000,000 B/s | 1.20 TB/s |
+
+### Deliverables
+
+- Reusable speed formatter.
+- Consistent unit conversion.
+- Formatting unit tests.
+
+### Completion Criteria
+
+- [ ] All supported units work correctly.
+- [ ] Decimal conversion uses base 1000.
+- [ ] Output is readable.
+- [ ] Zero is displayed as `0 KB/s`.
+- [ ] No unnecessary trailing zeros.
+- [ ] Unit boundary tests pass.
+
+---
+
+## Phase 07 — Dominant Direction & Switching Logic
+
+**Priority:** High  
+**Status:** Not Started
+
+### Objective
+
+Implement the common direction-selection engine used by automatic display modes.
+
+### Tasks
+
+- [ ] Implement `DominantDirectionEngine`.
+- [ ] Compare current download and upload speeds.
+- [ ] Identify the dominant direction.
+- [ ] Implement switching hysteresis.
+- [ ] Implement an absolute noise threshold.
+- [ ] Require confirmation across consecutive valid samples.
+- [ ] Preserve the current direction when speeds are close.
+- [ ] Handle idle traffic.
+- [ ] Use Download as the default idle direction.
+- [ ] Ensure responsive direction changes.
+- [ ] Make thresholds centrally configurable for testing.
+
+### Initial Switching Policy
+
+| Condition | Behavior |
+|---|---|
+| Download clearly dominates | Select Download |
+| Upload clearly dominates | Select Upload |
+| Speeds are close | Preserve current direction |
+| Small traffic fluctuations | Avoid unnecessary switching |
+| Both directions idle | Select Download |
+| Network reconnects | Re-establish direction state safely |
+
+Initial tuning targets:
+
+- Relative switching margin: approximately 10%.
+- Confirmation: two consecutive valid samples.
+- Additional absolute threshold: used to suppress low-rate noise.
+
+These are initial engineering defaults, not user-facing settings. Validate them during real-world testing.
+
+### Deliverables
+
+- Reusable dominant direction engine.
+- Stable automatic switching behavior.
+- Unit tests for direction transitions.
+
+### Completion Criteria
+
+- [ ] Correct dominant direction is selected.
+- [ ] Both automatic display modes can use the same engine.
+- [ ] No excessive switching occurs near equal speeds.
+- [ ] Direction changes remain responsive.
+- [ ] Idle behavior is correct.
+- [ ] Unit tests pass.
+
+---
+
+## Phase 08 — Native Menu Bar Integration
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Implement the native macOS menu bar status item using AppKit.
+
+### Tasks
+
+- [ ] Implement `MenuBarManager`.
+- [ ] Create an `NSStatusItem`.
+- [ ] Implement `MenuBarRenderer`.
+- [ ] Render download arrows.
+- [ ] Render upload arrows.
+- [ ] Apply direction-specific arrow colors.
+- [ ] Render speed text.
+- [ ] Configure readable font sizing.
+- [ ] Support Light Mode.
+- [ ] Support Dark Mode.
+- [ ] Configure status item sizing.
+- [ ] Update menu bar content dynamically.
+- [ ] Create the minimal native context menu.
+- [ ] Add Settings menu item.
+- [ ] Add Quit menu item.
+- [ ] Ensure the status item is removed on termination.
+
+### Display Examples
+
+```text
+↓ 2.45 MB/s    ↑ 120 KB/s
+
+↓ ↑ 2.45 MB/s
+
+↓ 2.45 MB/s
+
+↑ 120 KB/s
+```
+
+### Deliverables
+
+- Native menu bar status item.
+- Dynamic text rendering.
+- Settings and Quit access.
+
+### Completion Criteria
+
+- [ ] Menu bar item appears after application launch.
+- [ ] Arrows and text render correctly.
+- [ ] Download arrow is green.
+- [ ] Upload arrow is blue.
+- [ ] Text is readable in both appearance modes.
+- [ ] Menu bar updates without opening a window.
+- [ ] Settings and Quit actions work.
+- [ ] No unnecessary Dock icon appears during normal operation.
+
+---
+
+## Phase 09 — Display Modes Implementation
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Integrate all three display modes and both sub-options of Both Directions.
+
+### Tasks
+
+**Both Directions — Separate Speeds**
+
+- [ ] Display both arrows.
+- [ ] Display download speed independently.
+- [ ] Display upload speed independently.
+- [ ] Apply separate arrow colors.
+- [ ] Update both values dynamically.
+
+**Both Directions — Combined Arrows**
+
+- [ ] Always display both arrows.
+- [ ] Display only one numerical speed.
+- [ ] Use the dominant direction engine.
+- [ ] Switch the numerical speed when dominance changes.
+- [ ] Display `↓ ↑ 0 KB/s` when idle.
+
+**Single Direction — Manual**
+
+- [ ] Implement Download selection.
+- [ ] Implement Upload selection.
+- [ ] Display only the selected direction.
+- [ ] Keep the selected direction until changed.
+
+**Single Direction — Automatic**
+
+- [ ] Display only one arrow.
+- [ ] Use the dominant direction engine.
+- [ ] Switch between Download and Upload.
+- [ ] Display `↓ 0 KB/s` when idle.
+
+### Deliverables
+
+- All required display modes.
+- Fully integrated rendering logic.
+- Mode transition tests.
+
+### Completion Criteria
+
+- [ ] Both Directions — Separate works.
+- [ ] Both Directions — Combined works.
+- [ ] Single Direction — Manual Download works.
+- [ ] Single Direction — Manual Upload works.
+- [ ] Single Direction — Automatic works.
+- [ ] All modes update using real network measurements.
+- [ ] Changing modes does not restart network monitoring.
+- [ ] No incorrect or additional speed values are displayed.
+
+---
+
+## Phase 10 — Settings Interface & Preferences
+
+**Priority:** High  
+**Status:** Not Started
+
+### Objective
+
+Implement the compact native Settings window and persistent user preferences.
+
+### Tasks
+
+- [ ] Implement `SettingsManager`.
+- [ ] Implement `PreferencesStore`.
+- [ ] Implement `SettingsView`.
+- [ ] Implement Display Settings.
+- [ ] Add Both Directions configuration.
+- [ ] Add Separate Speeds selection.
+- [ ] Add Combined Arrows selection.
+- [ ] Add Single Direction — Manual.
+- [ ] Add Download selection.
+- [ ] Add Upload selection.
+- [ ] Add Single Direction — Automatic.
+- [ ] Implement Launch at Login toggle.
+- [ ] Add documentation navigation.
+- [ ] Persist display preferences using UserDefaults.
+- [ ] Restore preferences after application relaunch.
+- [ ] Apply setting changes immediately.
+
+### Preference Keys
+
+```text
+displayMode
+bothDirectionsStyle
+manualDirection
+launchAtLogin
+```
+
+### Deliverables
+
+- Complete Settings window.
+- Persistent preferences.
+- Immediate settings updates.
+
+### Completion Criteria
+
+- [ ] All display options are accessible.
+- [ ] Only relevant options are shown for the selected mode.
+- [ ] Settings are saved correctly.
+- [ ] Settings persist after relaunch.
+- [ ] Invalid or missing preferences use safe defaults.
+- [ ] Display updates immediately after configuration changes.
+- [ ] Settings remain compact and easy to use.
+
+---
+
+## Phase 11 — Application Lifecycle & Launch at Login
+
+**Priority:** High  
+**Status:** Not Started
+
+### Objective
+
+Complete application lifecycle handling and optional macOS login launch support.
+
+### Tasks
+
+- [ ] Implement application startup coordination.
+- [ ] Start network monitoring on application launch.
+- [ ] Ensure only one sampling task exists.
+- [ ] Implement monitoring task cancellation.
+- [ ] Handle application termination.
+- [ ] Implement `LoginItemManager`.
+- [ ] Integrate `ServiceManagement`.
+- [ ] Use `SMAppService` where supported.
+- [ ] Implement login launch registration.
+- [ ] Implement login launch unregistration.
+- [ ] Reflect registration state in Settings.
+- [ ] Handle registration errors.
+- [ ] Ensure the application works without login launch.
+
+### Deliverables
+
+- Stable application lifecycle.
+- Optional Launch at Login functionality.
+- Reliable monitoring startup and shutdown.
+
+### Completion Criteria
+
+- [ ] Monitoring starts automatically on launch.
+- [ ] Duplicate sampling tasks are prevented.
+- [ ] Monitoring stops on Quit.
+- [ ] Login launch can be enabled.
+- [ ] Login launch can be disabled.
+- [ ] Registration failures do not crash the application.
+- [ ] No unnecessary background process remains after termination.
+
+---
+
+## Phase 12 — Documentation & About Section
+
+**Priority:** Medium  
+**Status:** Not Started
+
+### Objective
+
+Implement offline documentation and application information inside Settings.
+
+### Tasks
+
+- [ ] Create Setup Guide.
+- [ ] Document DMG installation.
+- [ ] Document copying the app into Applications.
+- [ ] Document first-launch security approval where applicable.
+- [ ] Document Settings access.
+- [ ] Document Launch at Login.
+- [ ] Create Usage Guide.
+- [ ] Explain all display modes.
+- [ ] Explain automatic direction switching.
+- [ ] Explain supported units.
+- [ ] Explain measurement limitations.
+- [ ] Create Terms and Conditions.
+- [ ] Create Privacy Policy.
+- [ ] Implement About ANC.
+- [ ] Display application version.
+- [ ] Display ARRRY branding.
+- [ ] Display copyright information.
+- [ ] Bundle documentation with the application.
+
+### Deliverables
+
+- Complete offline documentation.
+- About section.
+- Documentation navigation inside Settings.
+
+### Completion Criteria
+
+- [ ] All documentation is accessible offline.
+- [ ] Setup instructions are accurate.
+- [ ] Display modes are clearly explained.
+- [ ] Privacy statements match the actual implementation.
+- [ ] Version and organization information are correct.
+- [ ] No placeholder documentation remains.
+
+---
+
+## Phase 13 — Error Handling & Performance Optimization
+
+**Priority:** High  
+**Status:** Not Started
+
+### Objective
+
+Improve stability, resource efficiency, and recovery from unexpected system conditions.
+
+### Tasks
+
+- [ ] Review all network error paths.
+- [ ] Handle interface statistics retrieval failures.
+- [ ] Handle network disconnections.
+- [ ] Handle network reconnections.
+- [ ] Handle interface changes.
+- [ ] Handle invalid counter snapshots.
+- [ ] Handle unexpected sampling delays.
+- [ ] Review task cancellation.
+- [ ] Review actor isolation.
+- [ ] Prevent duplicate monitoring tasks.
+- [ ] Prevent unnecessary menu bar updates.
+- [ ] Reduce unnecessary allocations.
+- [ ] Review memory usage.
+- [ ] Review CPU consumption.
+- [ ] Verify no traffic history is persisted.
+- [ ] Verify no external network requests are made by the monitoring implementation.
+
+### Deliverables
+
+- Improved application stability.
+- Optimized monitoring pipeline.
+- Verified error recovery.
+
+### Completion Criteria
+
+- [ ] Temporary network errors do not crash the app.
+- [ ] Monitoring recovers after reconnection.
+- [ ] No duplicate sampling tasks.
+- [ ] No unnecessary continuous CPU activity.
+- [ ] No persistent traffic history.
+- [ ] No unnecessary external dependencies or requests.
+- [ ] Application remains stable during extended operation.
+
+---
+
+## Phase 14 — Comprehensive Testing & Compatibility
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Perform complete unit, integration, manual, and compatibility testing.
+
+### Tasks
+
+**Unit Testing**
+
+- [ ] Test speed calculations.
+- [ ] Test counter reset handling.
+- [ ] Test elapsed-time calculations.
+- [ ] Test byte formatting.
+- [ ] Test unit boundaries.
+- [ ] Test dominant direction selection.
+- [ ] Test switching hysteresis.
+- [ ] Test settings persistence.
+- [ ] Test interface selection.
+
+**Integration Testing**
+
+- [ ] Test interface statistics to speed calculation.
+- [ ] Test speed calculation to formatter.
+- [ ] Test formatter to menu bar.
+- [ ] Test all display modes.
+- [ ] Test network path changes.
+- [ ] Test Settings updates.
+- [ ] Test application lifecycle.
+
+**Manual Testing**
+
+- [ ] Test Wi-Fi.
+- [ ] Test Ethernet where available.
+- [ ] Test VPN.
+- [ ] Test network disconnection.
+- [ ] Test network reconnection.
+- [ ] Test switching between interfaces.
+- [ ] Test Light Mode.
+- [ ] Test Dark Mode.
+- [ ] Test long-running sessions.
+- [ ] Test launch at login.
+- [ ] Test clean application termination.
+
+**Compatibility Testing**
+
+- [ ] Test Apple Silicon build.
+- [ ] Test Intel build where hardware is available.
+- [ ] Verify minimum macOS version compatibility.
+- [ ] Verify Universal Binary architecture slices.
+- [ ] Verify native application behavior after installation.
+
+### Deliverables
+
+- Complete test suite.
+- Testing report.
+- Verified application behavior.
+
+### Completion Criteria
+
+- [ ] All required unit tests pass.
+- [ ] Integration tests pass.
+- [ ] All display modes work correctly.
+- [ ] Network transitions work correctly.
+- [ ] No known critical or high-severity defects remain.
+- [ ] Target architecture compatibility is verified.
+- [ ] Release blockers are resolved.
+
+---
+
+## Phase 15 — Universal Binary & DMG Packaging
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Prepare the production application and create an installable DMG that works on supported Macs without development tools.
+
+### Tasks
+
+- [ ] Configure Release build settings.
+- [ ] Build for `arm64`.
+- [ ] Build for `x86_64`.
+- [ ] Create the Universal Binary.
+- [ ] Verify architecture slices.
+- [ ] Configure application bundle metadata.
+- [ ] Configure application version.
+- [ ] Configure bundle identifier.
+- [ ] Verify bundled documentation.
+- [ ] Prepare the Applications shortcut.
+- [ ] Create the DMG.
+- [ ] Configure DMG presentation.
+- [ ] Verify the DMG opens.
+- [ ] Verify the app can be dragged into Applications.
+- [ ] Verify the installed app launches independently.
+- [ ] Confirm Xcode and development tools are not required on the destination Mac.
+
+### Expected Output
+
+```text
+dist/
+│
+├── ARRY Network Counter.app
+│
+└── ARRY-Network-Counter.dmg
+```
+
+### Code Signing & Notarization
+
+- [ ] Configure Developer ID signing when credentials are available.
+- [ ] Enable hardened runtime as required.
+- [ ] Sign the application.
+- [ ] Submit for Apple notarization.
+- [ ] Staple the notarization ticket.
+- [ ] Sign and verify the DMG as appropriate.
+- [ ] Verify Gatekeeper behavior.
+
+If signing or notarization credentials are unavailable, document the limitation and produce a clearly identified personal-testing build. Do not claim that an unsigned build is notarized.
+
+### Deliverables
+
+- Universal application bundle.
+- Installable DMG.
+- Build and verification scripts.
+
+### Completion Criteria
+
+- [ ] DMG is generated successfully.
+- [ ] DMG installation works.
+- [ ] Application runs from Applications.
+- [ ] No development environment is required.
+- [ ] Intended architecture slices are verified.
+- [ ] Signing and notarization status is accurately documented.
+
+---
+
+## Phase 16 — Final Release & Deployment Verification
+
+**Priority:** Critical  
+**Status:** Not Started
+
+### Objective
+
+Complete the final release audit and prepare ANC for distribution.
+
+### Tasks
+
+- [ ] Perform a clean installation test.
+- [ ] Test on a Mac without the development environment.
+- [ ] Verify all display modes.
+- [ ] Verify network speed accuracy.
+- [ ] Verify menu bar appearance.
+- [ ] Verify Settings.
+- [ ] Verify Launch at Login.
+- [ ] Verify Quit behavior.
+- [ ] Verify documentation.
+- [ ] Verify privacy implementation.
+- [ ] Verify no backend or database dependencies.
+- [ ] Verify no unnecessary permissions.
+- [ ] Verify application version.
+- [ ] Verify DMG filename.
+- [ ] Verify code signing and notarization where configured.
+- [ ] Prepare final release notes.
+- [ ] Archive the final release artifacts.
+
+### Deliverables
+
+- Release-ready ANC application.
+- Final DMG installer.
+- Release notes.
+- Final verification report.
+
+### Completion Criteria
+
+- [ ] All required functionality is implemented.
+- [ ] All critical tests pass.
+- [ ] No known release-blocking defects remain.
+- [ ] Installation instructions are complete.
+- [ ] Distribution artifacts are verified.
+- [ ] Final release status is documented.
+
+---
+
+# 3. Phase Dependencies
+
+The phases should follow this dependency structure.
+
+```text
+Phase 01: Project Initialization
+        |
+        v
+Phase 02: Core Models
+        |
+        v
+Phase 03: Network Path Detection
+        |
+        v
+Phase 04: Interface Statistics
+        |
+        v
+Phase 05: Speed Calculation
+        |
+        v
+Phase 06: Speed Formatting
+        |
+        v
+Phase 07: Dominant Direction
+        |
+        v
+Phase 08: Menu Bar Integration
+        |
+        v
+Phase 09: Display Modes
+        |
+        v
+Phase 10: Settings & Preferences
+        |
+        v
+Phase 11: Lifecycle & Launch at Login
+        |
+        v
+Phase 12: Documentation
+        |
+        v
+Phase 13: Error Handling & Optimization
+        |
+        v
+Phase 14: Testing & Compatibility
+        |
+        v
+Phase 15: Universal Binary & DMG
+        |
+        v
+Phase 16: Final Release
+```
+
+Some implementation work can proceed in parallel when its dependencies are satisfied. However, a dependent phase must not be declared complete until its required components are integrated and tested.
+
+---
+
+# 4. Definition of Done
+
+A phase is considered complete only when all of the following conditions are satisfied:
+
+1. All tasks within the phase are implemented.
+2. The implementation follows the agreed architecture.
+3. The code compiles successfully.
+4. Relevant tests have been executed.
+5. No known critical defects remain in the phase.
+6. The deliverables are present.
+7. Completion criteria are verified.
+8. `CURRENT_STATUS.md` is updated.
+
+A partially implemented feature must not be marked complete.
+
+If a task is blocked, document the reason and its dependency.
+
+---
+
+# 5. Development Rules
+
+These rules apply throughout the entire project.
+
+### Code Quality
+
+- Use clear and meaningful naming.
+- Keep components modular.
+- Avoid unnecessary abstractions.
+- Avoid duplicated logic.
+- Use appropriate Swift access control.
+- Handle errors explicitly.
+- Use concurrency safely.
+- Keep UI and network logic separate.
+
+### Network Monitoring
+
+- Always use actual macOS interface counters.
+- Do not use simulated speed values in production.
+- Do not blindly sum every network interface.
+- Use actual elapsed sampling time.
+- Handle counter resets.
+- Handle interface changes.
+- Do not persist traffic measurements.
+
+### UI/UX
+
+- Keep the menu bar as the primary interface.
+- Keep Settings compact.
+- Avoid unnecessary windows.
+- Avoid dashboards.
+- Avoid charts.
+- Avoid extra diagnostics.
+- Preserve the agreed display modes.
+- Use native macOS behavior.
+
+### Scope Control
+
+Do not add:
+
+- Speed tests.
+- Network history.
+- Traffic reports.
+- Public IP lookup.
+- Ping monitoring.
+- DNS diagnostics.
+- Packet loss monitoring.
+- Wi-Fi signal monitoring.
+- User accounts.
+- Cloud synchronization.
+- Analytics.
+- Advertisements.
+- Backend services.
+
+Any scope change must first be reflected in `PROJECT_REQUIREMENTS.md` and `TECHNICAL_ARCHITECTURE.md`.
+
+---
+
+# 6. Final Release Checklist
+
+The following checklist must be completed before declaring ANC production-ready.
+
+### Application
+
+- [ ] Native macOS application.
+- [ ] Menu bar-only normal operation.
+- [ ] Correct application identity.
+- [ ] No unnecessary Dock icon.
+
+### Network Monitoring
+
+- [ ] Actual download speed.
+- [ ] Actual upload speed.
+- [ ] Correct interface selection.
+- [ ] Correct elapsed-time calculation.
+- [ ] Network reconnection handling.
+- [ ] Interface-change handling.
+
+### Display Modes
+
+- [ ] Both Directions — Separate Speeds.
+- [ ] Both Directions — Combined Arrows.
+- [ ] Single Direction — Manual Download.
+- [ ] Single Direction — Manual Upload.
+- [ ] Single Direction — Automatic.
+- [ ] Correct idle display.
+
+### Settings
+
+- [ ] All display settings.
+- [ ] Preference persistence.
+- [ ] Launch at Login.
+- [ ] Setup Guide.
+- [ ] Usage Guide.
+- [ ] Terms and Conditions.
+- [ ] Privacy Policy.
+- [ ] About ANC.
+
+### Performance & Reliability
+
+- [ ] Low resource consumption.
+- [ ] No unnecessary background work.
+- [ ] No persistent network history.
+- [ ] No unnecessary permissions.
+- [ ] Stable long-running operation.
+- [ ] Clean application termination.
+
+### Distribution
+
+- [ ] Universal Binary verified.
+- [ ] DMG generated.
+- [ ] Drag-to-Applications installation verified.
+- [ ] Independent launch verified.
+- [ ] Signing verified where configured.
+- [ ] Notarization verified where configured.
+- [ ] Clean Mac installation tested.
+
+---
+
+# 7. Project Completion
+
+ANC development is complete when all 16 phases have been implemented, tested, and verified.
+
+The final deliverable must be:
+
+```text
+ARRY-Network-Counter.dmg
+```
+
+The user should be able to:
+
+1. Transfer the DMG to another supported Mac.
+2. Open the DMG.
+3. Drag `ARRY Network Counter.app` into Applications.
+4. Launch the application.
+5. See real-time network speeds in the menu bar.
+6. Configure the preferred display mode.
+7. Optionally enable Launch at Login.
+
+No Xcode installation, Swift environment, backend, database, or additional development setup should be required on the destination Mac.
+
+---
+
+**Document:** `IMPLEMENTATION_PHASES.md`  
+**Project:** ARRY Network Counter (ANC)  
+**Organization:** ARRRY  
+**Total Phases:** 16  
+**Status:** Ready for Development
