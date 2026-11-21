@@ -25,11 +25,29 @@ public actor MockPreferencesStore: PreferencesStoring {
 public actor MockNetworkMonitor: NetworkMonitoring {
     public var isMonitoring: Bool = false
     public var currentSnapshot: NetworkSnapshot? = nil
+    public var currentPathState: NetworkPathState = .unsatisfied
     public var startCount: Int = 0
     public var stopCount: Int = 0
 
+    private var pathContinuations: [UUID: AsyncStream<NetworkPathState>.Continuation] = [:]
+
+    public var pathStateStream: AsyncStream<NetworkPathState> {
+        AsyncStream { continuation in
+            let id = UUID()
+            continuation.yield(self.currentPathState)
+            self.pathContinuations[id] = continuation
+        }
+    }
+
     public var snapshotStream: AsyncStream<NetworkSnapshot> {
         AsyncStream { _ in }
+    }
+
+    public func simulatePathUpdate(_ state: NetworkPathState) {
+        currentPathState = state
+        for continuation in pathContinuations.values {
+            continuation.yield(state)
+        }
     }
 
     public func startMonitoring() async throws {
@@ -40,6 +58,10 @@ public actor MockNetworkMonitor: NetworkMonitoring {
     public func stopMonitoring() async {
         stopCount += 1
         isMonitoring = false
+        for continuation in pathContinuations.values {
+            continuation.finish()
+        }
+        pathContinuations.removeAll()
     }
 }
 
@@ -58,9 +80,10 @@ public enum ApplicationCoordinatorTests {
         )
         assert(!coordinator.isRunning, "Coordinator must not be running before start()")
         assert(coordinator.preferences == .default, "Initial preferences must equal default")
+        assert(coordinator.pathState == .unsatisfied, "Initial pathState must equal unsatisfied")
         count += 1
 
-        // Test 2: Coordinator start() loads preferences and initiates monitor
+        // Test 2: Coordinator start() loads preferences, initiates monitor, and syncs pathState
         await coordinator.start()
         assert(coordinator.isRunning, "Coordinator must be running after start()")
         let loadCount = await mockStore.loadCount
@@ -90,7 +113,20 @@ public enum ApplicationCoordinatorTests {
         assert(saved == updated, "Saved preferences in store must match updated values")
         count += 1
 
-        // Test 5: stop() terminates monitoring
+        // Test 5: Live path update propagation from monitor to coordinator
+        await mockMonitor.simulatePathUpdate(.satisfiedWiFi)
+        // Allow brief async propagation
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.pathState == .satisfiedWiFi, "Coordinator pathState must update to satisfiedWiFi")
+        count += 1
+
+        // Test 6: Disconnection propagation
+        await mockMonitor.simulatePathUpdate(.unsatisfied)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        assert(coordinator.pathState == .unsatisfied, "Coordinator pathState must update to unsatisfied")
+        count += 1
+
+        // Test 7: stop() terminates monitoring
         await coordinator.stop()
         assert(!coordinator.isRunning, "Coordinator must not be running after stop()")
         let stopCount = await mockMonitor.stopCount

@@ -46,15 +46,15 @@ The application will remain minimal, local-first, and independent of external se
 | Current Status Tracking | Active |
 | Xcode Project Initialization | Completed |
 | Core Implementation | Completed |
-| Network Monitoring | Not Started |
+| Network Monitoring | Path Detection Completed (Counters Pending Phase 04) |
 | Menu Bar Integration | Not Started |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02 Unit Tests) |
+| Testing | Completed (Phase 02 & Phase 03 Unit Tests) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 02 Completed — Ready for Phase 03 (Network Path Detection)  
-**Next Action:** Begin Phase 03 implementation.
+**Current Development Phase:** Phase 03 Completed — Ready for Phase 04 (Network Interface Statistics)  
+**Next Action:** Begin Phase 04 implementation.
 
 ---
 
@@ -88,7 +88,7 @@ All four documents must remain consistent.
 |---|---|---|
 | 01 | Project Initialization & Configuration | Completed |
 | 02 | Core Models & Application Foundation | Completed |
-| 03 | Network Path Detection | Not Started |
+| 03 | Network Path Detection | Completed |
 | 04 | Network Interface Statistics | Not Started |
 | 05 | Network Speed Calculation Engine | Not Started |
 | 06 | Speed Formatting Engine | Not Started |
@@ -108,11 +108,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 2 |
+| Completed Phases | 3 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 14 |
-| Overall Implementation Progress | 12.5% |
+| Not Started Phases | 13 |
+| Overall Implementation Progress | 18.75% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,48 +120,44 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 02 — Core Models & Application Foundation
+### Phase 03 — Network Path Detection
 
 **Priority:** Critical  
 **Status:** Completed
 
 #### Objective
 
-Implement the core data models, protocols, preferences storage contracts, and application coordination structure.
+Implement native macOS network path monitoring using Apple's Network.framework (`NWPathMonitor`) to detect connectivity, identify available interface types, and publish network path changes safely to the application coordination layer.
 
 #### Completed Tasks
 
-- [x] Implement `NetworkSpeed` (raw bytes/second representation, clamped non-negative, Comparable, Sendable).
-- [x] Implement `NetworkSnapshot` (immutable timestamped received/transmitted counters and interface metadata).
-- [x] Implement `NetworkInterface` (strongly typed interface category, index, usability, and loopback flags).
-- [x] Implement `DisplayMode` (all 3 approved modes, Codable, CaseIterable, Sendable).
-- [x] Implement `BothDirectionsStyle` (separate speeds and combined arrows, Codable, CaseIterable).
-- [x] Implement `NetworkDirection` (download and upload, opposite direction helper, Codable).
-- [x] Implement `AppPreferences` (persisted settings model with approved default values per ADR-022).
-- [x] Define `NetworkMonitoring` protocol (start/stop lifecycle, snapshot stream, Sendable).
-- [x] Define `PreferencesStoring` protocol with `InMemoryPreferencesStore` and `UserDefaultsPreferencesStore`.
-- [x] Implement `ApplicationCoordinator` (`@MainActor`, dependency injection, preferences & lifecycle coordination).
-- [x] Establish Swift 6 concurrency, actor isolation, and MainActor boundaries.
-- [x] Centralize shared constants in `AppConfiguration`.
-- [x] Create comprehensive unit test suite (`Tests/`, `Scripts/test.sh`) covering all models and coordinator (27/27 assertions passed).
+- [x] Integrate Apple's `Network.framework`.
+- [x] Implement `NetworkPathState` (connectivity status: satisfied, unsatisfied, requiresConnection; interface categories; expensive/constrained flags).
+- [x] Implement `NetworkPathManager` (actor managing `NWPathMonitor` lifecycle, serial queue callbacks, duplicate suppression, session tokens).
+- [x] Implement `PathMonitorProviding` protocol with `SystemPathMonitorProvider` and `MockPathMonitorProvider`.
+- [x] Extend `NetworkMonitoring` protocol with `currentPathState` and `pathStateStream`.
+- [x] Integrate live network path state observation into `ApplicationCoordinator` (`@Published pathState`).
+- [x] Implement comprehensive unit tests covering path state, manager lifecycle, and coordinator integration (`Tests/NetworkPathStateTests.swift`, `Tests/NetworkPathManagerTests.swift`).
+- [x] Verify strict concurrency diagnostics and build both Debug and Release Universal Binary bundles.
 
 #### Deliverables Produced
 
-- Core Swift models in `ARRYNetworkCounter/Core/Models/`.
-- Protocol definitions in `ARRYNetworkCounter/Core/Protocols/`.
-- Application coordinator in `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
-- Shared configuration in `ARRYNetworkCounter/Core/Utilities/AppConfiguration.swift`.
-- Unit test suite and runner in `Tests/` with verification script `Scripts/test.sh`.
+- Network path state model in `ARRYNetworkCounter/Services/Network/NetworkPathState.swift`.
+- Network path manager in `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
+- Extended `NetworkMonitoring` contract in `ARRYNetworkCounter/Core/Protocols/NetworkMonitoring.swift`.
+- Updated `ApplicationCoordinator` in `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
+- Unit test suites executing 44 assertion checks with 100% pass rate.
 
 #### Completion Verification
 
-- [x] All core models compile cleanly under Swift 6.
-- [x] Models have strictly segregated responsibilities without UI or formatting coupling.
-- [x] Strongly typed enums for all display configurations.
-- [x] No UI-specific logic inside network calculation models.
-- [x] 100% of unit tests pass (27 passed, 0 failed).
+- [x] Wi-Fi and Ethernet interface categories correctly detected and mapped.
+- [x] Disconnection and reconnection states correctly detected and propagated.
+- [x] Duplicate consecutive state suppression verified.
+- [x] Stale callback rejection verified via session tokens.
+- [x] Idempotent start/stop monitoring verified.
+- [x] 100% of unit tests pass (44 passed, 0 failed).
 
-**Next Step:** Proceed to Phase 03 — Network Path Detection.
+**Next Step:** Proceed to Phase 04 — Network Interface Statistics.
 
 ---
 
@@ -184,6 +180,10 @@ This section must contain only features that have actually been implemented and 
 - Protocol contracts: `NetworkMonitoring`, `PreferencesStoring` (with in-memory and UserDefaults implementations).
 - Central application coordinator: `ApplicationCoordinator` (`@MainActor`).
 - Centralized configuration constants: `AppConfiguration`.
+- Native macOS network path awareness: `NetworkPathState` (connectivity status, interface categorization, expensive/constrained flags).
+- Native macOS network path manager: `NetworkPathManager` (actor managing `NWPathMonitor` lifecycle, serial queue callbacks, duplicate state suppression, session-based stale callback rejection).
+- Protocol-driven path monitoring provider: `PathMonitorProviding` with `SystemPathMonitorProvider` and `MockPathMonitorProvider`.
+- Live path update streaming and `@Published pathState` observation in `ApplicationCoordinator`.
 - Automated test suite and test runner: `Tests/`, `Scripts/test.sh`.
 
 ### Verified Functionality
@@ -192,7 +192,7 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing.
-- Full Phase 02 unit test suite passes: 27 assertions verified across 6 test suites with 0 failures in 1.12 ms.
+- Full Phase 02 and Phase 03 unit test suites pass: 44 assertions verified across 8 test suites with 0 failures in 25.88 ms.
 
 ### Important Rule
 
@@ -357,6 +357,7 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Documentation | Created CURRENT_STATUS.md | Completed |
 | 2026-11-21 | Phase 01 | Initialized native Xcode project, directory structure, Swift 6 entry point, and verified Universal Binary build | Completed |
 | 2026-11-21 | Phase 02 | Implemented core models, protocol abstractions, application coordinator, configuration constants, and verified unit test suite | Completed |
+| 2026-11-21 | Phase 03 | Integrated Network.framework, implemented NetworkPathManager and NetworkPathState, connected path observation to ApplicationCoordinator, and verified tests | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -364,15 +365,14 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 02 is completed and verified. The immediate development sequence for Phase 03 is:
+Phase 03 is completed and verified. The immediate development sequence for Phase 04 is:
 
-1. Integrate Apple's `Network.framework`.
-2. Implement `NetworkPathManager` and manage `NWPathMonitor` lifecycle.
-3. Detect available network paths (Wi-Fi, Ethernet, Cellular, Loopback).
-4. Detect network connectivity changes (connected vs disconnected).
-5. Identify active interface types and publish path transitions to coordinator.
-6. Ensure clean monitoring cancellation and teardown.
-7. Write unit and mock integration tests for network path detection.
+1. Implement `NetworkInterfaceProvider` to read received and transmitted byte counters (`getifaddrs()`, `AF_LINK`, `struct if_data`, `ifi_ibytes`, `ifi_obytes`).
+2. Implement safe C memory management and resource deallocation (`freeifaddrs()`).
+3. Implement `NetworkInterfaceSelector` to correlate active routable interfaces with path state.
+4. Filter loopback, inactive, and duplicate virtual/tunnel interfaces.
+5. Create network snapshot provider producing verified `NetworkSnapshot` instances.
+6. Write unit and integration tests for interface statistics retrieval and filtering.
 
 ---
 

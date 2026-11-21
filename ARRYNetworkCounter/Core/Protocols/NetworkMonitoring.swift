@@ -14,6 +14,12 @@ public protocol NetworkMonitoring: Sendable {
     /// Asynchronous stream yielding periodic or event-driven network snapshots.
     var snapshotStream: AsyncStream<NetworkSnapshot> { get async }
 
+    /// The current network path state, representing connectivity and available interfaces.
+    var currentPathState: NetworkPathState { get async }
+
+    /// Asynchronous stream yielding network path state updates.
+    var pathStateStream: AsyncStream<NetworkPathState> { get async }
+
     /// Initiates continuous network monitoring.
     func startMonitoring() async throws
 
