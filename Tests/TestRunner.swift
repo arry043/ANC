@@ -1,11 +1,11 @@
 import Foundation
 
-/// Executable test harness executing all Phase 02 unit test suites.
+/// Executable test harness executing all Phase 02 and Phase 03 unit test suites.
 @main
 struct TestRunner {
     static func main() async {
         print("==================================================")
-        print(" ARRY Network Counter — Phase 02 Test Execution   ")
+        print(" ARRY Network Counter — Unit Test Execution       ")
         print("==================================================")
 
         var totalPassed = 0
@@ -62,7 +62,27 @@ struct TestRunner {
             totalFailed += 1
         }
 
-        // 6. ApplicationCoordinatorTests
+        // 6. NetworkPathStateTests (Phase 03)
+        do {
+            let passed = try NetworkPathStateTests.run()
+            print("  [PASS] NetworkPathStateTests:      \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkPathStateTests:      Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 7. NetworkPathManagerTests (Phase 03)
+        do {
+            let passed = try await NetworkPathManagerTests.run()
+            print("  [PASS] NetworkPathManagerTests:    \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] NetworkPathManagerTests:    Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 8. ApplicationCoordinatorTests (Phase 02 & Phase 03)
         do {
             let passed = try await ApplicationCoordinatorTests.run()
             print("  [PASS] ApplicationCoordinatorTests: \(passed) assertion checks passed")
@@ -77,7 +97,7 @@ struct TestRunner {
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 6 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 8 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")
@@ -85,7 +105,7 @@ struct TestRunner {
         if totalFailed > 0 {
             exit(1)
         } else {
-            print("ALL PHASE 02 UNIT TESTS PASSED SUCCESSFULLY.")
+            print("ALL UNIT TESTS PASSED SUCCESSFULLY.")
             exit(0)
         }
     }

@@ -9,14 +9,20 @@ public final class ApplicationCoordinator: ObservableObject {
     /// Active user preferences.
     @Published public private(set) var preferences: AppPreferences
 
+    /// Current network path state published for UI presentation and subsystem coordination.
+    @Published public private(set) var pathState: NetworkPathState = .unsatisfied
+
     /// Indicates whether the application monitoring lifecycle is actively running.
     @Published public private(set) var isRunning: Bool = false
 
     /// Underlying preferences store.
     private let preferencesStore: any PreferencesStoring
 
-    /// Optional network monitor instance injected for lifecycle management.
+    /// Network monitor instance injected for lifecycle management.
     private let networkMonitor: (any NetworkMonitoring)?
+
+    /// Observation task tracking asynchronous path changes.
+    private var pathObservationTask: Task<Void, Never>?
 
     /// Creates a new `ApplicationCoordinator`.
     ///
@@ -26,7 +32,7 @@ public final class ApplicationCoordinator: ObservableObject {
     ///   - initialPreferences: Initial preferences to bootstrap state before async load.
     public init(
         preferencesStore: any PreferencesStoring = UserDefaultsPreferencesStore(),
-        networkMonitor: (any NetworkMonitoring)? = nil,
+        networkMonitor: (any NetworkMonitoring)? = NetworkPathManager(),
         initialPreferences: AppPreferences = .default
     ) {
         self.preferencesStore = preferencesStore
@@ -41,8 +47,16 @@ public final class ApplicationCoordinator: ObservableObject {
         preferences = await preferencesStore.loadPreferences()
 
         if let monitor = networkMonitor {
+            pathState = await monitor.currentPathState
             do {
                 try await monitor.startMonitoring()
+                let stream = await monitor.pathStateStream
+                pathObservationTask = Task { [weak self] in
+                    for await newPathState in stream {
+                        guard let self = self, self.isRunning else { break }
+                        self.pathState = newPathState
+                    }
+                }
             } catch {
                 // Safe recovery if monitor fails to start
             }
@@ -54,6 +68,9 @@ public final class ApplicationCoordinator: ObservableObject {
     /// Stops the application coordination lifecycle and halts active monitoring.
     public func stop() async {
         guard isRunning else { return }
+
+        pathObservationTask?.cancel()
+        pathObservationTask = nil
 
         if let monitor = networkMonitor {
             await monitor.stopMonitoring()

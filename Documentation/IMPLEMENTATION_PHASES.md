@@ -37,8 +37,8 @@ Each phase must produce a working, testable result before the next dependent pha
 |---|---|---|---|
 | 01 | Project Initialization & Configuration | Critical | Completed |
 | 02 | Core Models & Application Foundation | Critical | Completed |
-| 03 | Network Path Detection | Critical | Not Started |
-| 04 | Network Interface Statistics | Critical |
+| 03 | Network Path Detection | Critical | Completed |
+| 04 | Network Interface Statistics | Critical | Not Started |
 | 05 | Network Speed Calculation Engine | Critical |
 | 06 | Speed Formatting Engine | High |
 | 07 | Dominant Direction & Switching Logic | High |
@@ -142,7 +142,7 @@ Implement the core data models, protocols, and application coordination structur
 ## Phase 03 — Network Path Detection
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -150,32 +150,33 @@ Implement native macOS network path monitoring and connectivity change detection
 
 ### Tasks
 
-- [ ] Integrate Apple's `Network.framework`.
-- [ ] Implement `NetworkPathManager`.
-- [ ] Implement `NWPathMonitor` lifecycle management.
-- [ ] Detect available network paths.
-- [ ] Detect network connectivity changes.
-- [ ] Identify available interface types.
-- [ ] Handle connected and disconnected states.
-- [ ] Handle network path changes.
-- [ ] Publish path changes to the monitoring coordinator.
-- [ ] Ensure monitoring can be stopped cleanly.
+- [x] Integrate Apple's `Network.framework`.
+- [x] Implement `NetworkPathManager`.
+- [x] Implement `NWPathMonitor` lifecycle management.
+- [x] Detect available network paths.
+- [x] Detect network connectivity changes.
+- [x] Identify available interface types.
+- [x] Handle connected and disconnected states.
+- [x] Handle network path changes.
+- [x] Publish path changes to the monitoring coordinator.
+- [x] Ensure monitoring can be stopped cleanly.
 
 ### Deliverables
 
-- Working network path monitor.
-- Connectivity state management.
+- Working network path monitor (`NetworkPathManager.swift`).
+- Connectivity state management (`NetworkPathState.swift`).
 - Interface information available to the selection layer.
+- Unit test suite for path state, lifecycle, and coordinator integration (`Tests/NetworkPathStateTests.swift`, `Tests/NetworkPathManagerTests.swift`).
 
 ### Completion Criteria
 
-- [ ] Wi-Fi connectivity is detected.
-- [ ] Ethernet connectivity is detected where available.
-- [ ] Disconnection is detected.
-- [ ] Reconnection is detected.
-- [ ] Interface changes trigger re-evaluation.
-- [ ] No duplicate monitoring instances are created.
-- [ ] Monitoring shuts down cleanly.
+- [x] Wi-Fi connectivity is detected.
+- [x] Ethernet connectivity is detected where available.
+- [x] Disconnection is detected.
+- [x] Reconnection is detected.
+- [x] Interface changes trigger re-evaluation.
+- [x] No duplicate monitoring instances are created.
+- [x] Monitoring shuts down cleanly.
 
 ---
 

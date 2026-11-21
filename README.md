@@ -145,4 +145,5 @@ Full project specifications and technical documentation are maintained in the [`
 
 - **Completed:** Phase 01 — Project Initialization & Configuration (native Xcode project established, Swift 6 entry point configured, Universal Binary verified, AppKit/SwiftUI lifecycle connected, menu bar utility metadata validated).
 - **Completed:** Phase 02 — Core Models & Application Foundation (implemented `NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`, `DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`, `AppPreferences`, `NetworkMonitoring`, `PreferencesStoring`, `ApplicationCoordinator`, `AppConfiguration`, and verified unit test suite).
-- **Next Up:** Phase 03 — Network Path Detection (integrating Apple's `Network.framework` and `NWPathMonitor` for network path awareness).
+- **Completed:** Phase 03 — Network Path Detection (integrated Apple's `Network.framework`, implemented `NetworkPathManager` actor and `NetworkPathState` domain model, connected path streaming to `ApplicationCoordinator`, and verified 44 unit tests).
+- **Next Up:** Phase 04 — Network Interface Statistics (implementing `NetworkInterfaceProvider` to retrieve system received/transmitted byte counters via `getifaddrs()`).

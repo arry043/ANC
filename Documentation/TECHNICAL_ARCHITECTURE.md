@@ -368,19 +368,27 @@ The application must retrieve actual network traffic counters from macOS rather 
 
 ### 7.1 Network Path Detection
 
-Use Apple's `Network.framework`, particularly `NWPathMonitor`.
+Implemented via `NetworkPathManager` leveraging Apple's `Network.framework` and `NWPathMonitor`.
 
-Responsibilities:
+#### Implementation Architecture
 
-- Detect whether a usable network path exists.
-- Detect connectivity changes.
-- Identify available interface types.
-- React to network transitions.
-- Trigger interface re-evaluation.
+- **Monitor Ownership:** `NetworkPathManager` (actor) owns the `NWPathMonitor` instance and manages its lifecycle.
+- **Queue Isolation:** Monitor updates are dispatched onto a dedicated serial utility queue (`in.arrry.networkcounter.pathmonitor`).
+- **Domain State Decoupling:** Callback paths are immediately converted into immutable `NetworkPathState` domain models, preventing framework objects from leaking across concurrency domains.
+- **Provider Abstraction:** `PathMonitorProviding` protocol enables test injection with `MockPathMonitorProvider`, while production uses `SystemPathMonitorProvider`.
+- **Event Propagation:** Exposes `pathStateStream: AsyncStream<NetworkPathState>`, observed by `ApplicationCoordinator` on `@MainActor`.
+- **Duplicate Suppression:** Compares consecutive states and drops identical updates to minimize churn.
+- **Session Tokens:** Employs generation counters (`currentSessionID`) to ensure callbacks from terminated monitoring sessions cannot overwrite state after restart.
 
-`NWPathMonitor` is responsible for network path awareness, not byte-counter measurement.
+#### Responsibilities:
 
-It does not directly provide the received and transmitted byte totals needed for speed calculation.
+- Detect whether a usable network path exists (`status == .satisfied`).
+- Detect connectivity transitions (`satisfied`, `unsatisfied`, `requiresConnection`).
+- Identify available interface types (Wi-Fi, Ethernet, Cellular, Loopback, Other).
+- Detect expensive (cellular/hotspot) or constrained (low-data) paths.
+- React to network transitions and trigger interface re-evaluation in Phase 04.
+
+`NWPathMonitor` is responsible for network path awareness, not byte-counter measurement. It does not directly provide the received and transmitted byte totals needed for speed calculation.
 
 ### 7.2 Interface Statistics
 
