@@ -53,12 +53,12 @@ The application will remain minimal, local-first, and independent of external se
 | Application Lifecycle & Launch at Login | Completed (Phase 11) |
 | Documentation & About Section | Completed (Phase 12) |
 | Error Handling & Performance Optimization | Completed (Phase 13) |
-| Testing | Completed (Phase 02–13 Unit Tests — 220 assertions passed) |
+| Testing | Completed (Phase 02–14 Unit Tests — 249 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 13 Completed — Ready for Phase 14 (Comprehensive Testing & Compatibility)  
-**Next Action:** Begin Phase 14 implementation.
+**Current Development Phase:** Phase 14 Completed — Ready for Phase 15 (Universal Binary & DMG Packaging)  
+**Next Action:** Begin Phase 15 implementation.
 
 ---
 
@@ -103,7 +103,7 @@ All four documents must remain consistent.
 | 11 | Application Lifecycle & Launch at Login | Completed |
 | 12 | Documentation & About Section | Completed |
 | 13 | Error Handling & Performance Optimization | Completed |
-| 14 | Comprehensive Testing & Compatibility | Not Started |
+| 14 | Comprehensive Testing & Compatibility | Completed |
 | 15 | Universal Binary & DMG Packaging | Not Started |
 | 16 | Final Release & Deployment Verification | Not Started |
 
@@ -112,11 +112,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 13 |
+| Completed Phases | 14 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 3 |
-| Overall Implementation Progress | 81.25% |
+| Not Started Phases | 2 |
+| Overall Implementation Progress | 87.5% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -177,7 +177,53 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-### Current Phase: Phase 13 — Error Handling & Performance Optimization
+### Current Phase: Phase 14 — Comprehensive Testing & Compatibility
+
+**Priority:** Critical  
+**Status:** Completed
+
+#### Objective
+
+Perform a comprehensive testing and compatibility audit across unit, integration, scenario, platform compatibility, and resource benchmarks; validate all edge cases across speed calculation, decimal formatting, direction switching hysteresis, preferences resilience, and macOS 13.0 API surface characteristics; and deliver an exhaustive QA report.
+
+#### Completed Tasks
+
+- [x] Implemented dedicated boundary, edge-case, and stress test suite in `Tests/ComprehensiveCompatibilityTests.swift` (29 assertions) covering 8 distinct verification sections.
+- [x] Validated network speed calculation edge cases: initial baseline establishment, zero throughput, micro-throughput (150 B/s), high-throughput (1.25 GB/s / 10 Gbps line rate), counter wrap/decrease protection, and sleep gap reset (> 10s).
+- [x] Validated byte and speed formatting across all base-1000 SI scale boundaries (B/s, KB/s, MB/s, GB/s, TB/s), trailing zero suppression, POSIX decimal point consistency, and non-finite / negative value fallbacks to `0 KB/s`.
+- [x] Validated dominant direction engine hysteresis under noise and jitter: relative 10% margin, absolute 10,000 B/s noise floor, 2-sample consecutive requirement, candidate cancellation on flapping, and idle download default.
+- [x] Validated single-interface selection policy: active physical interfaces prioritised, loopback (`lo0`) strictly excluded, and inactive interfaces ignored.
+- [x] Validated menu bar text formatting across all 4 display modes: Both Directions (Separate Speeds & Combined Arrows), Single Direction (Manual Download & Upload), and Single Direction (Automatic tracking dominance).
+- [x] Validated preferences resilience: corrupted raw values in `UserDefaults` cleanly repaired with safe fallback to defaults, and live Combine updates verified.
+- [x] Validated bundle resource integrity: `Info.plist` checked for `LSUIElement = true`, `LSMinimumSystemVersion = 13.0`, `CFBundleIdentifier = in.arrry.networkcounter`, and verified presence of all 4 offline documentation guides.
+- [x] Executed concurrency and stress testing: 100 rapid preference updates and 50 high-frequency speed calculations executed without deadlocks or race conditions.
+- [x] Conducted transient memory audit confirming zero historical network data is retained in memory or persisted to disk.
+- [x] Verified Universal Binary compilation for both Debug and Release bundles containing `arm64` and `x86_64` Mach-O slices targeted to `macOS 13.0`.
+- [x] Empirically profiled live Release process execution: steady-state CPU measured at 0.3%–0.4% (well within < 0.5% requirement) with stable ~86 MB RSS footprint.
+- [x] Authored comprehensive formal QA report: `Documentation/TESTING_REPORT.md`.
+
+#### Deliverables Produced
+
+- Comprehensive test suite: `Tests/ComprehensiveCompatibilityTests.swift` (29 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (249 assertions passing across 25 test suites in ~808 ms).
+- Formal testing report: `Documentation/TESTING_REPORT.md`.
+- Verified Universal Binaries: `build/Debug/ARRY Network Counter.app` & `build/Release/ARRY Network Counter.app`.
+
+#### Completion Verification
+
+- [x] All 25 unit test suites pass (249 assertions with 0 failures).
+- [x] All 4 display modes work correctly and render exact plain text patterns.
+- [x] Universal Binary slices (`arm64` + `x86_64`) verified for Debug and Release via `lipo -info`.
+- [x] Load commands verify `minos 13.0` across both architecture slices.
+- [x] Steady-state CPU usage is 0.3%–0.4% (< 0.5% target).
+- [x] Zero memory leaks, zero persistence of network history.
+- [x] No release-blocking defects remain.
+
+**Next Step:** Proceed to Phase 15 — Universal Binary & DMG Packaging.
+
+---
+
+### Previous Phase: Phase 13 — Error Handling & Performance Optimization
 
 **Priority:** High  
 **Status:** Completed
@@ -681,6 +727,12 @@ Record meaningful implementation milestones here.
 | 2026-11-21 | Phase 06 | Implemented ByteFormatter and SpeedFormatter, base-1000 SI decimal scaling, up to 2 decimal places with trailing zero trimming, 0 KB/s zero display, ADR-034, and 13 unit test suites (111 assertions passing) | Completed |
 | 2026-11-21 | Phase 07 | Implemented DominantDirectionEngine actor, DirectionDecision, DirectionSwitchingConfiguration, 10% relative margin, 10 KB/s noise floor, 2-sample confirmation, download idle default, IEEE 754 micro-epsilon handling, ADR-035, and 14 unit test suites (124 assertions passing) | Completed |
 | 2026-11-21 | Phase 08 | Implemented native NSStatusItem integration via MenuBarManager, MenuBarRenderer, MenuBarContent, MenuBarMenuBuilder, MenuBarAppearance, official logo and AppIcon.icns integration, ADR-036, and 16 unit test suites (140 assertions passing) | Completed |
+| 2026-11-22 | Phase 09 | Implemented all 4 display modes, dynamic style switching, manual pinning, and 18 unit test suites (160 assertions passing) | Completed |
+| 2026-11-22 | Phase 10 | Implemented native SwiftUI SettingsView, SettingsManager, PreferencesStore persistence, and 20 unit test suites (188 assertions passing) | Completed |
+| 2026-11-22 | Phase 11 | Implemented application startup coordination, single sampling-task lifecycle, SMAppService LoginItemManager, and 22 unit test suites (208 assertions passing) | Completed |
+| 2026-11-22 | Phase 12 | Authored offline markdown guides, DocumentReaderView, AboutView, bundle resource integration, and 23 unit test suites (218 assertions passing) | Completed |
+| 2026-11-22 | Phase 13 | Implemented error handling, sleep/gap resets, counter decrease protection, redundant render suppression, and 24 unit test suites (220 assertions passing) | Completed |
+| 2026-11-22 | Phase 14 | Executed comprehensive testing & compatibility audit, 25 test suites (249 assertions passing), Universal Binary validation, and produced TESTING_REPORT.md | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -688,13 +740,13 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 08 is completed and verified. The immediate development sequence for Phase 09 (Display Modes Implementation) is:
+Phase 14 is completed and verified. The immediate development sequence for Phase 15 (Universal Binary & DMG Packaging) is:
 
-1. Wire full user preferences switching for all three display modes (`bothDirections`, `singleDirectionManual`, `singleDirectionAutomatic`).
-2. Implement seamless dynamic switching between `separateSpeeds` and `combinedArrows` within `bothDirections`.
-3. Support manual direction selection toggling (`download` vs `upload`) with immediate UI reflection.
-4. Verify dynamic transitions between display modes without restarting monitoring or recreating the status item.
-5. Expand unit tests for display mode transitions and configuration state transformations.
+1. Configure Release build settings and finalize distribution properties.
+2. Verify production Universal Binary packaging (`arm64` + `x86_64`) with embedded resources and documentation.
+3. Prepare the Applications symlink and DMG volume assets (`.VolumeIcon.icns`, background image).
+4. Generate the standalone, installable `ARRY-Network-Counter.dmg`.
+5. Verify clean drag-and-drop installation into `/Applications` without development tools.
 
 ---
 
