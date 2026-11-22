@@ -70,6 +70,8 @@ public enum BaselineResetReason: String, Sendable, Equatable, Codable {
     case disconnected
     /// Baseline was reset manually or during a lifecycle transition.
     case manualReset
+    /// The elapsed interval exceeded the maximum validity limit (e.g. system sleep/suspension).
+    case intervalTooLong
 }
 
 /// The specific rationale when a network sample is rejected for calculation.
@@ -80,6 +82,10 @@ public enum SampleRejectionReason: String, Sendable, Equatable, Codable {
     case reversedTimestamp
     /// Elapsed seconds calculation produced a non-finite or non-positive value.
     case nonFiniteElapsedSeconds
+    /// The sample arrived too quickly after the baseline (< 50 ms), risking divide-by-near-zero jitter.
+    case intervalTooShort
+    /// The calculated speed value was non-finite (NaN or infinite).
+    case nonFiniteCalculatedSpeed
 }
 
 /// Result of evaluating a network counter snapshot against the current calculation baseline.
@@ -114,14 +120,29 @@ public enum SpeedCalculationResult: Sendable, Equatable {
 /// `NetworkSpeedCalculator` enforces monotonic elapsed-time calculations, detects counter resets and interface
 /// transitions, and produces immutable `SpeedCalculationResult` values.
 public actor NetworkSpeedCalculator {
+    /// Default maximum acceptable measurement interval in seconds (10.0 s).
+    /// Used by production coordinator to prevent sleep/wake intervals from generating misleading speed spikes.
+    public static let defaultMaximumIntervalSeconds: Double = 10.0
+
+    /// Optional maximum allowable elapsed time interval in seconds before resetting baseline.
+    /// When set and the elapsed interval exceeds this duration, the measurement is treated
+    /// as a discontinuity, resetting baseline to the current snapshot.
+    public let maximumMeasurementIntervalSeconds: Double?
+
     /// The current baseline snapshot used for subsequent delta calculations.
     public private(set) var baselineSnapshot: NetworkSnapshot?
 
     /// Creates a new `NetworkSpeedCalculator`.
     ///
-    /// - Parameter initialBaseline: Optional pre-existing baseline snapshot (defaults to `nil`).
-    public init(initialBaseline: NetworkSnapshot? = nil) {
+    /// - Parameters:
+    ///   - initialBaseline: Optional pre-existing baseline snapshot (defaults to `nil`).
+    ///   - maximumMeasurementIntervalSeconds: Optional upper bound on elapsed seconds (defaults to `nil`).
+    public init(
+        initialBaseline: NetworkSnapshot? = nil,
+        maximumMeasurementIntervalSeconds: Double? = nil
+    ) {
         self.baselineSnapshot = initialBaseline
+        self.maximumMeasurementIntervalSeconds = maximumMeasurementIntervalSeconds
     }
 
     /// Calculates transfer speeds by comparing `currentSnapshot` against the stored baseline.
@@ -157,6 +178,12 @@ public actor NetworkSpeedCalculator {
             return .sampleRejected(reason: .nonFiniteElapsedSeconds)
         }
 
+        // 4a. Guard against excessively delayed samples if a maximum interval limit is configured
+        if let maxInterval = maximumMeasurementIntervalSeconds, elapsedSeconds > maxInterval {
+            self.baselineSnapshot = currentSnapshot
+            return .baselineReset(reason: .intervalTooLong)
+        }
+
         // 5. Detect counter decrease / reset
         guard currentSnapshot.receivedBytes >= previous.receivedBytes,
               currentSnapshot.transmittedBytes >= previous.transmittedBytes else {
@@ -171,6 +198,11 @@ public actor NetworkSpeedCalculator {
         // 7. Calculate speeds in bytes per second
         let downloadBps = Double(deltaReceived) / elapsedSeconds
         let uploadBps = Double(deltaTransmitted) / elapsedSeconds
+
+        guard downloadBps.isFinite && uploadBps.isFinite && downloadBps >= 0 && uploadBps >= 0 else {
+            self.baselineSnapshot = currentSnapshot
+            return .sampleRejected(reason: .nonFiniteCalculatedSpeed)
+        }
 
         let downloadSpeed = NetworkSpeed(bytesPerSecond: downloadBps)
         let uploadSpeed = NetworkSpeed(bytesPerSecond: uploadBps)

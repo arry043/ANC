@@ -52,12 +52,13 @@ The application will remain minimal, local-first, and independent of external se
 | Settings Interface | Completed (Phase 10) |
 | Application Lifecycle & Launch at Login | Completed (Phase 11) |
 | Documentation & About Section | Completed (Phase 12) |
-| Testing | Completed (Phase 02–12 Unit Tests — 208 assertions passed) |
+| Error Handling & Performance Optimization | Completed (Phase 13) |
+| Testing | Completed (Phase 02–13 Unit Tests — 220 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 12 Completed — Ready for Phase 13 (Error Handling & Performance Optimization)  
-**Next Action:** Begin Phase 13 implementation.
+**Current Development Phase:** Phase 13 Completed — Ready for Phase 14 (Comprehensive Testing & Compatibility)  
+**Next Action:** Begin Phase 14 implementation.
 
 ---
 
@@ -101,7 +102,7 @@ All four documents must remain consistent.
 | 10 | Settings Interface & Preferences | Completed |
 | 11 | Application Lifecycle & Launch at Login | Completed |
 | 12 | Documentation & About Section | Completed |
-| 13 | Error Handling & Performance Optimization | Not Started |
+| 13 | Error Handling & Performance Optimization | Completed |
 | 14 | Comprehensive Testing & Compatibility | Not Started |
 | 15 | Universal Binary & DMG Packaging | Not Started |
 | 16 | Final Release & Deployment Verification | Not Started |
@@ -111,11 +112,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 12 |
+| Completed Phases | 13 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 4 |
-| Overall Implementation Progress | 75.0% |
+| Not Started Phases | 3 |
+| Overall Implementation Progress | 81.25% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -176,7 +177,59 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-### Current Phase: Phase 12 — Documentation & About Section
+### Current Phase: Phase 13 — Error Handling & Performance Optimization
+
+**Priority:** High  
+**Status:** Completed
+
+#### Objective
+
+Conduct a comprehensive stability, reliability, resource-usage, and performance audit of the monitoring pipeline, implement interface retrieval failure recovery, enforce sleep/suspension timing bounds and counter-reset protection, eliminate redundant AppKit menu-bar renders, and verify transient memory and strict privacy constraints.
+
+#### Completed Tasks
+
+- [x] Implemented centralized Unified Logging via `AppLogger` (`os.Logger`) across Lifecycle, Network, Settings, and MenuBar categories without logging sensitive payloads or spamming.
+- [x] Hardened `NetworkPathManager.sampleCurrentSnapshot()` with `do-catch` recovery: interface statistics enumeration errors clear `currentSnapshot = nil`, transition `currentSelectionResult = .enumerationFailed(message:)`, and log diagnostic notices without crashing or propagating stale snapshots.
+- [x] Extended `NetworkInterfaceSelector.SelectionResult` with `.enumerationFailed(message:)` to distinguish hardware/OS enumeration failures from valid zero-interface states.
+- [x] Enhanced network disconnection/reconnection recovery: path state transitioning to `.unsatisfied` immediately clears `currentSnapshot = nil` in `NetworkPathManager` and resets `speedCalculator` and `directionEngine` in `ApplicationCoordinator`. Reconnection establishes a fresh baseline without calculating across the disconnected gap.
+- [x] Hardened `NetworkSpeedCalculator` with configurable `maximumMeasurementIntervalSeconds` (default: 10.0 s): elapsed intervals exceeding the limit (e.g. system sleep/wake or long scheduling pauses) reset the baseline (`.baselineReset(reason: .intervalTooLong)`) to prevent artificial multi-second spikes.
+- [x] Implemented counter decrease protection: decreased cumulative bytes (kernel resets or rollover) immediately trigger `.baselineReset(reason: .counterDecreased)`, establishing a new baseline without integer underflow or invalid speed spikes.
+- [x] Protected `DominantDirectionEngine` entry point against non-finite values (NaN / Infinity), safely falling back to `.defaultDirection` (`.download`) without triggering false direction switches.
+- [x] Coalesced `ApplicationCoordinator` baseline resets: when `speedCalculator.calculateSpeed` produces no measurement or resets, `coordinator.latestMeasurement` is cleared to `nil` and `directionEngine` is reset to prevent stale speed display.
+- [x] Optimized `MenuBarManager` rendering: added `.removeDuplicates()` on Combine subscriptions, tracked `renderCount`, and enforced strict change detection against `lastRenderedContent`. Identical speeds/content skip AppKit `button.attributedTitle` updates completely, cutting CPU consumption to 1.7% and eliminating WindowServer redraw spam.
+- [x] Conducted comprehensive privacy and memory audit: verified zero persistent traffic history in `UserDefaults` and zero outbound/inbound network requests in monitoring code.
+- [x] Created `Tests/ErrorHandlingAndPerformanceTests.swift` (12 assertions) and integrated suite 24 into `Tests/TestRunner.swift` (220 assertions passing across 24 test suites in ~804 ms).
+- [x] Verified Universal Binary builds for Debug and Release containing `arm64` and `x86_64` slices.
+
+#### Deliverables Produced
+
+- Centralized logger: `ARRYNetworkCounter/Core/Utilities/AppLogger.swift`.
+- Hardened path manager: `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
+- Extended selector result: `ARRYNetworkCounter/Services/Network/NetworkInterfaceSelector.swift`.
+- Hardened speed calculator: `ARRYNetworkCounter/Services/Monitoring/NetworkSpeedCalculator.swift`.
+- Hardened dominant direction engine: `ARRYNetworkCounter/Services/Monitoring/DominantDirectionEngine.swift`.
+- Hardened coordinator: `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
+- Optimized menu bar manager: `ARRYNetworkCounter/MenuBar/MenuBarManager.swift`.
+- Unit test suite: `Tests/ErrorHandlingAndPerformanceTests.swift` (12 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (220 assertions passing across 24 test suites).
+
+#### Completion Verification
+
+- [x] Temporary statistics retrieval failures do not crash the app and clear stale snapshots.
+- [x] Monitoring recovers cleanly after network disconnection and reconnection.
+- [x] Counter decreases reset baseline without calculation spikes or unsigned underflow.
+- [x] Excessive sampling intervals (> 10s sleep/wake) reset baseline to prevent artificial spikes.
+- [x] Identical content skips AppKit menu bar redrawing (verified via `renderCount`).
+- [x] Process CPU usage measured at 1.7% during active monitoring with 87 MB RSS.
+- [x] Zero network traffic history or metrics are persisted to disk.
+- [x] 100% of unit tests pass (220 assertions across 24 test suites with 0 failures).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
+
+**Next Step:** Proceed to Phase 14 — Comprehensive Testing & Compatibility.
+
+---
+
+### Previous Phase: Phase 12 — Documentation & About Section
 
 **Priority:** Medium  
 **Status:** Completed

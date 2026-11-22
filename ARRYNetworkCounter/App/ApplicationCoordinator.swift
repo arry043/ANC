@@ -69,7 +69,7 @@ public final class ApplicationCoordinator: ObservableObject {
     public init(
         preferencesStore: any PreferencesStoring = UserDefaultsPreferencesStore(),
         networkMonitor: (any NetworkMonitoring)? = NetworkPathManager(),
-        speedCalculator: NetworkSpeedCalculator = NetworkSpeedCalculator(),
+        speedCalculator: NetworkSpeedCalculator = NetworkSpeedCalculator(maximumMeasurementIntervalSeconds: NetworkSpeedCalculator.defaultMaximumIntervalSeconds),
         directionEngine: DominantDirectionEngine = DominantDirectionEngine(),
         initialPreferences: AppPreferences = .default
     ) {
@@ -147,6 +147,12 @@ public final class ApplicationCoordinator: ObservableObject {
                                 let decision = await self.directionEngine.evaluate(measurement)
                                 self.dominantDirection = decision.direction
                                 self.latestMeasurement = measurement
+                            } else {
+                                self.latestMeasurement = nil
+                                if case .baselineReset = result {
+                                    await self.directionEngine.reset()
+                                    self.dominantDirection = .download
+                                }
                             }
                         } else {
                             await self.speedCalculator.reset()

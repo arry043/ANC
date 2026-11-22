@@ -16,6 +16,9 @@ public final class MenuBarManager: NSObject {
     /// Last rendered content cache to prevent redundant UI redraws.
     public private(set) var lastRenderedContent: MenuBarContent?
 
+    /// Number of actual rendering passes performed by this manager.
+    public private(set) var renderCount: Int = 0
+
     /// Indicates whether the manager is actively tracking coordinator updates.
     public private(set) var isRunning: Bool = false
 
@@ -56,6 +59,7 @@ public final class MenuBarManager: NSObject {
         }
 
         lastRenderedContent = nil
+        renderCount = 0
     }
 
     /// Creates and configures the native `NSStatusItem` if not already created.
@@ -81,6 +85,8 @@ public final class MenuBarManager: NSObject {
 
     /// Pulls current application state from `ApplicationCoordinator`, constructs `MenuBarContent`, and updates the status item.
     public func updateContent() {
+        guard isRunning, let button = statusItem?.button else { return }
+
         let content = currentContentFromCoordinator()
 
         // Avoid unnecessary redrawing if rendered content has not changed
@@ -89,12 +95,11 @@ public final class MenuBarManager: NSObject {
         }
 
         lastRenderedContent = content
+        renderCount += 1
 
-        if let button = statusItem?.button {
-            let attributed = MenuBarRenderer.render(content: content)
-            button.attributedTitle = attributed
-            button.setAccessibilityLabel(MenuBarRenderer.renderPlainText(content: content))
-        }
+        let attributed = MenuBarRenderer.render(content: content)
+        button.attributedTitle = attributed
+        button.setAccessibilityLabel(MenuBarRenderer.renderPlainText(content: content))
     }
 
     /// Derives a clean `MenuBarContent` model from active coordinator state using `MenuBarContentBuilder`.
@@ -111,21 +116,25 @@ public final class MenuBarManager: NSObject {
 
     private func subscribeToCoordinatorUpdates() {
         coordinator.$latestMeasurement
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.updateContent() }
             .store(in: &cancellables)
 
         coordinator.$dominantDirection
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.updateContent() }
             .store(in: &cancellables)
 
         coordinator.$pathState
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.updateContent() }
             .store(in: &cancellables)
 
         coordinator.$preferences
+            .removeDuplicates()
             .receive(on: RunLoop.main)
             .sink { [weak self] _ in self?.updateContent() }
             .store(in: &cancellables)
