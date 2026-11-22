@@ -192,12 +192,32 @@ struct TestRunner {
             totalFailed += 1
         }
 
+        // 19. PreferencesStoreTests (Phase 10)
+        do {
+            let passed = try await PreferencesStoreTests.run()
+            print("  [PASS] PreferencesStoreTests:               \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] PreferencesStoreTests:               Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 20. SettingsBehaviorTests (Phase 10)
+        do {
+            let passed = try await SettingsBehaviorTests.run()
+            print("  [PASS] SettingsBehaviorTests:               \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] SettingsBehaviorTests:               Failed with error: \(error)")
+            totalFailed += 1
+        }
+
         let endTime = DispatchTime.now()
         let elapsedMilliseconds = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 18 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 20 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")

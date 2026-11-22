@@ -856,9 +856,33 @@ Provide native documentation views for:
 
 Documentation should be bundled with the application and available offline.
 
-### 13.4 Settings Persistence
+### 13.4 Settings Persistence & Implementation Architecture
 
-Use `UserDefaults`.
+In Phase 10, the settings and preferences subsystem is implemented via four primary components:
+
+1. **`PreferencesStore` (`PreferencesStoring`):**
+   - Thread-safe (`@unchecked Sendable` using `NSLock`) persistent storage backed by `UserDefaults`.
+   - Four dedicated keys: `displayMode`, `bothDirectionsStyle`, `manualDirection`, and `launchAtLogin`.
+   - Typed reading and writing with granular getters/setters and composite `loadPreferences()` / `savePreferences(_:)`.
+   - Safe defaults: `bothDirections`, `separateSpeeds`, `download`, and `false`.
+   - Robust invalid value detection and auto-repair: corrupted strings or types in `UserDefaults` automatically fall back to approved defaults and repair the persisted value without crashing.
+   - Dependency injection: supports custom `UserDefaults` instances for test isolation without polluting `.standard`.
+2. **`SettingsManager`:**
+   - Central `@MainActor` presentation manager and coordinator.
+   - Manages single `NSWindow` hosting `SettingsView` via `NSHostingController`.
+   - Prevents duplicate windows: focuses and activates existing window if already open.
+   - Immediate propagation: updates `preferencesStore` and synchronously calls `ApplicationCoordinator.applyPreferences(_:)`.
+   - Triggers `MenuBarManager` Combine subscription (`coordinator.$preferences`), causing immediate `MenuBarContent` re-render without restarting network monitoring or recreating `NSStatusItem`.
+3. **`SettingsView`:**
+   - Native SwiftUI interface adhering to the minimal utility-app aesthetic.
+   - Conditional display controls: shows only relevant controls for active mode (`Both Directions`, `Single Direction — Manual`, or `Single Direction — Automatic`).
+   - Inactive mode preference preservation: switching modes preserves previously configured choices.
+   - Live speed preview cards using monospaced digits, colored arrows (`#30B86B` green, `#3988E8` blue), and matching menu-bar typography.
+   - Launch at Login toggle with Phase 11 boundary caption.
+   - Native documentation links opening existing project markdown files (`README.md`, `TECHNICAL_ARCHITECTURE.md`, `PROJECT_REQUIREMENTS.md`, `PROJECT_DECISIONS.md`).
+4. **`LaunchAtLoginManaging` Boundary (`LaunchAtLoginService`):**
+   - Protocol defining `isEnabled` and `setEnabled(_:)`.
+   - Manages Phase 10 preference model; marks boundary for Phase 11 system service registration.
 
 Suggested preference keys:
 

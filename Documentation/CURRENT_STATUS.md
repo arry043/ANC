@@ -49,13 +49,13 @@ The application will remain minimal, local-first, and independent of external se
 | Network Monitoring | Completed |
 | Menu Bar Integration | Completed (Phase 08) |
 | Display Modes Implementation | Completed (Phase 09) |
-| Settings Interface | Not Started |
-| Testing | Completed (Phase 02–09 Unit Tests — 160 assertions passed) |
+| Settings Interface | Completed (Phase 10) |
+| Testing | Completed (Phase 02–10 Unit Tests — 178 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 09 Completed — Ready for Phase 10 (Settings Interface & Preferences)  
-**Next Action:** Begin Phase 10 implementation.
+**Current Development Phase:** Phase 10 Completed — Ready for Phase 11 (Application Lifecycle & Launch at Login)  
+**Next Action:** Begin Phase 11 implementation.
 
 ---
 
@@ -96,7 +96,7 @@ All four documents must remain consistent.
 | 07 | Dominant Direction & Switching Logic | Completed |
 | 08 | Native Menu Bar Integration | Completed |
 | 09 | Display Modes Implementation | Completed |
-| 10 | Settings Interface & Preferences | Not Started |
+| 10 | Settings Interface & Preferences | Completed |
 | 11 | Application Lifecycle & Launch at Login | Not Started |
 | 12 | Documentation & About Section | Not Started |
 | 13 | Error Handling & Performance Optimization | Not Started |
@@ -174,11 +174,56 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-**Next Step:** Proceed to Phase 10 — Settings Interface & Preferences.
+### Current Phase: Phase 10 — Settings Interface & Preferences
+
+**Priority:** High  
+**Status:** Completed
+
+#### Objective
+
+Implement a compact, clean native macOS Settings interface with persistent user preferences (`PreferencesStore`), presentation coordination (`SettingsManager`), native SwiftUI settings view (`SettingsView`), immediate menu-bar display update propagation without monitoring restarts, launch-at-login preference management and Phase 11 boundary definition, and documentation navigation to repository documentation resources.
+
+#### Completed Tasks
+
+- [x] Implemented `PreferencesStore` with typed reads/writes, safe defaults, corrupted value auto-repair, independent key updates, and support for isolated `UserDefaults` suites.
+- [x] Implemented `LaunchAtLoginManaging` protocol and `LaunchAtLoginService` providing the Phase 10 preference model and Phase 11 boundary definition.
+- [x] Implemented `SettingsManager` as the `@MainActor` presentation manager for the Settings window, preventing duplicate windows and propagating setting changes immediately.
+- [x] Implemented `SettingsView` in SwiftUI using a native macOS utility aesthetic, presenting conditional display controls (Both Directions, Single Direction — Manual, Single Direction — Automatic), speed previews with monospaced digits and colored arrows, launch-at-login toggle with Phase 11 footnote, and navigation to local project documentation.
+- [x] Extended `ApplicationCoordinator` with synchronous and asynchronous preference propagation (`applyPreferences`).
+- [x] Connected menu bar context menu `Settings...` action to `SettingsManager.showSettingsWindow()`.
+- [x] Implemented unit and integration tests in `PreferencesStoreTests` (8 assertions) and `SettingsBehaviorTests` (10 assertions).
+- [x] Verified Universal Binary builds for Debug and Release containing `arm64` and `x86_64` slices.
+
+#### Deliverables Produced
+
+- Preferences store: `ARRYNetworkCounter/Services/Preferences/PreferencesStore.swift`.
+- Launch at login service boundary: `ARRYNetworkCounter/Services/Preferences/LaunchAtLoginService.swift`.
+- Settings presentation manager: `ARRYNetworkCounter/Settings/SettingsManager.swift`.
+- Native SwiftUI settings view: `ARRYNetworkCounter/Settings/SettingsView.swift`.
+- Preferences unit test suite: `Tests/PreferencesStoreTests.swift` (8 assertions).
+- Settings behavior integration test suite: `Tests/SettingsBehaviorTests.swift` (10 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (178 assertions passing across 20 test suites).
+
+#### Completion Verification
+
+- [x] Settings window opens from menu bar context menu and focuses existing window if already open.
+- [x] All three display modes (Both Directions, Manual, Automatic) configure cleanly.
+- [x] Both Directions styles (Separate Speeds, Combined Arrows) update and persist.
+- [x] Manual Direction (Download, Upload) updates, persists, and is never overridden by dominance engine.
+- [x] Inactive mode preferences are preserved across mode switches.
+- [x] Preference changes reflect immediately in the menu bar without restarting monitoring or recreating `NSStatusItem`.
+- [x] Preferences persist across store instances and application relaunches.
+- [x] Corrupted or invalid stored values are detected, repaired, and safely fall back to defaults without crashing.
+- [x] Launch at login preference is persisted and accurately reflected without falsely claiming OS registration.
+- [x] Navigation buttons open actual existing documentation files (`README.md`, `TECHNICAL_ARCHITECTURE.md`, `PROJECT_REQUIREMENTS.md`, `PROJECT_DECISIONS.md`).
+- [x] 100% of unit and integration tests pass (178 assertions across 20 test suites with 0 failures in 609 ms).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
+
+**Next Step:** Proceed to Phase 11 — Application Lifecycle & Launch at Login.
 
 ---
 
-### Previous Phase: Phase 08 — Native Menu Bar Integration
+### Previous Phase: Phase 09 — Display Modes Implementation
 
 **Priority:** Critical  
 **Status:** Completed

@@ -520,7 +520,7 @@ Integrate all three display modes and both sub-options of Both Directions.
 ## Phase 10 — Settings Interface & Preferences
 
 **Priority:** High  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -528,22 +528,22 @@ Implement the compact native Settings window and persistent user preferences.
 
 ### Tasks
 
-- [ ] Implement `SettingsManager`.
-- [ ] Implement `PreferencesStore`.
-- [ ] Implement `SettingsView`.
-- [ ] Implement Display Settings.
-- [ ] Add Both Directions configuration.
-- [ ] Add Separate Speeds selection.
-- [ ] Add Combined Arrows selection.
-- [ ] Add Single Direction — Manual.
-- [ ] Add Download selection.
-- [ ] Add Upload selection.
-- [ ] Add Single Direction — Automatic.
-- [ ] Implement Launch at Login toggle.
-- [ ] Add documentation navigation.
-- [ ] Persist display preferences using UserDefaults.
-- [ ] Restore preferences after application relaunch.
-- [ ] Apply setting changes immediately.
+- [x] Implement `SettingsManager`.
+- [x] Implement `PreferencesStore`.
+- [x] Implement `SettingsView`.
+- [x] Implement Display Settings.
+- [x] Add Both Directions configuration.
+- [x] Add Separate Speeds selection.
+- [x] Add Combined Arrows selection.
+- [x] Add Single Direction — Manual.
+- [x] Add Download selection.
+- [x] Add Upload selection.
+- [x] Add Single Direction — Automatic.
+- [x] Implement Launch at Login toggle.
+- [x] Add documentation navigation.
+- [x] Persist display preferences using UserDefaults.
+- [x] Restore preferences after application relaunch.
+- [x] Apply setting changes immediately.
 
 ### Preference Keys
 
@@ -556,19 +556,20 @@ launchAtLogin
 
 ### Deliverables
 
-- Complete Settings window.
-- Persistent preferences.
-- Immediate settings updates.
+- Complete Settings window (`SettingsView.swift`, `SettingsManager.swift`).
+- Persistent preferences (`PreferencesStore.swift`).
+- Immediate settings updates via `ApplicationCoordinator` and `MenuBarManager`.
+- Comprehensive test coverage (`PreferencesStoreTests.swift`, `SettingsBehaviorTests.swift`).
 
 ### Completion Criteria
 
-- [ ] All display options are accessible.
-- [ ] Only relevant options are shown for the selected mode.
-- [ ] Settings are saved correctly.
-- [ ] Settings persist after relaunch.
-- [ ] Invalid or missing preferences use safe defaults.
-- [ ] Display updates immediately after configuration changes.
-- [ ] Settings remain compact and easy to use.
+- [x] All display options are accessible.
+- [x] Only relevant options are shown for the selected mode.
+- [x] Settings are saved correctly.
+- [x] Settings persist after relaunch.
+- [x] Invalid or missing preferences use safe defaults.
+- [x] Display updates immediately after configuration changes.
+- [x] Settings remain compact and easy to use.
 
 ---
 
