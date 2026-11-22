@@ -11,6 +11,12 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
     /// Active user preferences driving the Settings interface and observer updates.
     @Published public private(set) var preferences: AppPreferences
 
+    /// Active navigation tab in the Settings window.
+    @Published public var selectedTab: SettingsTab = .preferences
+
+    /// Currently displayed offline documentation document, if any.
+    @Published public var viewingDocument: DocumentationDocument? = nil
+
     /// Persistent preferences storage provider.
     public let preferencesStore: PreferencesStore
 
@@ -65,8 +71,8 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
         newWindow.title = "ARRY Network Counter Settings"
         newWindow.styleMask = [.titled, .closable, .miniaturizable]
         newWindow.isReleasedWhenClosed = false
-        newWindow.setContentSize(NSSize(width: 460, height: 520))
-        newWindow.minSize = NSSize(width: 430, height: 480)
+        newWindow.setContentSize(NSSize(width: 480, height: 540))
+        newWindow.minSize = NSSize(width: 460, height: 500)
         newWindow.center()
         newWindow.delegate = self
 

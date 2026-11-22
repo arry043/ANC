@@ -884,6 +884,37 @@ In Phase 10, the settings and preferences subsystem is implemented via four prim
    - Protocol defining `isEnabled` and `setEnabled(_:)`.
    - Manages Phase 10 preference model; marks boundary for Phase 11 system service registration.
 
+### 13.5 Offline Documentation & About Subsystem Architecture (Phase 12)
+
+In Phase 12, the offline documentation and application identity subsystem is implemented via the following components:
+
+1. **User Documentation Suite (`Documentation/UserGuides` and `Documentation/Legal`):**
+   - **`SETUP_GUIDE.md`:** System requirements (macOS 13.0+, Apple Silicon arm64 & Intel x86_64), DMG installation, Gatekeeper approval workflow for ad-hoc preview builds, menu-bar utility behavior (`LSUIElement`), and `SMAppService` launch-at-login setup.
+   - **`USAGE_GUIDE.md`:** Real-time throughput monitoring description (derived from `getifaddrs`, not synthetic speed tests), detailed explanation of all 4 display configurations, 3-rule hysteresis engine (10% relative margin, 10,000 B/s threshold, 2 consecutive samples, idle download default), SI decimal units (B/s, KB/s, MB/s, GB/s, TB/s), Byte vs. bit distinction (8 bits = 1 Byte), and kernel measurement limitations (LAN vs. WAN, AirDrop, VPN tunnels).
+   - **`TERMS_AND_CONDITIONS.md`:** Plain-language license grant, permitted use, measurement accuracy disclaimers, no-warranty provisions ("as is"), Apple Inc. trademark disclaimers, ARRRY brand ownership, and limitation of liability.
+   - **`PRIVACY_POLICY.md`:** Source-code audited disclosures confirming zero outbound network activity, zero analytics/telemetry/crash logging, in-memory volatile throughput calculation, local storage strictly limited to 4 user configuration preferences in `UserDefaults`, and instructions for preference removal.
+2. **Resource Bundling Strategy:**
+   - Documentation markdown files are bundled directly into `Contents/Resources/Documentation/` inside the built `.app` bundle for both Debug and Release configurations.
+   - Packaged automatically via `Scripts/build.sh` and XcodeGen resource target specifications.
+   - Eliminates all runtime dependencies on repository paths or external network access.
+3. **`DocumentationLoader` & `DocumentationDocument`:**
+   - Strongly-typed document enum identifying each guide with user-facing titles, subtitles, and SF Symbol icons.
+   - High-reliability resource resolution: searches bundle subdirectory `Documentation/`, bundle root resources, and local fallback paths for test runner environments.
+   - Graceful fallback: returns structured markdown error descriptions if a document file is missing, preventing crashes.
+4. **`DocumentReaderView`:**
+   - Native SwiftUI scrollable reader view rendering parsed markdown blocks (headers H1-H4, dividers, code blocks, tables, blockquotes, and styled paragraphs).
+   - Navigation header toolbar with back button returning to Settings, document icon and title, and an "Offline" verification pill.
+   - Selectable text support (`.textSelection(.enabled)`).
+5. **`AboutView` & Dynamic Bundle Versioning:**
+   - Polished application identity view displaying official `AppLogo` asset with continuous corner radius and drop shadow.
+   - Dynamic versioning: `AppConfiguration.Version` reads `CFBundleShortVersionString`, `CFBundleVersion`, and `NSHumanReadableCopyright` directly from `Bundle.main.infoDictionary` with fallback defaults.
+   - Brand attribution: ARRRY product ownership and copyright notice.
+   - Interactive quick-action links to inspect Terms & Conditions, Privacy Policy, Setup Guide, and Usage Guide.
+6. **Settings Navigation Coordination:**
+   - `SettingsTab` enum (`.preferences`, `.documentation`, `.about`) hosted directly on `SettingsManager`.
+   - Native segmented tab bar at the top of `SettingsView`.
+   - Reactive `@Published` navigation state allowing programmatic opening of documents or tabs.
+
 Suggested preference keys:
 
 | Key | Type | Purpose |

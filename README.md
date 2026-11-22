@@ -6,8 +6,8 @@ A lightweight native macOS menu bar utility designed to display real-time networ
 **Platform:** macOS (macOS 13.0+)  
 **Technology Stack:** Swift 6, SwiftUI, AppKit  
 **Architecture:** Universal Binary (`arm64`, `x86_64`)  
-**Current Development Phase:** Phase 09 — Display Modes Implementation (Completed)  
-**Next Phase:** Phase 10 — Settings Interface & Preferences
+**Current Development Phase:** Phase 12 — Documentation & About Section (Completed)  
+**Next Phase:** Phase 13 — Error Handling & Performance Optimization
 
 ---
 
@@ -59,7 +59,13 @@ ARRY-Network-Counter/
 │   ├── TECHNICAL_ARCHITECTURE.md
 │   ├── IMPLEMENTATION_PHASES.md
 │   ├── CURRENT_STATUS.md
-│   └── PROJECT_DECISIONS.md
+│   ├── PROJECT_DECISIONS.md
+│   ├── UserGuides/
+│   │   ├── SETUP_GUIDE.md
+│   │   └── USAGE_GUIDE.md
+│   └── Legal/
+│       ├── TERMS_AND_CONDITIONS.md
+│       └── PRIVACY_POLICY.md
 ├── Scripts/
 │   └── build.sh
 ├── Tests/

@@ -620,7 +620,7 @@ Complete application lifecycle handling and optional macOS login launch support.
 ## Phase 12 — Documentation & About Section
 
 **Priority:** Medium  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -628,39 +628,41 @@ Implement offline documentation and application information inside Settings.
 
 ### Tasks
 
-- [ ] Create Setup Guide.
-- [ ] Document DMG installation.
-- [ ] Document copying the app into Applications.
-- [ ] Document first-launch security approval where applicable.
-- [ ] Document Settings access.
-- [ ] Document Launch at Login.
-- [ ] Create Usage Guide.
-- [ ] Explain all display modes.
-- [ ] Explain automatic direction switching.
-- [ ] Explain supported units.
-- [ ] Explain measurement limitations.
-- [ ] Create Terms and Conditions.
-- [ ] Create Privacy Policy.
-- [ ] Implement About ANC.
-- [ ] Display application version.
-- [ ] Display ARRRY branding.
-- [ ] Display copyright information.
-- [ ] Bundle documentation with the application.
+- [x] Create Setup Guide.
+- [x] Document DMG installation.
+- [x] Document copying the app into Applications.
+- [x] Document first-launch security approval where applicable.
+- [x] Document Settings access.
+- [x] Document Launch at Login.
+- [x] Create Usage Guide.
+- [x] Explain all display modes.
+- [x] Explain automatic direction switching.
+- [x] Explain supported units.
+- [x] Explain measurement limitations.
+- [x] Create Terms and Conditions.
+- [x] Create Privacy Policy.
+- [x] Implement About ANC.
+- [x] Display application version.
+- [x] Display ARRRY branding.
+- [x] Display copyright information.
+- [x] Bundle documentation with the application.
 
 ### Deliverables
 
-- Complete offline documentation.
-- About section.
-- Documentation navigation inside Settings.
+- Complete offline documentation (`SETUP_GUIDE.md`, `USAGE_GUIDE.md`, `TERMS_AND_CONDITIONS.md`, `PRIVACY_POLICY.md`).
+- About section inside Settings (`AboutView.swift`).
+- Documentation navigation and native markdown reader (`DocumentReaderView.swift`).
+- Documentation loader and resource provider (`DocumentationProvider.swift`).
+- Comprehensive unit test suite (`DocumentationTests.swift` - 10 assertions).
 
 ### Completion Criteria
 
-- [ ] All documentation is accessible offline.
-- [ ] Setup instructions are accurate.
-- [ ] Display modes are clearly explained.
-- [ ] Privacy statements match the actual implementation.
-- [ ] Version and organization information are correct.
-- [ ] No placeholder documentation remains.
+- [x] All documentation is accessible offline.
+- [x] Setup instructions are accurate.
+- [x] Display modes are clearly explained.
+- [x] Privacy statements match the actual implementation.
+- [x] Version and organization information are correct.
+- [x] No placeholder documentation remains.
 
 ---
 
