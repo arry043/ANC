@@ -26,9 +26,10 @@ public enum DisplayConfigurationTests {
 
         // Test 3: BothDirectionsStyle cases and Codable
         let bothStyles = BothDirectionsStyle.allCases
-        assert(bothStyles.count == 2, "BothDirectionsStyle must have exactly 2 cases")
+        assert(bothStyles.count == 3, "BothDirectionsStyle must have exactly 3 cases")
         assert(bothStyles.contains(.separateSpeeds), "Must contain separateSpeeds")
         assert(bothStyles.contains(.combinedArrows), "Must contain combinedArrows")
+        assert(bothStyles.contains(.withoutArrows), "Must contain withoutArrows")
         for style in BothDirectionsStyle.allCases {
             let data = try encoder.encode(style)
             let decoded = try decoder.decode(BothDirectionsStyle.self, from: data)
@@ -45,6 +46,18 @@ public enum DisplayConfigurationTests {
             let data = try encoder.encode(dir)
             let decoded = try decoder.decode(NetworkDirection.self, from: data)
             assert(decoded == dir, "Decoded NetworkDirection must equal original")
+        }
+        count += 1
+
+        // Test 5: SingleDirectionArrowStyle cases and Codable
+        let arrowStyles = SingleDirectionArrowStyle.allCases
+        assert(arrowStyles.count == 2, "SingleDirectionArrowStyle must have exactly 2 cases")
+        assert(arrowStyles.contains(.withArrow), "Must contain withArrow")
+        assert(arrowStyles.contains(.withoutArrows), "Must contain withoutArrows")
+        for aStyle in SingleDirectionArrowStyle.allCases {
+            let data = try encoder.encode(aStyle)
+            let decoded = try decoder.decode(SingleDirectionArrowStyle.self, from: data)
+            assert(decoded == aStyle, "Decoded SingleDirectionArrowStyle must equal original")
         }
         count += 1
 

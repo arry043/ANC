@@ -204,6 +204,8 @@ public enum SettingsBehaviorTests {
             return count
         }
         assert(window1.title == "ARRY Network Counter Settings", "Window title must be 'ARRY Network Counter Settings'")
+        assert(window1.styleMask.contains(.resizable), "Window must be resizable")
+        assert(window1.minSize.width == 460 && window1.minSize.height == 500, "Window minimum size must be 460x500")
 
         // Second call must focus existing window without recreating
         settingsManager.showSettingsWindow()
@@ -222,6 +224,84 @@ public enum SettingsBehaviorTests {
         menuBarManager.handleSettingsAction()
         assert(settingsManager.isWindowOpen, "handleSettingsAction must trigger settings presentation")
         settingsManager.closeSettingsWindow()
+        count += 1
+
+        // ---------------------------------------------------------------------
+        // Test 11: Window responsiveness and multi-size layout resizing
+        // ---------------------------------------------------------------------
+        settingsManager.showSettingsWindow()
+        guard let activeWindow = settingsManager.window else {
+            assertionFailure("Settings window must exist")
+            return count
+        }
+
+        // Resize to minimum size (460x500)
+        activeWindow.setContentSize(NSSize(width: 460, height: 500))
+        assert(activeWindow.contentView?.frame.size.width == 460, "Content view width must adapt to 460 pt")
+
+        // Resize to medium size (640x600)
+        activeWindow.setContentSize(NSSize(width: 640, height: 600))
+        assert(activeWindow.contentView?.frame.size.width == 640, "Content view width must adapt to 640 pt")
+
+        // Resize to large size (800x700)
+        activeWindow.setContentSize(NSSize(width: 800, height: 700))
+        assert(activeWindow.contentView?.frame.size.width == 800, "Content view width must adapt to 800 pt")
+
+        // Restore default size (500x560)
+        activeWindow.setContentSize(NSSize(width: 500, height: 560))
+        assert(activeWindow.contentView?.frame.size.width == 500, "Content view width must restore to 500 pt")
+
+        // Test tab switching during presentation
+        settingsManager.selectedTab = .documentation
+        assert(settingsManager.selectedTab == .documentation, "Must support switching to documentation")
+        settingsManager.selectedTab = .about
+        assert(settingsManager.selectedTab == .about, "Must support switching to about")
+        settingsManager.selectedTab = .preferences
+        assert(settingsManager.selectedTab == .preferences, "Must support switching back to preferences")
+
+        settingsManager.closeSettingsWindow()
+        count += 1
+
+        // ---------------------------------------------------------------------
+        // Test 12: Arrow visibility control across all display modes
+        // ---------------------------------------------------------------------
+        // A. Both directions without arrows
+        settingsManager.updateDisplayMode(.bothDirections)
+        settingsManager.updateBothDirectionsStyle(.withoutArrows)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+
+        assert(settingsManager.preferences.bothDirectionsStyle == .withoutArrows, "Style must be withoutArrows")
+        assert(store.getBothDirectionsStyle() == .withoutArrows, "Store must persist withoutArrows")
+        let bothNoArrowsTitle = menuBarManager.statusItem?.button?.attributedTitle.string ?? ""
+        assert(bothNoArrowsTitle == "DL 5 MB/s    UL 10 KB/s", "Menu bar must render 'DL 5 MB/s    UL 10 KB/s', got '\(bothNoArrowsTitle)'")
+
+        // B. Single direction manual without arrows
+        settingsManager.updateDisplayMode(.singleDirectionManual)
+        settingsManager.updateManualDirection(.download)
+        settingsManager.updateSingleDirectionArrowStyle(.withoutArrows)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+
+        assert(settingsManager.preferences.singleDirectionArrowStyle == .withoutArrows, "Arrow style must be withoutArrows")
+        assert(store.getSingleDirectionArrowStyle() == .withoutArrows, "Store must persist singleDirectionArrowStyle")
+        let manualDLNoArrowTitle = menuBarManager.statusItem?.button?.attributedTitle.string ?? ""
+        assert(manualDLNoArrowTitle == "5 MB/s", "Manual download without arrow must render '5 MB/s', got '\(manualDLNoArrowTitle)'")
+
+        settingsManager.updateManualDirection(.upload)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        let manualULNoArrowTitle = menuBarManager.statusItem?.button?.attributedTitle.string ?? ""
+        assert(manualULNoArrowTitle == "10 KB/s", "Manual upload without arrow must render '10 KB/s', got '\(manualULNoArrowTitle)'")
+
+        // C. Single direction automatic without arrows
+        settingsManager.updateDisplayMode(.singleDirectionAutomatic)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        let autoNoArrowTitle = menuBarManager.statusItem?.button?.attributedTitle.string ?? ""
+        assert(autoNoArrowTitle == "5 MB/s", "Auto without arrow must render '5 MB/s', got '\(autoNoArrowTitle)'")
+
+        // D. Re-enabling arrows restores directional glyphs
+        settingsManager.updateSingleDirectionArrowStyle(.withArrow)
+        try? await Task.sleep(nanoseconds: 10_000_000)
+        let autoWithArrowTitle = menuBarManager.statusItem?.button?.attributedTitle.string ?? ""
+        assert(autoWithArrowTitle == "↓ 5 MB/s", "Restoring arrow must render '↓ 5 MB/s', got '\(autoWithArrowTitle)'")
         count += 1
 
         // Cleanup

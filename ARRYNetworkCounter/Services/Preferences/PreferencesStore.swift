@@ -10,17 +10,20 @@ public final class PreferencesStore: PreferencesStoring, @unchecked Sendable {
         public let displayMode: String
         public let bothDirectionsStyle: String
         public let manualDirection: String
+        public let singleDirectionArrowStyle: String
         public let launchAtLogin: String
 
         public init(
             displayMode: String = "displayMode",
             bothDirectionsStyle: String = "bothDirectionsStyle",
             manualDirection: String = "manualDirection",
+            singleDirectionArrowStyle: String = "singleDirectionArrowStyle",
             launchAtLogin: String = "launchAtLogin"
         ) {
             self.displayMode = displayMode
             self.bothDirectionsStyle = bothDirectionsStyle
             self.manualDirection = manualDirection
+            self.singleDirectionArrowStyle = singleDirectionArrowStyle
             self.launchAtLogin = launchAtLogin
         }
 
@@ -172,6 +175,37 @@ public final class PreferencesStore: PreferencesStoring, @unchecked Sendable {
         userDefaults.set(enabled, forKey: keys.launchAtLogin)
     }
 
+    // MARK: - Single Direction Arrow Style
+
+    /// Retrieves the persisted single-direction arrow style, falling back to `.withArrow` if missing or invalid.
+    public func getSingleDirectionArrowStyle() -> SingleDirectionArrowStyle {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard let raw = userDefaults.object(forKey: keys.singleDirectionArrowStyle) else {
+            if let fallbackRaw = userDefaults.string(forKey: AppConfiguration.PersistenceKeys.singleDirectionArrowStyle),
+               let style = SingleDirectionArrowStyle(rawValue: fallbackRaw) {
+                return style
+            }
+            return AppPreferences.default.singleDirectionArrowStyle
+        }
+
+        if let str = raw as? String, let style = SingleDirectionArrowStyle(rawValue: str) {
+            return style
+        }
+
+        // Invalid stored value: repair in storage and fall back to safe default
+        userDefaults.set(AppPreferences.default.singleDirectionArrowStyle.rawValue, forKey: keys.singleDirectionArrowStyle)
+        return AppPreferences.default.singleDirectionArrowStyle
+    }
+
+    /// Persists the selected single-direction arrow style without modifying unrelated preferences.
+    public func setSingleDirectionArrowStyle(_ style: SingleDirectionArrowStyle) {
+        lock.lock()
+        defer { lock.unlock() }
+        userDefaults.set(style.rawValue, forKey: keys.singleDirectionArrowStyle)
+    }
+
     // MARK: - Whole Model Access
 
     /// Loads the composite `AppPreferences` model from storage.
@@ -180,6 +214,7 @@ public final class PreferencesStore: PreferencesStoring, @unchecked Sendable {
             displayMode: getDisplayMode(),
             bothDirectionsStyle: getBothDirectionsStyle(),
             manualDirection: getManualDirection(),
+            singleDirectionArrowStyle: getSingleDirectionArrowStyle(),
             launchAtLogin: getLaunchAtLogin()
         )
     }
@@ -189,6 +224,7 @@ public final class PreferencesStore: PreferencesStoring, @unchecked Sendable {
         setDisplayMode(preferences.displayMode)
         setBothDirectionsStyle(preferences.bothDirectionsStyle)
         setManualDirection(preferences.manualDirection)
+        setSingleDirectionArrowStyle(preferences.singleDirectionArrowStyle)
         setLaunchAtLogin(preferences.launchAtLogin)
     }
 

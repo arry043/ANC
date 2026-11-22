@@ -69,9 +69,9 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
 
         let newWindow = NSWindow(contentViewController: hostingController)
         newWindow.title = "ARRY Network Counter Settings"
-        newWindow.styleMask = [.titled, .closable, .miniaturizable]
+        newWindow.styleMask = [.titled, .closable, .miniaturizable, .resizable]
         newWindow.isReleasedWhenClosed = false
-        newWindow.setContentSize(NSSize(width: 480, height: 540))
+        newWindow.setContentSize(NSSize(width: 500, height: 560))
         newWindow.minSize = NSSize(width: 460, height: 500)
         newWindow.center()
         newWindow.delegate = self
@@ -128,6 +128,15 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
     public func updateManualDirection(_ direction: NetworkDirection) {
         var updated = preferences
         updated.manualDirection = direction
+        updatePreferences(updated)
+    }
+
+    /// Updates the single-direction arrow visibility preference.
+    ///
+    /// - Parameter style: The selected arrow visibility style.
+    public func updateSingleDirectionArrowStyle(_ style: SingleDirectionArrowStyle) {
+        var updated = preferences
+        updated.singleDirectionArrowStyle = style
         updatePreferences(updated)
     }
 

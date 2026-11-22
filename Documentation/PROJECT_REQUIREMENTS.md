@@ -116,23 +116,40 @@ Requirements:
 
 This option is intended for users who prefer a compact menu bar indicator.
 
+### Option A3 — Without Arrows
+
+Display download and upload speeds independently using compact text labels instead of directional arrows.
+
+Example:
+
+    DL 2.45 MB/s    UL 120 KB/s
+
+Requirements:
+
+- Do not display directional arrow glyphs (`↓` or `↑`).
+- Display download speed alongside green `DL` label.
+- Display upload speed alongside blue `UL` label.
+- Update both values continuously.
+- Preserve 4-space separation between download and upload speeds.
+
 ## 4.2 Mode B — Single Direction (Manual)
 
-This mode displays only one selected direction.
+This mode displays only one selected direction, with optional arrow visibility.
 
 Users must be able to select:
 
 ### Download
-
-    ↓ 2.45 MB/s
+- With Arrow: `↓ 2.45 MB/s`
+- Without Arrows: `2.45 MB/s`
 
 ### Upload
-
-    ↑ 120 KB/s
+- With Arrow: `↑ 120 KB/s`
+- Without Arrows: `120 KB/s`
 
 Requirements:
 
-- Only one arrow is visible.
+- When arrows are enabled, display the corresponding directional arrow (`↓` or `↑`).
+- When arrows are disabled, display only the numeric speed value without arrow glyphs.
 - Only the selected direction's speed is displayed.
 - The selected direction remains unchanged until the user changes the preference.
 - The speed updates continuously.
@@ -140,21 +157,22 @@ Requirements:
 
 ## 4.3 Mode C — Single Direction (Automatic)
 
-This mode displays only the currently dominant traffic direction.
+This mode displays only the currently dominant traffic direction, with optional arrow visibility.
 
 Examples:
 
 Download is dominant:
-
-    ↓ 2.45 MB/s
+- With Arrow: `↓ 2.45 MB/s`
+- Without Arrows: `2.45 MB/s`
 
 Upload is dominant:
-
-    ↑ 120 KB/s
+- With Arrow: `↑ 120 KB/s`
+- Without Arrows: `120 KB/s`
 
 Requirements:
 
-- Display only one arrow at a time.
+- When arrows are enabled, display only one arrow at a time matching the dominant direction.
+- When arrows are disabled, display only the dominant speed value.
 - Automatically determine the dominant traffic direction.
 - Display the corresponding speed.
 - Switch between upload and download as network activity changes.

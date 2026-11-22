@@ -11,95 +11,99 @@ public struct AboutView: View {
     }
 
     public var body: some View {
-        VStack(spacing: 18) {
-            Spacer(minLength: 10)
+        ScrollView(.vertical, showsIndicators: false) {
+            VStack(spacing: 18) {
+                Spacer(minLength: 12)
 
-            // App Identity & Logo
-            appLogoView
-                .frame(width: 80, height: 80)
+                // App Identity & Logo
+                appLogoView
+                    .frame(width: 80, height: 80)
 
-            VStack(spacing: 4) {
-                Text(AppConfiguration.appName)
-                    .font(.title2)
-                    .fontWeight(.bold)
+                VStack(spacing: 4) {
+                    Text(AppConfiguration.appName)
+                        .font(.title2)
+                        .fontWeight(.bold)
 
-                Text("(\(AppConfiguration.shortName))")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-
-                Text("Version \(AppConfiguration.Version.versionString) (Build \(AppConfiguration.Version.buildNumber))")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 2)
-            }
-
-            VStack(spacing: 6) {
-                Text("Designed and engineered by \(AppConfiguration.organization)")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-
-                Text("A lightweight, privacy-focused native macOS menu-bar utility for real-time network throughput monitoring.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 32)
-            }
-
-            Divider()
-                .padding(.horizontal, 40)
-
-            // Legal & Documentation Quick Access Buttons
-            VStack(spacing: 8) {
-                HStack(spacing: 16) {
-                    Button("Terms & Conditions") {
-                        onSelectDocument(.termsAndConditions)
-                    }
-                    .buttonStyle(.link)
-                    .font(.caption)
-
-                    Text("•")
+                    Text("(\(AppConfiguration.shortName))")
+                        .font(.subheadline)
                         .foregroundColor(.secondary)
-                        .font(.caption2)
 
-                    Button("Privacy Policy") {
-                        onSelectDocument(.privacyPolicy)
-                    }
-                    .buttonStyle(.link)
-                    .font(.caption)
+                    Text("Version \(AppConfiguration.Version.versionString) (Build \(AppConfiguration.Version.buildNumber))")
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
+                        .padding(.top, 2)
                 }
 
-                HStack(spacing: 16) {
-                    Button("Setup Guide") {
-                        onSelectDocument(.setupGuide)
-                    }
-                    .buttonStyle(.link)
-                    .font(.caption)
+                VStack(spacing: 6) {
+                    Text("Designed and engineered by \(AppConfiguration.organization)")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
 
-                    Text("•")
+                    Text("A lightweight, privacy-focused native macOS menu-bar utility for real-time network throughput monitoring.")
+                        .font(.caption)
                         .foregroundColor(.secondary)
-                        .font(.caption2)
-
-                    Button("Usage Guide") {
-                        onSelectDocument(.usageGuide)
-                    }
-                    .buttonStyle(.link)
-                    .font(.caption)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 24)
                 }
+
+                Divider()
+                    .padding(.horizontal, 40)
+
+                // Legal & Documentation Quick Access Buttons
+                VStack(spacing: 8) {
+                    HStack(spacing: 16) {
+                        Button("Terms & Conditions") {
+                            onSelectDocument(.termsAndConditions)
+                        }
+                        .buttonStyle(.link)
+                        .font(.caption)
+
+                        Text("•")
+                            .foregroundColor(.secondary)
+                            .font(.caption2)
+
+                        Button("Privacy Policy") {
+                            onSelectDocument(.privacyPolicy)
+                        }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                    }
+
+                    HStack(spacing: 16) {
+                        Button("Setup Guide") {
+                            onSelectDocument(.setupGuide)
+                        }
+                        .buttonStyle(.link)
+                        .font(.caption)
+
+                        Text("•")
+                            .foregroundColor(.secondary)
+                            .font(.caption2)
+
+                        Button("Usage Guide") {
+                            onSelectDocument(.usageGuide)
+                        }
+                        .buttonStyle(.link)
+                        .font(.caption)
+                    }
+                }
+
+                Spacer(minLength: 12)
+
+                // Copyright Information
+                VStack(spacing: 2) {
+                    Text(AppConfiguration.Version.copyright)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+
+                    Text("Universal Binary • macOS 13.0+")
+                        .font(.caption2)
+                        .foregroundColor(.secondary.opacity(0.8))
+                }
+                .padding(.bottom, 16)
             }
-
-            Spacer(minLength: 10)
-
-            // Copyright Information
-            VStack(spacing: 2) {
-                Text(AppConfiguration.Version.copyright)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
-
-                Text("Universal Binary • macOS 13.0+")
-                    .font(.caption2)
-                    .foregroundColor(.secondary.opacity(0.8))
-            }
-            .padding(.bottom, 16)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 20)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

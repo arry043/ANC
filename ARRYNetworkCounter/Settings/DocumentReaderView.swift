@@ -59,6 +59,8 @@ public struct DocumentReaderView: View {
                 Text(document.title)
                     .font(.headline)
                     .fontWeight(.medium)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
 
             Spacer()
@@ -129,13 +131,13 @@ public struct DocumentReaderView: View {
                 .padding(.vertical, 4)
 
         case .codeBlock(let code):
-            VStack(alignment: .leading) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 Text(code)
                     .font(.system(.caption, design: .monospaced))
                     .foregroundColor(.primary)
                     .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)
                     .fill(Color(nsColor: .controlBackgroundColor))
@@ -146,15 +148,17 @@ public struct DocumentReaderView: View {
             )
 
         case .table(let rows):
-            VStack(alignment: .leading, spacing: 4) {
-                ForEach(rows.indices, id: \.self) { index in
-                    Text(rows[index])
-                        .font(.system(.caption, design: .monospaced))
-                        .foregroundColor(index == 0 ? .primary : .secondary)
-                        .fontWeight(index == 0 ? .semibold : .regular)
+            ScrollView(.horizontal, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 4) {
+                    ForEach(rows.indices, id: \.self) { index in
+                        Text(rows[index])
+                            .font(.system(.caption, design: .monospaced))
+                            .foregroundColor(index == 0 ? .primary : .secondary)
+                            .fontWeight(index == 0 ? .semibold : .regular)
+                    }
                 }
+                .padding(10)
             }
-            .padding(10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
                 RoundedRectangle(cornerRadius: 6, style: .continuous)

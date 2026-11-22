@@ -6,8 +6,8 @@ A lightweight native macOS menu bar utility designed to display real-time networ
 **Platform:** macOS (macOS 13.0+)  
 **Technology Stack:** Swift 6, SwiftUI, AppKit  
 **Architecture:** Universal Binary (`arm64`, `x86_64`)  
-**Current Development Phase:** Phase 12 — Documentation & About Section (Completed)  
-**Next Phase:** Phase 13 — Error Handling & Performance Optimization
+**Current Development Phase:** Phase 16 — Final Release & Deployment Verification (Completed)  
+**Status:** v1.0.0 Release Ready (100% Complete)
 
 ---
 
@@ -148,9 +148,12 @@ Full project specifications and technical documentation are maintained in the [`
 
 ---
 
-## Current Status & Next Phase
+## Release & Installation
 
-- **Completed:** Phase 01 — Project Initialization & Configuration (native Xcode project established, Swift 6 entry point configured, Universal Binary verified, AppKit/SwiftUI lifecycle connected, menu bar utility metadata validated).
-- **Completed:** Phase 02 — Core Models & Application Foundation (implemented `NetworkSpeed`, `NetworkSnapshot`, `NetworkInterface`, `DisplayMode`, `BothDirectionsStyle`, `NetworkDirection`, `AppPreferences`, `NetworkMonitoring`, `PreferencesStoring`, `ApplicationCoordinator`, `AppConfiguration`, and verified unit test suite).
-- **Completed:** Phase 03 — Network Path Detection (integrated Apple's `Network.framework`, implemented `NetworkPathManager` actor and `NetworkPathState` domain model, connected path streaming to `ApplicationCoordinator`, and verified 44 unit tests).
-- **Next Up:** Phase 04 — Network Interface Statistics (implementing `NetworkInterfaceProvider` to retrieve system received/transmitted byte counters via `getifaddrs()`).
+The production application and installable DMG are packaged in `dist/` and archived in `release/v1.0.0/`:
+
+- **DMG Package:** `dist/ARRY-Network-Counter.dmg` (5.0 MB)
+- **Universal Application Bundle:** `dist/ARRY Network Counter.app` (`arm64` + `x86_64`)
+- **Release Automation:** Run `./Scripts/release.sh` to execute the full test suite, build both architecture slices, package the bundle, generate the DMG, and perform installation verification.
+- **Release Archive:** Checksummed release artifacts with `SHA256SUMS.txt` are maintained in `release/v1.0.0/`.
+- **Release Documentation:** See [`RELEASE_NOTES.md`](file:///Users/arry03/Desktop/ARRRY/ANC/Documentation/RELEASE_NOTES.md) and [`RELEASE_VERIFICATION_REPORT.md`](file:///Users/arry03/Desktop/ARRRY/ANC/Documentation/RELEASE_VERIFICATION_REPORT.md).

@@ -8,6 +8,9 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
     /// Active presentation style when both directions are displayed.
     public let bothDirectionsStyle: BothDirectionsStyle
 
+    /// Active arrow visibility style when a single direction mode is displayed.
+    public let singleDirectionArrowStyle: SingleDirectionArrowStyle
+
     /// Current download speed formatted string (e.g. "2.45 MB/s"), or nil if unavailable.
     public let downloadSpeedText: String?
 
@@ -27,6 +30,7 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
     public init(
         displayMode: DisplayMode = .bothDirections,
         bothDirectionsStyle: BothDirectionsStyle = .combinedArrows,
+        singleDirectionArrowStyle: SingleDirectionArrowStyle = .withArrow,
         downloadSpeedText: String? = nil,
         uploadSpeedText: String? = nil,
         dominantDirection: NetworkDirection = .download,
@@ -35,6 +39,7 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
     ) {
         self.displayMode = displayMode
         self.bothDirectionsStyle = bothDirectionsStyle
+        self.singleDirectionArrowStyle = singleDirectionArrowStyle
         self.downloadSpeedText = downloadSpeedText
         self.uploadSpeedText = uploadSpeedText
         self.dominantDirection = dominantDirection
@@ -46,6 +51,7 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
     public static let idle = MenuBarContent(
         displayMode: .bothDirections,
         bothDirectionsStyle: .combinedArrows,
+        singleDirectionArrowStyle: .withArrow,
         downloadSpeedText: "0 KB/s",
         uploadSpeedText: "0 KB/s",
         dominantDirection: .download,
@@ -57,6 +63,7 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
     public static let disconnected = MenuBarContent(
         displayMode: .bothDirections,
         bothDirectionsStyle: .combinedArrows,
+        singleDirectionArrowStyle: .withArrow,
         downloadSpeedText: "0 KB/s",
         uploadSpeedText: "0 KB/s",
         dominantDirection: .download,
@@ -71,7 +78,7 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
             switch bothDirectionsStyle {
             case .combinedArrows:
                 return (dominantDirection == .download) ? downloadSpeedText : uploadSpeedText
-            case .separateSpeeds:
+            case .separateSpeeds, .withoutArrows:
                 return nil
             }
         case .singleDirectionManual:

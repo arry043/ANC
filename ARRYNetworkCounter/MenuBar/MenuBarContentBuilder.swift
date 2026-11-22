@@ -38,6 +38,7 @@ public enum MenuBarContentBuilder {
         return MenuBarContent(
             displayMode: preferences.displayMode,
             bothDirectionsStyle: preferences.bothDirectionsStyle,
+            singleDirectionArrowStyle: preferences.singleDirectionArrowStyle,
             downloadSpeedText: dlText,
             uploadSpeedText: ulText,
             dominantDirection: dominantDirection,

@@ -54,36 +54,61 @@ Displays both direction indicators together while showing only the speed of the 
 
 ---
 
-### 3. Single Direction — Manual
+### 3. Both Directions — Without Arrows
 
-Displays exclusively the direction manually chosen by the user.
+Displays independent download and upload speeds using compact letter labels instead of directional arrow glyphs.
 
-**Download Representation:**
+**Visual Representation:**
 ```text
-↓ 2.45 MB/s
+DL 2.45 MB/s    UL 120 KB/s
 ```
 
-**Upload Representation:**
+- **Download:** Indicated with a green `DL` text label followed by the download speed.
+- **Upload:** Indicated with a blue `UL` text label followed by the upload speed.
+- **Separation:** Speeds are separated with fixed spacing (4 spaces) for clean readability.
+- **Best For:** Users who prefer typographic letter abbreviations without arrow icons.
+
+---
+
+### 4. Single Direction — Manual
+
+Displays exclusively the direction manually chosen by the user, with optional arrow visibility.
+
+**With Arrow Representation:**
 ```text
-↑ 120 KB/s
+Download:  ↓ 2.45 MB/s
+Upload:    ↑ 120 KB/s
+```
+
+**Without Arrows Representation:**
+```text
+Download:  2.45 MB/s
+Upload:    120 KB/s
 ```
 
 - **User Control:** Select either **Download** or **Upload** in Settings.
+- **Arrow Visibility:** Choose between **With Arrow** and **Without Arrows**.
 - **Fixed Display:** The chosen direction remains locked in the menu bar. Automatic dominance changes will not override your selection.
 - **Best For:** Users monitoring specific tasks, such as large file downloads, streaming, or video uploads.
 
 ---
 
-### 4. Single Direction — Automatic
+### 5. Single Direction — Automatic
 
-Dynamically displays whichever direction is actively dominating network throughput using intelligent hysteresis switching.
+Dynamically displays whichever direction is actively dominating network throughput using intelligent hysteresis switching, with optional arrow visibility.
 
-**Visual Representation:**
+**With Arrow Representation:**
 ```text
 ↓ 2.45 MB/s   (switches to ↑ 1.20 MB/s when upload dominates)
 ```
 
-- **Dynamic Direction:** Shows a single arrow and speed value corresponding to the dominant direction.
+**Without Arrows Representation:**
+```text
+2.45 MB/s     (switches to 1.20 MB/s when upload dominates)
+```
+
+- **Dynamic Direction:** Shows a single speed value corresponding to the dominant direction.
+- **Arrow Visibility:** Choose between **With Arrow** and **Without Arrows**.
 - **Intelligent Switching:** Automatically transitions between download and upload as network demands shift.
 - **Best For:** Users seeking maximum menu-bar space efficiency with zero manual intervention.
 

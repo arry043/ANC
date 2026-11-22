@@ -29,6 +29,7 @@ public enum AppConfiguration {
         public static let displayMode = "in.arrry.networkcounter.displayMode"
         public static let bothDirectionsStyle = "in.arrry.networkcounter.bothDirectionsStyle"
         public static let manualDirection = "in.arrry.networkcounter.manualDirection"
+        public static let singleDirectionArrowStyle = "in.arrry.networkcounter.singleDirectionArrowStyle"
         public static let launchAtLogin = "in.arrry.networkcounter.launchAtLogin"
     }
 
