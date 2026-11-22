@@ -7,4 +7,7 @@ public enum BothDirectionsStyle: String, Sendable, Equatable, Hashable, CaseIter
 
     /// Display both arrows with a single numerical speed representing the dominant direction: `↓ ↑ 2.45 MB/s`.
     case combinedArrows = "combinedArrows"
+
+    /// Display independent speeds for both directions with compact text labels: `DL 2.45 MB/s    UL 120 KB/s`.
+    case withoutArrows = "withoutArrows"
 }

@@ -16,8 +16,17 @@ public enum MenuBarAppearance {
     /// Standard upward arrow symbol representing upload traffic.
     public static let uploadSymbol = "↑"
 
+    /// Text label representing download traffic when directional arrows are disabled.
+    public static let downloadLabel = "DL"
+
+    /// Text label representing upload traffic when directional arrows are disabled.
+    public static let uploadLabel = "UL"
+
     /// Typography for directional indicators (semibold system font).
     public static let arrowFont = NSFont.systemFont(ofSize: 11.5, weight: .semibold)
+
+    /// Typography for text directional labels (DL/UL).
+    public static let labelFont = NSFont.systemFont(ofSize: 11.0, weight: .semibold)
 
     /// Typography for numerical speeds (monospaced digits to prevent layout jitter as numbers change).
     public static let speedFont = NSFont.monospacedDigitSystemFont(ofSize: 11.5, weight: .medium)

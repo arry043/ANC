@@ -13,6 +13,9 @@ public struct AppPreferences: Sendable, Equatable, Hashable, Codable {
     /// Selected direction when `displayMode` is `.singleDirectionManual`.
     public var manualDirection: NetworkDirection
 
+    /// Arrow visibility preference when a single-direction mode is active.
+    public var singleDirectionArrowStyle: SingleDirectionArrowStyle
+
     /// Whether the application is configured to launch automatically at macOS login.
     public var launchAtLogin: Bool
 
@@ -21,11 +24,13 @@ public struct AppPreferences: Sendable, Equatable, Hashable, Codable {
         displayMode: DisplayMode = .bothDirections,
         bothDirectionsStyle: BothDirectionsStyle = .separateSpeeds,
         manualDirection: NetworkDirection = .download,
+        singleDirectionArrowStyle: SingleDirectionArrowStyle = .withArrow,
         launchAtLogin: Bool = false
     ) {
         self.displayMode = displayMode
         self.bothDirectionsStyle = bothDirectionsStyle
         self.manualDirection = manualDirection
+        self.singleDirectionArrowStyle = singleDirectionArrowStyle
         self.launchAtLogin = launchAtLogin
     }
 
@@ -34,6 +39,7 @@ public struct AppPreferences: Sendable, Equatable, Hashable, Codable {
         displayMode: .bothDirections,
         bothDirectionsStyle: .separateSpeeds,
         manualDirection: .download,
+        singleDirectionArrowStyle: .withArrow,
         launchAtLogin: false
     )
 }

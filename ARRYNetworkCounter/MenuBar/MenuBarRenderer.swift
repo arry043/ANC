@@ -37,34 +37,46 @@ public enum MenuBarRenderer {
                 appendArrow(MenuBarAppearance.uploadSymbol, color: MenuBarAppearance.uploadColor, to: result)
                 appendSpacer(" ", to: result)
                 appendSpeed(ulText, to: result)
+
+            case .withoutArrows:
+                // Format: "DL <dlSpeed>    UL <ulSpeed>"
+                appendLabel(MenuBarAppearance.downloadLabel, color: MenuBarAppearance.downloadColor, to: result)
+                appendSpacer(" ", to: result)
+                appendSpeed(dlText, to: result)
+                appendSpacer(MenuBarAppearance.separateSpeedsSpacer, to: result)
+                appendLabel(MenuBarAppearance.uploadLabel, color: MenuBarAppearance.uploadColor, to: result)
+                appendSpacer(" ", to: result)
+                appendSpeed(ulText, to: result)
             }
 
         case .singleDirectionManual:
             // Format: "↓ <dlSpeed>" or "↑ <ulSpeed>" depending on manual direction preference
-            switch content.manualDirection {
-            case .download:
-                appendArrow(MenuBarAppearance.downloadSymbol, color: MenuBarAppearance.downloadColor, to: result)
-                appendSpacer(" ", to: result)
-                appendSpeed(dlText, to: result)
+            let (speed, symbol, color) = (content.manualDirection == .download)
+                ? (dlText, MenuBarAppearance.downloadSymbol, MenuBarAppearance.downloadColor)
+                : (ulText, MenuBarAppearance.uploadSymbol, MenuBarAppearance.uploadColor)
 
-            case .upload:
-                appendArrow(MenuBarAppearance.uploadSymbol, color: MenuBarAppearance.uploadColor, to: result)
+            switch content.singleDirectionArrowStyle {
+            case .withArrow:
+                appendArrow(symbol, color: color, to: result)
                 appendSpacer(" ", to: result)
-                appendSpeed(ulText, to: result)
+                appendSpeed(speed, to: result)
+            case .withoutArrows:
+                appendSpeed(speed, to: result)
             }
 
         case .singleDirectionAutomatic:
             // Format: "↓ <dlSpeed>" or "↑ <ulSpeed>" depending on dominant direction
-            switch content.dominantDirection {
-            case .download:
-                appendArrow(MenuBarAppearance.downloadSymbol, color: MenuBarAppearance.downloadColor, to: result)
-                appendSpacer(" ", to: result)
-                appendSpeed(dlText, to: result)
+            let (speed, symbol, color) = (content.dominantDirection == .download)
+                ? (dlText, MenuBarAppearance.downloadSymbol, MenuBarAppearance.downloadColor)
+                : (ulText, MenuBarAppearance.uploadSymbol, MenuBarAppearance.uploadColor)
 
-            case .upload:
-                appendArrow(MenuBarAppearance.uploadSymbol, color: MenuBarAppearance.uploadColor, to: result)
+            switch content.singleDirectionArrowStyle {
+            case .withArrow:
+                appendArrow(symbol, color: color, to: result)
                 appendSpacer(" ", to: result)
-                appendSpeed(ulText, to: result)
+                appendSpeed(speed, to: result)
+            case .withoutArrows:
+                appendSpeed(speed, to: result)
             }
         }
 
@@ -87,6 +99,14 @@ public enum MenuBarRenderer {
             .foregroundColor: color
         ]
         target.append(NSAttributedString(string: symbol, attributes: attributes))
+    }
+
+    private static func appendLabel(_ label: String, color: NSColor, to target: NSMutableAttributedString) {
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: MenuBarAppearance.labelFont,
+            .foregroundColor: color
+        ]
+        target.append(NSAttributedString(string: label, attributes: attributes))
     }
 
     private static func appendSpeed(_ speed: String, to target: NSMutableAttributedString) {

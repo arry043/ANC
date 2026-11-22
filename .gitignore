@@ -4,6 +4,7 @@
 # Build & Distribution
 build/
 dist/
+release/
 DerivedData/
 *.xcuserstate
 xcuserdata/

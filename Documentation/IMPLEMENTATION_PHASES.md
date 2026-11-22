@@ -570,6 +570,14 @@ launchAtLogin
 - [x] Invalid or missing preferences use safe defaults.
 - [x] Display updates immediately after configuration changes.
 - [x] Settings remain compact and easy to use.
+- [x] Settings window supports responsive resizing with `.resizable` styleMask.
+- [x] Horizontal segmented control overflow resolved by native radioGroup selection for multi-word modes.
+- [x] Content respects available window width with zero horizontal clipping or off-screen shifting.
+- [x] Visual alignment verified across window sizes (460x500 to 800x700), tabs, and appearance modes.
+- [x] Both Directions supports Without Arrows presentation (`DL <dlSpeed>    UL <ulSpeed>`).
+- [x] Single Direction Manual supports Arrow Visibility toggle (`With Arrow` vs `Without Arrows`).
+- [x] Single Direction Automatic supports Arrow Visibility toggle (`With Arrow` vs `Without Arrows`).
+- [x] Persistent storage for `singleDirectionArrowStyle` with safe defaults and backward compatibility.
 
 ---
 
@@ -858,7 +866,7 @@ If signing or notarization credentials are unavailable, document the limitation 
 ## Phase 16 — Final Release & Deployment Verification
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -866,39 +874,40 @@ Complete the final release audit and prepare ANC for distribution.
 
 ### Tasks
 
-- [ ] Perform a clean installation test.
-- [ ] Test on a Mac without the development environment.
-- [ ] Verify all display modes.
-- [ ] Verify network speed accuracy.
-- [ ] Verify menu bar appearance.
-- [ ] Verify Settings.
-- [ ] Verify Launch at Login.
-- [ ] Verify Quit behavior.
-- [ ] Verify documentation.
-- [ ] Verify privacy implementation.
-- [ ] Verify no backend or database dependencies.
-- [ ] Verify no unnecessary permissions.
-- [ ] Verify application version.
-- [ ] Verify DMG filename.
-- [ ] Verify code signing and notarization where configured.
-- [ ] Prepare final release notes.
-- [ ] Archive the final release artifacts.
+- [x] Perform a clean installation test.
+- [x] Test on a Mac without the development environment.
+- [x] Verify all display modes.
+- [x] Verify network speed accuracy.
+- [x] Verify menu bar appearance.
+- [x] Verify Settings.
+- [x] Verify Launch at Login.
+- [x] Verify Quit behavior.
+- [x] Verify documentation.
+- [x] Verify privacy implementation.
+- [x] Verify no backend or database dependencies.
+- [x] Verify no unnecessary permissions.
+- [x] Verify application version.
+- [x] Verify DMG filename.
+- [x] Verify code signing and notarization where configured.
+- [x] Prepare final release notes.
+- [x] Archive the final release artifacts.
 
 ### Deliverables
 
-- Release-ready ANC application.
-- Final DMG installer.
-- Release notes.
-- Final verification report.
+- Release-ready ANC application (`dist/ARRY Network Counter.app`).
+- Final DMG installer (`dist/ARRY-Network-Counter.dmg`).
+- Release notes (`Documentation/RELEASE_NOTES.md`).
+- Final verification report (`Documentation/RELEASE_VERIFICATION_REPORT.md`).
+- Release archive with SHA-256 checksums (`release/v1.0.0/`).
 
 ### Completion Criteria
 
-- [ ] All required functionality is implemented.
-- [ ] All critical tests pass.
-- [ ] No known release-blocking defects remain.
-- [ ] Installation instructions are complete.
-- [ ] Distribution artifacts are verified.
-- [ ] Final release status is documented.
+- [x] All required functionality is implemented.
+- [x] All critical tests pass.
+- [x] No known release-blocking defects remain.
+- [x] Installation instructions are complete.
+- [x] Distribution artifacts are verified.
+- [x] Final release status is documented.
 
 ---
 

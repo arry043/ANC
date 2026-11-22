@@ -538,8 +538,8 @@ public enum ComprehensiveCompatibilityTests {
 
         // 14. Transient memory audit: verify no historical metrics or persistence
         let finalDomain = testSuite.dictionaryRepresentation()
-        let persistedKeys = finalDomain.keys.filter { $0.hasPrefix("in.arrry") || ["displayMode", "bothDirectionsStyle", "manualDirection", "launchAtLogin"].contains($0) }
-        assert(persistedKeys.count <= 4, "Only the 4 documented user preference keys may exist in UserDefaults")
+        let persistedKeys = finalDomain.keys.filter { $0.hasPrefix("in.arrry") || ["displayMode", "bothDirectionsStyle", "manualDirection", "singleDirectionArrowStyle", "launchAtLogin"].contains($0) }
+        assert(persistedKeys.count <= 5, "Only the 5 documented user preference keys may exist in UserDefaults")
         count += 1
 
         testSuite.removePersistentDomain(forName: testSuiteName)

@@ -743,6 +743,12 @@ enum DisplayMode {
 enum BothDirectionsStyle {
     case separateSpeeds
     case combinedArrows
+    case withoutArrows
+}
+
+enum SingleDirectionArrowStyle {
+    case withArrow
+    case withoutArrows
 }
 
 enum NetworkDirection {

@@ -40,18 +40,22 @@ public struct SettingsView: View {
                 mainContentView
             }
         }
-        .frame(minWidth: 460, idealWidth: 480, minHeight: 500, idealHeight: 540)
+        .frame(minWidth: 460, idealWidth: 500, maxWidth: .infinity, minHeight: 500, idealHeight: 560, maxHeight: .infinity)
     }
 
     // MARK: - Main Content with Tab Bar
 
     private var mainContentView: some View {
         VStack(spacing: 0) {
-            // Top Navigation Segmented Tab Bar
-            tabSelector
-                .padding(.horizontal, 20)
-                .padding(.top, 16)
-                .padding(.bottom, 12)
+            // Top Navigation Segmented Tab Bar - Centered within available width
+            HStack {
+                Spacer()
+                tabSelector
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
 
             Divider()
 
@@ -68,6 +72,7 @@ public struct SettingsView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(nsColor: .windowBackgroundColor))
     }
 
@@ -103,7 +108,9 @@ public struct SettingsView: View {
                 Spacer(minLength: 10)
             }
             .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     // MARK: - Header Section
@@ -124,6 +131,7 @@ public struct SettingsView: View {
             }
             Spacer()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder
@@ -158,11 +166,12 @@ public struct SettingsView: View {
                 Text("Single Direction — Manual").tag(DisplayMode.singleDirectionManual)
                 Text("Single Direction — Automatic").tag(DisplayMode.singleDirectionAutomatic)
             }
-            .pickerStyle(.segmented)
+            .pickerStyle(.radioGroup)
             .labelsHidden()
 
             conditionalDisplayControls
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder
@@ -189,11 +198,13 @@ public struct SettingsView: View {
             )) {
                 Text("Separate Speeds").tag(BothDirectionsStyle.separateSpeeds)
                 Text("Combined Arrows").tag(BothDirectionsStyle.combinedArrows)
+                Text("Without Arrows").tag(BothDirectionsStyle.withoutArrows)
             }
             .pickerStyle(.radioGroup)
             .labelsHidden()
 
-            if settingsManager.preferences.bothDirectionsStyle == .separateSpeeds {
+            switch settingsManager.preferences.bothDirectionsStyle {
+            case .separateSpeeds:
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Display download and upload speeds independently.")
                         .font(.caption)
@@ -222,7 +233,8 @@ public struct SettingsView: View {
                         }
                     }
                 }
-            } else {
+
+            case .combinedArrows:
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Display both direction arrows with the speed of the currently dominant direction.")
                         .font(.caption)
@@ -246,9 +258,42 @@ public struct SettingsView: View {
                         }
                     }
                 }
+
+            case .withoutArrows:
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Display download and upload speeds independently with compact text labels.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    previewContainer {
+                        HStack(spacing: 8) {
+                            Text("Preview:")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            HStack(spacing: 4) {
+                                Text("DL")
+                                    .foregroundColor(Color(nsColor: MenuBarAppearance.downloadColor))
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 11.5))
+                                Text("2.45 MB/s")
+                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            }
+                            Text("   ")
+                            HStack(spacing: 4) {
+                                Text("UL")
+                                    .foregroundColor(Color(nsColor: MenuBarAppearance.uploadColor))
+                                    .fontWeight(.semibold)
+                                    .font(.system(size: 11.5))
+                                Text("120 KB/s")
+                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            }
+                        }
+                    }
+                }
             }
         }
         .padding(.leading, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var singleDirectionManualControls: some View {
@@ -267,78 +312,121 @@ public struct SettingsView: View {
             .pickerStyle(.radioGroup)
             .labelsHidden()
 
-            if settingsManager.preferences.manualDirection == .download {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Continuously display download speed. Dominant direction switching will not override this.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+            Text("Arrow Visibility")
+                .font(.subheadline)
+                .fontWeight(.medium)
+                .padding(.top, 4)
 
-                    previewContainer {
-                        HStack(spacing: 8) {
-                            Text("Preview:")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            HStack(spacing: 4) {
-                                Text("↓")
-                                    .foregroundColor(Color(nsColor: MenuBarAppearance.downloadColor))
-                                    .fontWeight(.semibold)
-                                Text("2.45 MB/s")
-                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
-                            }
-                        }
-                    }
-                }
-            } else {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text("Continuously display upload speed. Dominant direction switching will not override this.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+            Picker("", selection: Binding(
+                get: { settingsManager.preferences.singleDirectionArrowStyle },
+                set: { settingsManager.updateSingleDirectionArrowStyle($0) }
+            )) {
+                Text("With Arrow").tag(SingleDirectionArrowStyle.withArrow)
+                Text("Without Arrows").tag(SingleDirectionArrowStyle.withoutArrows)
+            }
+            .pickerStyle(.radioGroup)
+            .labelsHidden()
 
-                    previewContainer {
-                        HStack(spacing: 8) {
-                            Text("Preview:")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            HStack(spacing: 4) {
-                                Text("↑")
-                                    .foregroundColor(Color(nsColor: MenuBarAppearance.uploadColor))
+            VStack(alignment: .leading, spacing: 6) {
+                let dirDesc = settingsManager.preferences.manualDirection == .download ? "download" : "upload"
+                Text("Continuously display \(dirDesc) speed. Dominant direction switching will not override this.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                previewContainer {
+                    HStack(spacing: 8) {
+                        Text("Preview:")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+
+                        let isDownload = (settingsManager.preferences.manualDirection == .download)
+                        let speedStr = isDownload ? "2.45 MB/s" : "120 KB/s"
+                        let arrowSymbol = isDownload ? "↓" : "↑"
+                        let arrowColor = isDownload ? Color(nsColor: MenuBarAppearance.downloadColor) : Color(nsColor: MenuBarAppearance.uploadColor)
+
+                        HStack(spacing: 4) {
+                            if settingsManager.preferences.singleDirectionArrowStyle == .withArrow {
+                                Text(arrowSymbol)
+                                    .foregroundColor(arrowColor)
                                     .fontWeight(.semibold)
-                                Text("120 KB/s")
-                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
                             }
+                            Text(speedStr)
+                                .font(.system(size: 12, weight: .medium, design: .monospaced))
                         }
                     }
                 }
             }
         }
         .padding(.leading, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var singleDirectionAutomaticControls: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Automatically displays the direction currently carrying the dominant traffic using hysteresis switching.")
-                .font(.caption)
-                .foregroundColor(.secondary)
+        VStack(alignment: .leading, spacing: 12) {
+            Text("Arrow Visibility")
+                .font(.subheadline)
+                .fontWeight(.medium)
 
-            previewContainer {
-                HStack(spacing: 8) {
-                    Text("Preview:")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    HStack(spacing: 4) {
-                        Text("↓")
-                            .foregroundColor(Color(nsColor: MenuBarAppearance.downloadColor))
-                            .fontWeight(.semibold)
-                        Text("2.45 MB/s")
-                            .font(.system(size: 12, weight: .medium, design: .monospaced))
+            Picker("", selection: Binding(
+                get: { settingsManager.preferences.singleDirectionArrowStyle },
+                set: { settingsManager.updateSingleDirectionArrowStyle($0) }
+            )) {
+                Text("With Arrow").tag(SingleDirectionArrowStyle.withArrow)
+                Text("Without Arrows").tag(SingleDirectionArrowStyle.withoutArrows)
+            }
+            .pickerStyle(.radioGroup)
+            .labelsHidden()
+
+            VStack(alignment: .leading, spacing: 6) {
+                Text("Automatically displays the direction currently carrying the dominant traffic using hysteresis switching.")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                previewContainer {
+                    ViewThatFits(in: .horizontal) {
+                        HStack(spacing: 8) {
+                            Text("Preview:")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            HStack(spacing: 4) {
+                                if settingsManager.preferences.singleDirectionArrowStyle == .withArrow {
+                                    Text("↓")
+                                        .foregroundColor(Color(nsColor: MenuBarAppearance.downloadColor))
+                                        .fontWeight(.semibold)
+                                }
+                                Text("2.45 MB/s")
+                                    .font(.system(size: 12, weight: .medium, design: .monospaced))
+                            }
+                            Text(settingsManager.preferences.singleDirectionArrowStyle == .withArrow ? "(switches to ↑ when upload dominates)" : "(switches to upload speed when dominant)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            HStack(spacing: 8) {
+                                Text("Preview:")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                HStack(spacing: 4) {
+                                    if settingsManager.preferences.singleDirectionArrowStyle == .withArrow {
+                                        Text("↓")
+                                            .foregroundColor(Color(nsColor: MenuBarAppearance.downloadColor))
+                                            .fontWeight(.semibold)
+                                    }
+                                    Text("2.45 MB/s")
+                                        .font(.system(size: 12, weight: .medium, design: .monospaced))
+                                }
+                            }
+                            Text(settingsManager.preferences.singleDirectionArrowStyle == .withArrow ? "(switches to ↑ when upload dominates)" : "(switches to upload speed when dominant)")
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
                     }
-                    Text("(switches to ↑ when upload dominates)")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
                 }
             }
         }
         .padding(.leading, 4)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func previewContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -430,6 +518,7 @@ public struct SettingsView: View {
                     .foregroundColor(.red)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: - Documentation Tab
@@ -455,7 +544,9 @@ public struct SettingsView: View {
                 Spacer(minLength: 10)
             }
             .padding(20)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private func docRow(document: DocumentationDocument) -> some View {
@@ -490,6 +581,7 @@ public struct SettingsView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
+        .frame(maxWidth: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 8, style: .continuous)
                 .fill(Color(nsColor: .controlBackgroundColor))
