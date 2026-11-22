@@ -242,12 +242,22 @@ struct TestRunner {
             totalFailed += 1
         }
 
+        // 24. ErrorHandlingAndPerformanceTests (Phase 13)
+        do {
+            let passed = try await ErrorHandlingAndPerformanceTests.run()
+            print("  [PASS] ErrorHandlingAndPerformanceTests:   \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] ErrorHandlingAndPerformanceTests:   Failed with error: \(error)")
+            totalFailed += 1
+        }
+
         let endTime = DispatchTime.now()
         let elapsedMilliseconds = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 23 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 24 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")

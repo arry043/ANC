@@ -669,7 +669,7 @@ Implement offline documentation and application information inside Settings.
 ## Phase 13 — Error Handling & Performance Optimization
 
 **Priority:** High  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -677,38 +677,40 @@ Improve stability, resource efficiency, and recovery from unexpected system cond
 
 ### Tasks
 
-- [ ] Review all network error paths.
-- [ ] Handle interface statistics retrieval failures.
-- [ ] Handle network disconnections.
-- [ ] Handle network reconnections.
-- [ ] Handle interface changes.
-- [ ] Handle invalid counter snapshots.
-- [ ] Handle unexpected sampling delays.
-- [ ] Review task cancellation.
-- [ ] Review actor isolation.
-- [ ] Prevent duplicate monitoring tasks.
-- [ ] Prevent unnecessary menu bar updates.
-- [ ] Reduce unnecessary allocations.
-- [ ] Review memory usage.
-- [ ] Review CPU consumption.
-- [ ] Verify no traffic history is persisted.
-- [ ] Verify no external network requests are made by the monitoring implementation.
+- [x] Review all network error paths.
+- [x] Handle interface statistics retrieval failures.
+- [x] Handle network disconnections.
+- [x] Handle network reconnections.
+- [x] Handle interface changes.
+- [x] Handle invalid counter snapshots.
+- [x] Handle unexpected sampling delays.
+- [x] Review task cancellation.
+- [x] Review actor isolation.
+- [x] Prevent duplicate monitoring tasks.
+- [x] Prevent unnecessary menu bar updates.
+- [x] Reduce unnecessary allocations.
+- [x] Review memory usage.
+- [x] Review CPU consumption.
+- [x] Verify no traffic history is persisted.
+- [x] Verify no external network requests are made by the monitoring implementation.
 
 ### Deliverables
 
-- Improved application stability.
-- Optimized monitoring pipeline.
-- Verified error recovery.
+- Improved application stability and unified logging (`AppLogger.swift`).
+- Optimized monitoring pipeline and interface failure handling (`NetworkPathManager.swift`, `NetworkInterfaceSelector.swift`).
+- Timing boundary and counter discontinuity protection (`NetworkSpeedCalculator.swift`).
+- Redundant render suppression with change detection (`MenuBarManager.swift`).
+- Comprehensive error handling and performance test suite (`ErrorHandlingAndPerformanceTests.swift` - 12 assertions).
 
 ### Completion Criteria
 
-- [ ] Temporary network errors do not crash the app.
-- [ ] Monitoring recovers after reconnection.
-- [ ] No duplicate sampling tasks.
-- [ ] No unnecessary continuous CPU activity.
-- [ ] No persistent traffic history.
-- [ ] No unnecessary external dependencies or requests.
-- [ ] Application remains stable during extended operation.
+- [x] Temporary network errors do not crash the app.
+- [x] Monitoring recovers after reconnection.
+- [x] No duplicate sampling tasks.
+- [x] No unnecessary continuous CPU activity.
+- [x] No persistent traffic history.
+- [x] No unnecessary external dependencies or requests.
+- [x] Application remains stable during extended operation.
 
 ---
 

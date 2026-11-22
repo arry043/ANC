@@ -101,6 +101,20 @@ public actor DominantDirectionEngine {
         let dl = measurement.downloadBytesPerSecond
         let ul = measurement.uploadBytesPerSecond
 
+        // 0. Guard against non-finite values (NaN or Infinity)
+        guard dl.isFinite && ul.isFinite else {
+            let previous = currentDirection
+            currentDirection = configuration.defaultDirection
+            pendingCandidate = nil
+            consecutiveCandidateCount = 0
+            return DirectionDecision(
+                direction: currentDirection,
+                didSwitch: (currentDirection != previous),
+                candidateDirection: nil,
+                confirmationCount: 0
+            )
+        }
+
         // 1. Idle condition: both directions have zero or non-positive traffic
         if dl <= 0 && ul <= 0 {
             let previous = currentDirection

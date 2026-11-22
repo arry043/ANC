@@ -251,7 +251,16 @@ public actor NetworkPathManager: NetworkMonitoring {
     public func sampleCurrentSnapshot() async throws -> NetworkSnapshot? {
         guard isMonitoring else { return nil }
 
-        let stats = try await interfaceProvider.currentInterfaceStatistics()
+        let stats: [NetworkInterfaceStatistics]
+        do {
+            stats = try await interfaceProvider.currentInterfaceStatistics()
+        } catch {
+            self.currentSnapshot = nil
+            self.currentSelectionResult = .enumerationFailed(message: error.localizedDescription)
+            AppLogger.network.notice("Interface statistics retrieval failed: \(error.localizedDescription, privacy: .public)")
+            return nil
+        }
+
         let result = interfaceSelector.selectInterface(pathState: currentPathState, statistics: stats)
         self.currentSelectionResult = result
 
@@ -287,7 +296,16 @@ public actor NetworkPathManager: NetworkMonitoring {
             return
         }
 
+        let previousStatus = currentPathState.status
         currentPathState = newState
+
+        if newState.status != .satisfied {
+            self.currentSnapshot = nil
+            self.currentSelectionResult = .noActivePath
+            AppLogger.network.info("Network path transitioned to unsatisfied (previous: \(previousStatus.rawValue, privacy: .public)). Baseline cleared.")
+        } else {
+            AppLogger.network.info("Network path transitioned to satisfied (\(newState.activeInterfaceName ?? "unknown", privacy: .public)).")
+        }
 
         for continuation in pathContinuations.values {
             continuation.yield(newState)

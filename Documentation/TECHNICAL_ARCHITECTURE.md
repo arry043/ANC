@@ -976,6 +976,39 @@ Use Apple's native `ServiceManagement` framework and `SMAppService.mainApp` (mac
    - Does not report false success if macOS rejects registration.
    - Operates completely normally when Launch at Login is disabled or unsupported.
 
+### 14.3 Error Handling, Recovery & Performance Optimization Architecture (Phase 13)
+
+Phase 13 hardens application reliability, recovery, and resource consumption across the entire pipeline:
+
+1. **Interface Statistics Retrieval Failure Handling:**
+   - BSD `getifaddrs()` calls in `NetworkInterfaceProvider` guarantee `freeifaddrs()` execution on every code path.
+   - `NetworkPathManager.sampleCurrentSnapshot()` wraps enumeration in `do-catch`. On failure, it clears `currentSnapshot = nil`, sets `currentSelectionResult = .enumerationFailed(message:)`, and logs a structured notice via `AppLogger.network`.
+   - Prevents stale snapshot retention or arithmetic crashes downstream when interfaces are in transient kernel states.
+
+2. **Network Disconnection and Reconnection Recovery:**
+   - Path state changes to `.unsatisfied` immediately invalidate `currentSnapshot` in `NetworkPathManager` and invoke `reset()` on both `NetworkSpeedCalculator` and `DominantDirectionEngine`.
+   - Coordinator resets `speedResult = .noActivePath`, `latestMeasurement = nil`, and `dominantDirection = .download`.
+   - Upon reconnection (`.satisfied`), the initial sample establishes a fresh baseline (`.baselineEstablished`) with `latestMeasurement == nil`. Speed calculations resume strictly upon the subsequent 1-second sample, preventing speed spikes calculated across the disconnected interval.
+
+3. **Counter Discontinuity & Timing Boundary Protection:**
+   - **Counter Decrease Protection:** When cumulative bytes decrease (interface reboot, module reload, or counter rollover), `NetworkSpeedCalculator` traps the discontinuity, resets the baseline to the new snapshot, and returns `.baselineReset(reason: .counterDecreased)` rather than performing unsigned underflow arithmetic.
+   - **Maximum Measurement Interval (10.0 s):** Protects against system sleep/wake cycles or thread scheduling starvation. If the elapsed interval between samples exceeds 10.0 seconds, the sample is treated as a timing discontinuity (`.baselineReset(reason: .intervalTooLong)`), preventing accumulated background traffic from generating misleading multi-second speed spikes upon wake.
+   - **Non-Finite Speed Protection:** `NetworkSpeedCalculator` and `DominantDirectionEngine` validate that calculated speeds are finite (not NaN or Infinity), resetting or rejecting anomalies before they reach UI presentation.
+
+4. **Redundant Menu-Bar Render Suppression:**
+   - In `MenuBarManager`, Combine subscriptions on coordinator publishers (`$latestMeasurement`, `$dominantDirection`, `$pathState`, `$preferences`) use `.removeDuplicates()` to filter duplicate notifications.
+   - `MenuBarManager.updateContent()` performs strict structural equality comparison between the new `MenuBarContent` and `lastRenderedContent`.
+   - If the content has not changed (e.g. idle traffic or steady speeds), AppKit `NSStatusItem.button.attributedTitle` and accessibility label updates are skipped completely. This reduces idle CPU usage to ~1.7% and eliminates WindowServer invalidation redraw cycles.
+
+5. **Unified Logging (`AppLogger`):**
+   - Utilizes Apple's native `os.Logger` subsystem (`in.arrry.networkcounter`) across `Lifecycle`, `Network`, `Settings`, and `MenuBar` categories.
+   - Eliminates console spam by logging only meaningful state transitions, rate-limited errors, and lifecycle events without capturing packet payloads or user data.
+
+6. **Transient Memory & Zero-Persistence Guarantee:**
+   - All network snapshots, speeds, and intermediate states exist strictly in volatile RAM.
+   - Persistent storage in `UserDefaults` is strictly confined to the 4 approved configuration keys (`displayMode`, `bothDirectionsStyle`, `manualDirection`, `launchAtLogin`).
+   - The application makes zero outbound or inbound network connections.
+
 ---
 
 ## 15. macOS Application Configuration

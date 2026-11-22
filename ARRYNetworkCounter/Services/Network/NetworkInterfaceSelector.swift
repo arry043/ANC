@@ -17,6 +17,8 @@ public struct NetworkInterfaceSelector: Sendable {
         case noMatchingInterface(requestedName: String?)
         /// No operational non-loopback interfaces are currently usable.
         case noUsableInterfaces
+        /// Statistics retrieval or interface enumeration failed.
+        case enumerationFailed(message: String)
 
         /// The selected interface statistics, if any.
         public var selectedStatistics: NetworkInterfaceStatistics? {
