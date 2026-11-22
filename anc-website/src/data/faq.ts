@@ -15,13 +15,13 @@ export const faqItems: FAQItem[] = [
     category: "general",
     question: "Which macOS versions are supported?",
     answer:
-      "ANC requires macOS 13.0 (Ventura) or later, including macOS 14 (Sonoma) and macOS 15 (Sequoia). It leverages modern macOS frameworks including SwiftUI, AppKit, Network.framework, and SMAppService.",
+      "ANC requires macOS Ventura (13.0) or later, including macOS Sonoma and macOS Sequoia.",
   },
   {
     category: "general",
     question: "Does ANC support both Apple Silicon and Intel Macs?",
     answer:
-      "Yes. ARRY Network Counter is compiled as an Apple Universal Binary containing native 64-bit slices for both Apple Silicon (arm64: M1, M2, M3, M4 family) and Intel (x86_64) Mac computers. It runs natively without requiring Rosetta 2 translation.",
+      "Yes. ARRY Network Counter runs natively on all Apple Silicon (M1, M2, M3, M4) and Intel-based Mac computers.",
   },
   {
     category: "features",
@@ -33,19 +33,19 @@ export const faqItems: FAQItem[] = [
     category: "features",
     question: "How does ANC prevent menu-bar flickering during balanced traffic?",
     answer:
-      "ANC incorporates a deterministic 3-factor hysteresis engine: the opposing direction must exceed the active speed by at least a 10% relative margin and a 10 KB/s absolute noise floor across 2 consecutive 1-second sample intervals. This eliminates rapid visual flapping when speeds are nearly equal.",
+      "ANC includes intelligent anti-flicker protection that waits for consistent traffic before switching directions, preventing distracting jumps in your menu bar when download and upload rates are nearly balanced.",
   },
   {
     category: "general",
     question: "Does ANC appear in the macOS Dock or App Switcher?",
     answer:
-      "No. ANC is intentionally configured as a background menu-bar accessory (`LSUIElement = true`). It resides entirely in your top menu bar and does not clutter your Dock or the Command-Tab application switcher.",
+      "No. ANC lives quietly in your top menu bar and does not clutter your Dock or the Command-Tab application switcher.",
   },
   {
     category: "technical",
     question: "Does ANC require administrator or root privileges?",
     answer:
-      "No. ANC runs entirely as a standard unprivileged user process. It queries standard BSD kernel network interface counters (`getifaddrs`), which are public system statistics accessible without root or administrator elevation.",
+      "No. ANC runs as a standard Mac app and does not require administrator privileges or root access.",
   },
   {
     category: "privacy",
@@ -57,36 +57,36 @@ export const faqItems: FAQItem[] = [
     category: "technical",
     question: "Why can local network transfers affect the speed readings?",
     answer:
-      "ANC measures actual throughput traversing your Mac's active network hardware interface (such as Wi-Fi `en0` or Ethernet `en1`). Because kernel interface counters measure all link-level data, local file transfers (AirDrop, NAS, Time Machine over network) and internet traffic both contribute to total link throughput. ANC is an interface throughput monitor, not a synthetic internet speed test.",
+      "ANC measures actual data moving across your active network interface (such as Wi-Fi or Ethernet). Because it monitors all link-level traffic, local transfers (AirDrop, local NAS file copies, Time Machine network backups) and internet traffic both contribute to total throughput. ANC is an interface throughput monitor, not a synthetic internet speed test.",
   },
   {
     category: "technical",
     question: "What unit standards are used for speed calculations?",
     answer:
-      "ANC strictly adopts standard macOS decimal SI units (base 1000): 1 KB/s = 1,000 B/s and 1 MB/s = 1,000,000 B/s. Values are presented in Bytes per second (8 bits = 1 Byte) formatted with up to 2 decimal places and trailing zero trimming (e.g. 1.5 MB/s). Idle state is displayed as 0 KB/s.",
+      "ANC uses standard decimal units matching macOS: 1 KB/s = 1,000 B/s and 1 MB/s = 1,000,000 B/s. Idle state is shown cleanly as 0 KB/s.",
   },
   {
     category: "features",
     question: "How do I enable Launch at Login?",
     answer:
-      "Open ARRY Network Counter Settings from the menu-bar item. In the General section, check the 'Launch at Login' box. ANC uses Apple's modern `SMAppService.mainApp` API to register natively with macOS Login Items without installing background daemons or helper tools.",
+      "Open ARRY Network Counter Settings from the menu-bar item. In the General section, check the 'Launch at Login' box to start automatically whenever you sign in to macOS.",
   },
   {
     category: "troubleshooting",
     question: "Why does macOS Gatekeeper show a security prompt on first launch?",
     answer:
-      "Current v1.0.0 builds are ad-hoc signed for personal and preview testing and have not yet been signed with a commercial Apple Developer ID certificate. To open: right-click (or Control-click) ARRY Network Counter.app in your Applications folder, choose 'Open', and confirm 'Open' in the dialog. Alternatively, approve it in macOS System Settings > Privacy & Security > Security.",
+      "To open: right-click (or Control-click) ARRY Network Counter.app in your Applications folder, choose 'Open', and confirm 'Open' in the dialog. Alternatively, approve it in macOS System Settings > Privacy & Security > Security.",
   },
   {
     category: "general",
     question: "How do I update ARRY Network Counter?",
     answer:
-      "Download the new release DMG from the official ARRRY download center (`anc.arrry.in/download`), open the disk image, and drag the updated application to your Applications folder, selecting 'Replace' when prompted. Your four saved preferences in UserDefaults will remain preserved.",
+      "Download the new release DMG, open the disk image, and drag the application to your Applications folder, choosing 'Replace' when prompted. Your display preferences will remain preserved automatically.",
   },
   {
     category: "troubleshooting",
-    question: "How do I completely uninstall ANC and remove saved settings?",
+    question: "How do I completely uninstall ANC?",
     answer:
-      "To uninstall: quit ANC from the menu bar, delete `ARRY Network Counter.app` from `/Applications`, and if you wish to reset saved display preferences, run `defaults delete in.arrry.networkcounter` in the macOS Terminal.",
+      "To uninstall: quit ANC from the menu bar, then drag ARRY Network Counter from your Applications folder to the Trash.",
   },
 ];

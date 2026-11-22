@@ -52,38 +52,21 @@ export const featuresList: ANCFeature[] = [
   {
     id: "single-auto",
     title: "Single Direction — Automatic",
-    subtitle: "Intelligent 3-Factor Hysteresis Engine",
+    subtitle: "Intelligent Direction Switching",
     description:
-      "ANC dynamically switches to display whichever direction currently carries the dominant throughput. Protected by a deterministic 3-factor hysteresis engine to prevent visual flapping or flickering during balanced connections.",
-    badge: "Intelligent Switching",
-    specs: ["10% relative speed margin requirement", "10 KB/s absolute noise floor threshold", "2 consecutive sample confirmation", "Defaults to ↓ 0 KB/s when idle"],
+      "ANC automatically highlights whichever direction currently has higher network traffic, with smart anti-flicker stability to keep your menu bar calm during balanced connections.",
+    badge: "Smart Switching",
+    specs: ["Automatic traffic detection", "Built-in anti-flicker stability", "Smooth direction handover", "Clean 0 KB/s baseline when idle"],
     visualType: "single-auto",
   },
   {
     id: "performance-privacy",
-    title: "Native Architecture & Privacy",
-    subtitle: "Engineered in Swift 6 for Zero Bloat",
+    title: "Native Performance & Privacy",
+    subtitle: "Lightweight, silent, and battery-friendly",
     description:
-      "Built natively with SwiftUI, AppKit, and BSD kernel interface statistics (getifaddrs). Zero telemetry, zero webviews, zero background analytics, and an average CPU footprint under 0.4%.",
-    badge: "Privacy Guarantee",
-    specs: ["Under 0.4% steady-state CPU usage", "Universal Binary (Apple Silicon + Intel)", "Zero external network connections", "4 preference values in UserDefaults only"],
+      "Designed natively for macOS to run silently in your menu bar. Zero telemetry, zero webviews, zero tracking, and an ultra-lightweight CPU footprint under 0.4%.",
+    badge: "Privacy First",
+    specs: ["Under 0.4% typical CPU usage", "Zero data collection or tracking", "Runs completely offline", "Native macOS energy efficiency"],
     visualType: "specs-list",
   },
-];
-
-export const technicalSpecs = [
-  { label: "Application Name", value: "ARRY Network Counter" },
-  { label: "Short Name", value: "ANC" },
-  { label: "Current Version", value: "1.0.0 (Build 1)" },
-  { label: "Release Date", value: "November 22, 2026" },
-  { label: "Operating System", value: "macOS 13.0+ (Ventura, Sonoma, Sequoia)" },
-  { label: "Architectures", value: "Universal Binary (arm64 Apple Silicon + x86_64 Intel)" },
-  { label: "Distribution Package", value: "Apple Disk Image (DMG) · 5.3 MB" },
-  { label: "Bundle Identifier", value: "in.arrry.networkcounter" },
-  { label: "Application Type", value: "Native Menu-Bar Accessory (LSUIElement)" },
-  { label: "Code Signing", value: "Ad-hoc signed (Developer ID notarization pending)" },
-  { label: "Measurement Sampling", value: "Monotonic 1-second interval kernel counters" },
-  { label: "Throughput Units", value: "Base-1000 SI Decimal (1 KB/s = 1,000 B/s)" },
-  { label: "Persistence", value: "4 local keys in NSUserDefaults (zero telemetry)" },
-  { label: "Startup Integration", value: "Apple SMAppService.mainApp (macOS Login Items)" },
 ];

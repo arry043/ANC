@@ -23,7 +23,7 @@ export function HeroSection() {
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-medium">Version {latestRelease.version} is now available</span>
             <span className="text-neutral-500">•</span>
-            <span className="font-mono text-[11px] text-neutral-400">macOS {latestRelease.minimumMacOS}</span>
+            <span className="text-xs text-neutral-400">Requires macOS Ventura or later</span>
           </div>
 
           {/* Editorial Headline */}
@@ -63,15 +63,15 @@ export function HeroSection() {
           <div className="flex flex-wrap items-center justify-center gap-6 pt-4 text-xs text-neutral-400">
             <div className="flex items-center gap-2">
               <Cpu className="w-4 h-4 text-emerald-400" />
-              <span>Universal Binary (arm64 + x86_64)</span>
+              <span>Apple Silicon & Intel Macs</span>
             </div>
             <div className="flex items-center gap-2">
               <Gauge className="w-4 h-4 text-sky-400" />
-              <span>&lt; 0.4% Average CPU</span>
+              <span>Lightweight · Minimal CPU</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-teal-400" />
-              <span>100% Local-First · Zero Telemetry</span>
+              <span>100% Private · Zero Tracking</span>
             </div>
           </div>
         </div>

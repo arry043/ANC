@@ -30,23 +30,23 @@ export default function GuidePage() {
         <div className="p-8 rounded-3xl bg-[#0F0F14] border border-white/[0.08] space-y-4">
           <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
             <Activity className="w-5 h-5 text-emerald-400" />
-            1. Measurement Methodology
+            1. How It Works
           </h2>
           <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-            ARRY Network Counter calculates real-time network throughput by querying standard macOS kernel network statistics via the operating system&apos;s BSD <code className="text-emerald-400 font-mono">getifaddrs</code> interface.
+            ARRY Network Counter measures real-time download and upload activity by reading standard network interface metrics provided by macOS, calculating the exact bytes moving across your active connection each second.
           </p>
           <div className="space-y-2 pt-2 text-xs text-neutral-400">
             <div className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-              <span><strong>Cumulative Kernel Byte Counters:</strong> ANC samples the cumulative received (<code className="font-mono text-neutral-300">ifi_ibytes</code>) and transmitted (<code className="font-mono text-neutral-300">ifi_obytes</code>) bytes for the primary active network interface.</span>
+              <span><strong>Real-Time Sampling:</strong> Throughput is measured at smooth 1-second intervals for immediate, live feedback.</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-              <span><strong>Monotonic Timing:</strong> Time deltas are calculated using macOS monotonic system clocks (<code className="font-mono text-neutral-300">clock_gettime_nsec_np</code>) sampled at steady 1-second intervals.</span>
+              <span><strong>Active Connection Focus:</strong> Traffic is monitored on your Mac&apos;s primary active connection (such as Wi-Fi or Ethernet).</span>
             </div>
             <div className="flex items-start gap-2">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
-              <span><strong>Single-Interface Policy:</strong> Traffic is monitored on the active default route adapter (e.g. Wi-Fi <code className="font-mono text-neutral-300">en0</code> or Ethernet <code className="font-mono text-neutral-300">en1</code>). Virtual bridges and loopback adapters are not summed together.</span>
+              <span><strong>Lightweight & Non-Intrusive:</strong> Calculations run efficiently in memory without battery drain or slowdown.</span>
             </div>
           </div>
         </div>
@@ -107,17 +107,20 @@ export default function GuidePage() {
         <div className="p-8 rounded-3xl bg-[#0F0F14] border border-white/[0.08] space-y-4">
           <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
             <Shield className="w-5 h-5 text-emerald-400" />
-            4. Local-First Privacy Guarantees
+            4. Privacy & Offline Architecture
           </h2>
           <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed">
-            ANC contains zero network sockets, zero HTTP clients, zero analytics trackers, and zero crash-reporting frameworks. It operates completely offline.
+            ANC operates entirely locally on your Mac. It never makes outbound network connections, bundles zero telemetry or tracking SDKs, and stores only your chosen display settings on your device.
           </p>
-          <div className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs font-mono text-neutral-300">
-            <div>Persisted UserDefaults keys (4 values only):</div>
-            <div className="text-emerald-400 pl-4">• displayMode (string)</div>
-            <div className="text-emerald-400 pl-4">• bothDirectionsStyle (string)</div>
-            <div className="text-emerald-400 pl-4">• manualDirection (string)</div>
-            <div className="text-emerald-400 pl-4">• launchAtLogin (boolean)</div>
+          <div className="space-y-2 pt-2 text-xs text-neutral-400">
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+              <span><strong>Zero Telemetry:</strong> No usage metrics, error logs, or personal information are ever recorded or transmitted.</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 mt-1.5 shrink-0" />
+              <span><strong>Local Storage Only:</strong> Only your selected display preferences are saved locally on your Mac.</span>
+            </div>
           </div>
         </div>
       </div>

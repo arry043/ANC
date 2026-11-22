@@ -68,14 +68,14 @@ export default function InstallPage() {
       title: "Locate in Your Menu Bar",
       icon: PanelTop,
       content:
-        "ARRY Network Counter is architected strictly as a menu-bar accessory (LSUIElement). It does NOT appear in your Dock or Command-Tab switcher. Look for the throughput monitor (e.g. ↓ 0 B/s  ↑ 0 B/s) on the trailing side of your top menu bar.",
+        "ARRY Network Counter lives strictly in your macOS menu bar. It does not appear in your Dock or Command-Tab switcher. Look for the throughput monitor (e.g. ↓ 0 KB/s  ↑ 0 KB/s) on the right side of your top menu bar.",
     },
     {
       step: "07",
       title: "Optional Launch at Login",
       icon: Power,
       content:
-        "Click the ANC status item in your menu bar, choose Settings, and check 'Launch at Login' in the General section. ANC registers natively with macOS Login Items using Apple's SMAppService API.",
+        "Click the ANC status item in your menu bar, choose Settings, and check 'Launch at Login' in the General section to start automatically whenever you sign in to macOS.",
     },
   ];
 
@@ -91,7 +91,7 @@ export default function InstallPage() {
             Installation Guide
           </h1>
           <p className="text-sm sm:text-base text-neutral-400 leading-relaxed">
-            Follow this visual guide to install and configure ARRY Network Counter on macOS 13.0 or later.
+            Follow this visual guide to install and configure ARRY Network Counter on macOS.
           </p>
         </div>
 
@@ -100,7 +100,7 @@ export default function InstallPage() {
           <div className="space-y-1">
             <h3 className="text-sm font-semibold text-white">System Requirements</h3>
             <p className="text-xs text-neutral-400">
-              macOS 13.0 (Ventura), 14.0 (Sonoma), or 15.0+ (Sequoia) · Universal Binary (arm64 Apple Silicon + x86_64 Intel)
+              Requires macOS Ventura (13.0) or later · Compatible with Apple Silicon & Intel Macs
             </p>
           </div>
           <span className="px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 shrink-0">
@@ -181,19 +181,19 @@ export default function InstallPage() {
             {[
               {
                 q: "Why is ARRY Network Counter not visible in my Dock?",
-                a: "ANC is deliberately built as a menu-bar-only accessory (LSUIElement = true). It does not have a Dock icon or an entry in the Command-Tab switcher. Look for the throughput monitor in the top right menu bar.",
+                a: "ANC is designed as a menu-bar-only utility. It lives directly in your top menu bar and does not appear in your Dock or the Command-Tab application switcher.",
               },
               {
                 q: "What if the application is missing from the menu bar?",
                 a: "If your Mac has a notch or a crowded menu bar, macOS may temporarily hide menu extras. Try closing unused menu-bar items or check System Settings > Control Center to ensure menu extras are allowed.",
               },
               {
-                q: "How do I replace an older version of ANC?",
-                a: "Download the updated DMG, open it, and drag ARRY Network Counter to Applications. Click 'Replace' when macOS asks. Your saved display preferences in UserDefaults will be preserved.",
+                q: "How do I update to a newer version of ANC?",
+                a: "Download the updated DMG, open it, and drag ARRY Network Counter to Applications. Click 'Replace' when macOS asks. Your saved display preferences will be kept automatically.",
               },
               {
-                q: "How do I completely remove the application and preferences?",
-                a: "Quit ANC, delete 'ARRY Network Counter.app' from /Applications, and run 'defaults delete in.arrry.networkcounter' in Terminal to wipe saved settings.",
+                q: "How do I completely remove the application?",
+                a: "Quit ANC from the menu bar, then drag ARRY Network Counter from your Applications folder to the Trash.",
               },
             ].map((faq, i) => (
               <div key={i} className="p-5 rounded-2xl bg-[#0E0E14] border border-white/[0.06] space-y-1.5">

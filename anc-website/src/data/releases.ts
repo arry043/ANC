@@ -19,15 +19,12 @@ export const releasesData: ANCRelease[] = [
     isLatest: true,
     signingStatus: "ad-hoc",
     highlights: [
-      "Initial general release of ARRY Network Counter",
-      "Native menu-bar throughput monitoring for macOS 13.0+ (Ventura, Sonoma, Sequoia)",
-      "Universal Binary: full native slices for Apple Silicon (arm64) and Intel (x86_64)",
-      "Four distinct display modes with 3-factor hysteresis switching",
-      "SI decimal byte speed scaling (1 KB/s = 1,000 B/s)",
-      "Native Launch at Login integration via SMAppService",
-      "Offline documentation bundled directly into Settings",
-      "Zero telemetry, zero external network connections, zero analytics",
-      "Ultra-lightweight steady-state CPU footprint under 0.4%"
+      "Real-time download and upload speed monitoring directly in your macOS menu bar.",
+      "Multiple display modes: separate speeds, combined arrows, or direction only.",
+      "Automatic and manual direction selection with smooth anti-flicker protection.",
+      "Launch at Login support to start automatically with macOS.",
+      "Offline documentation and user guides built directly into Settings.",
+      "100% private: zero data collection, zero network tracking, and minimal battery impact."
     ]
   }
 ];
