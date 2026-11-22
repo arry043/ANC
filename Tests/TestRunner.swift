@@ -172,12 +172,32 @@ struct TestRunner {
             totalFailed += 1
         }
 
+        // 17. MenuBarContentBuilderTests (Phase 09)
+        do {
+            let passed = try MenuBarContentBuilderTests.run()
+            print("  [PASS] MenuBarContentBuilderTests:          \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] MenuBarContentBuilderTests:          Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 18. DisplayModeIntegrationTests (Phase 09)
+        do {
+            let passed = try await DisplayModeIntegrationTests.run()
+            print("  [PASS] DisplayModeIntegrationTests:         \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] DisplayModeIntegrationTests:         Failed with error: \(error)")
+            totalFailed += 1
+        }
+
         let endTime = DispatchTime.now()
         let elapsedMilliseconds = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 16 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 18 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")

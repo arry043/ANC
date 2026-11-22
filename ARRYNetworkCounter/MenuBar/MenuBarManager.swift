@@ -94,28 +94,13 @@ public final class MenuBarManager: NSObject {
         }
     }
 
-    /// Derives a clean `MenuBarContent` model from active coordinator state.
+    /// Derives a clean `MenuBarContent` model from active coordinator state using `MenuBarContentBuilder`.
     public func currentContentFromCoordinator() -> MenuBarContent {
-        let isConnected = (coordinator.pathState.status == .satisfied)
-        let dlText: String
-        let ulText: String
-
-        if isConnected, let measurement = coordinator.latestMeasurement {
-            dlText = SpeedFormatter.format(measurement.download)
-            ulText = SpeedFormatter.format(measurement.upload)
-        } else {
-            dlText = "0 KB/s"
-            ulText = "0 KB/s"
-        }
-
-        return MenuBarContent(
-            displayMode: coordinator.preferences.displayMode,
-            bothDirectionsStyle: coordinator.preferences.bothDirectionsStyle,
-            downloadSpeedText: dlText,
-            uploadSpeedText: ulText,
-            dominantDirection: coordinator.dominantDirection,
-            manualDirection: coordinator.preferences.manualDirection,
-            isConnected: isConnected
+        MenuBarContentBuilder.build(
+            preferences: coordinator.preferences,
+            pathState: coordinator.pathState,
+            latestMeasurement: coordinator.latestMeasurement,
+            dominantDirection: coordinator.dominantDirection
         )
     }
 

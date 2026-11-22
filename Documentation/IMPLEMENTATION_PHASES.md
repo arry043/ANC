@@ -460,7 +460,7 @@ Implement the native macOS menu bar status item using AppKit.
 ## Phase 09 — Display Modes Implementation
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -470,50 +470,50 @@ Integrate all three display modes and both sub-options of Both Directions.
 
 **Both Directions — Separate Speeds**
 
-- [ ] Display both arrows.
-- [ ] Display download speed independently.
-- [ ] Display upload speed independently.
-- [ ] Apply separate arrow colors.
-- [ ] Update both values dynamically.
+- [x] Display both arrows.
+- [x] Display download speed independently.
+- [x] Display upload speed independently.
+- [x] Apply separate arrow colors.
+- [x] Update both values dynamically.
 
 **Both Directions — Combined Arrows**
 
-- [ ] Always display both arrows.
-- [ ] Display only one numerical speed.
-- [ ] Use the dominant direction engine.
-- [ ] Switch the numerical speed when dominance changes.
-- [ ] Display `↓ ↑ 0 KB/s` when idle.
+- [x] Always display both arrows.
+- [x] Display only one numerical speed.
+- [x] Use the dominant direction engine.
+- [x] Switch the numerical speed when dominance changes.
+- [x] Display `↓ ↑ 0 KB/s` when idle.
 
 **Single Direction — Manual**
 
-- [ ] Implement Download selection.
-- [ ] Implement Upload selection.
-- [ ] Display only the selected direction.
-- [ ] Keep the selected direction until changed.
+- [x] Implement Download selection.
+- [x] Implement Upload selection.
+- [x] Display only the selected direction.
+- [x] Keep the selected direction until changed.
 
 **Single Direction — Automatic**
 
-- [ ] Display only one arrow.
-- [ ] Use the dominant direction engine.
-- [ ] Switch between Download and Upload.
-- [ ] Display `↓ 0 KB/s` when idle.
+- [x] Display only one arrow.
+- [x] Use the dominant direction engine.
+- [x] Switch between Download and Upload.
+- [x] Display `↓ 0 KB/s` when idle.
 
 ### Deliverables
 
-- All required display modes.
-- Fully integrated rendering logic.
-- Mode transition tests.
+- All required display modes (`MenuBarContentBuilder.swift`, `MenuBarContent.swift`, `MenuBarRenderer.swift`).
+- Fully integrated rendering logic in `MenuBarManager.swift`.
+- Mode transition and integration tests (`MenuBarContentBuilderTests.swift`, `DisplayModeIntegrationTests.swift`).
 
 ### Completion Criteria
 
-- [ ] Both Directions — Separate works.
-- [ ] Both Directions — Combined works.
-- [ ] Single Direction — Manual Download works.
-- [ ] Single Direction — Manual Upload works.
-- [ ] Single Direction — Automatic works.
-- [ ] All modes update using real network measurements.
-- [ ] Changing modes does not restart network monitoring.
-- [ ] No incorrect or additional speed values are displayed.
+- [x] Both Directions — Separate works.
+- [x] Both Directions — Combined works.
+- [x] Single Direction — Manual Download works.
+- [x] Single Direction — Manual Upload works.
+- [x] Single Direction — Automatic works.
+- [x] All modes update using real network measurements.
+- [x] Changing modes does not restart network monitoring.
+- [x] No incorrect or additional speed values are displayed.
 
 ---
 

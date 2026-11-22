@@ -26,4 +26,7 @@ public enum MenuBarAppearance {
     public static var textColor: NSColor {
         NSColor.headerTextColor
     }
+
+    /// Spacing between separate download and upload speeds (4 spaces per project requirements).
+    public static let separateSpeedsSpacer = "    "
 }

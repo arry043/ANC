@@ -81,12 +81,13 @@ public final class ApplicationCoordinator: ObservableObject {
             if pathState.status == .satisfied, let snap = currentSnapshot {
                 let result = await speedCalculator.calculateSpeed(from: snap)
                 speedResult = result
-                latestMeasurement = result.measurement
                 if let measurement = result.measurement {
                     let decision = await directionEngine.evaluate(measurement)
                     dominantDirection = decision.direction
+                    latestMeasurement = measurement
                 } else {
                     dominantDirection = .download
+                    latestMeasurement = nil
                 }
             } else {
                 speedResult = .noActivePath
@@ -120,9 +121,9 @@ public final class ApplicationCoordinator: ObservableObject {
                             let result = await self.speedCalculator.calculateSpeed(from: newSnapshot)
                             self.speedResult = result
                             if let measurement = result.measurement {
-                                self.latestMeasurement = measurement
                                 let decision = await self.directionEngine.evaluate(measurement)
                                 self.dominantDirection = decision.direction
+                                self.latestMeasurement = measurement
                             }
                         } else {
                             await self.speedCalculator.reset()
