@@ -212,12 +212,32 @@ struct TestRunner {
             totalFailed += 1
         }
 
+        // 21. ApplicationLifecycleTests (Phase 11)
+        do {
+            let passed = try await ApplicationLifecycleTests.run()
+            print("  [PASS] ApplicationLifecycleTests:           \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] ApplicationLifecycleTests:           Failed with error: \(error)")
+            totalFailed += 1
+        }
+
+        // 22. LoginItemManagerTests (Phase 11)
+        do {
+            let passed = try await LoginItemManagerTests.run()
+            print("  [PASS] LoginItemManagerTests:               \(passed) assertion checks passed")
+            totalPassed += passed
+        } catch {
+            print("  [FAIL] LoginItemManagerTests:               Failed with error: \(error)")
+            totalFailed += 1
+        }
+
         let endTime = DispatchTime.now()
         let elapsedMilliseconds = Double(endTime.uptimeNanoseconds - startTime.uptimeNanoseconds) / 1_000_000.0
 
         print("--------------------------------------------------")
         print("Test Execution Summary:")
-        print("  Total Passed: \(totalPassed) assertions across 20 test suites")
+        print("  Total Passed: \(totalPassed) assertions across 22 test suites")
         print("  Total Failed: \(totalFailed)")
         print(String(format: "  Execution Duration: %.2f ms", elapsedMilliseconds))
         print("==================================================")

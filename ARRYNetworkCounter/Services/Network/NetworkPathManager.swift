@@ -127,6 +127,14 @@ public actor NetworkPathManager: NetworkMonitoring {
     /// Registered active subscribers to the snapshot stream.
     private var snapshotContinuations: [UUID: AsyncStream<NetworkSnapshot>.Continuation] = [:]
 
+    /// Periodic background task sampling network interface counters at designated intervals.
+    private var samplingTask: Task<Void, Never>?
+
+    /// Indicates whether a periodic sampling task is actively running.
+    public var isSamplingTaskActive: Bool {
+        samplingTask != nil && !(samplingTask?.isCancelled ?? true)
+    }
+
     /// Creates a new `NetworkPathManager`.
     ///
     /// - Parameters:
@@ -192,6 +200,17 @@ public actor NetworkPathManager: NetworkMonitoring {
             }
         }
 
+        // Single active sampling task enforcement
+        samplingTask?.cancel()
+        samplingTask = Task { [weak self, session] in
+            while !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: UInt64(AppConfiguration.defaultSamplingIntervalSeconds * 1_000_000_000))
+                guard !Task.isCancelled else { break }
+                guard let self = self else { break }
+                await self.performPeriodicSample(sessionID: session)
+            }
+        }
+
         // Initial snapshot evaluation
         _ = try? await sampleCurrentSnapshot()
     }
@@ -202,6 +221,10 @@ public actor NetworkPathManager: NetworkMonitoring {
 
         isMonitoring = false
         currentSessionID &+= 1
+
+        samplingTask?.cancel()
+        samplingTask = nil
+
         provider.cancelMonitoring()
 
         currentSnapshot = nil
@@ -216,6 +239,11 @@ public actor NetworkPathManager: NetworkMonitoring {
             continuation.finish()
         }
         snapshotContinuations.removeAll()
+    }
+
+    private func performPeriodicSample(sessionID: UInt64) async {
+        guard isMonitoring, sessionID == currentSessionID else { return }
+        _ = try? await sampleCurrentSnapshot()
     }
 
     /// Samples fresh interface statistics, re-evaluates the active interface, and emits an updated snapshot.

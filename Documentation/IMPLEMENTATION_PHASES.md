@@ -576,7 +576,7 @@ launchAtLogin
 ## Phase 11 — Application Lifecycle & Launch at Login
 
 **Priority:** High  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -584,35 +584,36 @@ Complete application lifecycle handling and optional macOS login launch support.
 
 ### Tasks
 
-- [ ] Implement application startup coordination.
-- [ ] Start network monitoring on application launch.
-- [ ] Ensure only one sampling task exists.
-- [ ] Implement monitoring task cancellation.
-- [ ] Handle application termination.
-- [ ] Implement `LoginItemManager`.
-- [ ] Integrate `ServiceManagement`.
-- [ ] Use `SMAppService` where supported.
-- [ ] Implement login launch registration.
-- [ ] Implement login launch unregistration.
-- [ ] Reflect registration state in Settings.
-- [ ] Handle registration errors.
-- [ ] Ensure the application works without login launch.
+- [x] Implement application startup coordination.
+- [x] Start network monitoring on application launch.
+- [x] Ensure only one sampling task exists.
+- [x] Implement monitoring task cancellation.
+- [x] Handle application termination.
+- [x] Implement `LoginItemManager`.
+- [x] Integrate `ServiceManagement`.
+- [x] Use `SMAppService` where supported.
+- [x] Implement login launch registration.
+- [x] Implement login launch unregistration.
+- [x] Reflect registration state in Settings.
+- [x] Handle registration errors.
+- [x] Ensure the application works without login launch.
 
 ### Deliverables
 
-- Stable application lifecycle.
-- Optional Launch at Login functionality.
-- Reliable monitoring startup and shutdown.
+- Stable application lifecycle (`ApplicationCoordinator.swift`, `NetworkPathManager.swift`, `AppDelegate.swift`).
+- Optional Launch at Login functionality (`LoginItemManager.swift`, `ServiceManagement`).
+- Reliable monitoring startup and shutdown with single-pipeline enforcement.
+- Comprehensive test coverage (`ApplicationLifecycleTests.swift`, `LoginItemManagerTests.swift`).
 
 ### Completion Criteria
 
-- [ ] Monitoring starts automatically on launch.
-- [ ] Duplicate sampling tasks are prevented.
-- [ ] Monitoring stops on Quit.
-- [ ] Login launch can be enabled.
-- [ ] Login launch can be disabled.
-- [ ] Registration failures do not crash the application.
-- [ ] No unnecessary background process remains after termination.
+- [x] Monitoring starts automatically on launch.
+- [x] Duplicate sampling tasks are prevented.
+- [x] Monitoring stops on Quit.
+- [x] Login launch can be enabled.
+- [x] Login launch can be disabled.
+- [x] Registration failures do not crash the application.
+- [x] No unnecessary background process remains after termination.
 
 ---
 

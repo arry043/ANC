@@ -50,12 +50,13 @@ The application will remain minimal, local-first, and independent of external se
 | Menu Bar Integration | Completed (Phase 08) |
 | Display Modes Implementation | Completed (Phase 09) |
 | Settings Interface | Completed (Phase 10) |
-| Testing | Completed (Phase 02–10 Unit Tests — 178 assertions passed) |
+| Application Lifecycle & Launch at Login | Completed (Phase 11) |
+| Testing | Completed (Phase 02–11 Unit Tests — 198 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 10 Completed — Ready for Phase 11 (Application Lifecycle & Launch at Login)  
-**Next Action:** Begin Phase 11 implementation.
+**Current Development Phase:** Phase 11 Completed — Ready for Phase 12 (Documentation & About Section)  
+**Next Action:** Begin Phase 12 implementation.
 
 ---
 
@@ -97,7 +98,7 @@ All four documents must remain consistent.
 | 08 | Native Menu Bar Integration | Completed |
 | 09 | Display Modes Implementation | Completed |
 | 10 | Settings Interface & Preferences | Completed |
-| 11 | Application Lifecycle & Launch at Login | Not Started |
+| 11 | Application Lifecycle & Launch at Login | Completed |
 | 12 | Documentation & About Section | Not Started |
 | 13 | Error Handling & Performance Optimization | Not Started |
 | 14 | Comprehensive Testing & Compatibility | Not Started |
@@ -174,7 +175,59 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-### Current Phase: Phase 10 — Settings Interface & Preferences
+### Current Phase: Phase 11 — Application Lifecycle & Launch at Login
+
+**Priority:** High  
+**Status:** Completed
+
+#### Objective
+
+Establish reliable application startup and shutdown behavior, enforce that only one network monitoring pipeline and sampling task exist per application instance, handle application termination cleanly with controlled asynchronous AppKit shutdown, and implement optional macOS login launch registration using Apple's supported `ServiceManagement` and `SMAppService.mainApp` APIs with full Settings synchronization and mockable test abstractions.
+
+#### Completed Tasks
+
+- [x] Implemented `ApplicationLifecycleState` model (`notStarted`, `starting`, `running`, `stopping`, `stopped`, `failed`) and state transitions in `ApplicationCoordinator`.
+- [x] Enforced single monitoring pipeline guarantee: only 1 active `NWPathMonitor`, 1 active sampling task, 1 active snapshot pipeline, and idempotent `start()` and `stop()` calls.
+- [x] Implemented periodic sampling task in `NetworkPathManager` with explicit lifecycle ownership, safe cancellation, and session ID token invalidation to reject stale callbacks.
+- [x] Implemented AppKit controlled asynchronous shutdown in `AppDelegate.applicationShouldTerminate(_:)` using `.terminateLater` and `NSApp.reply(toApplicationShouldTerminate: true)` so macOS waits for coordinator shutdown.
+- [x] Implemented `LoginItemProviding` protocol, `SystemLoginItemProvider` backed by `SMAppService.mainApp`, and `MockLoginItemProvider` for isolated unit testing without touching user system settings.
+- [x] Implemented `LoginItemManager` managing actual macOS login item registration, unregistration, status queries (`enabled`, `notRegistered`, `requiresApproval`, `notFound`), and opening System Settings > Login Items via supported APIs.
+- [x] Synchronized `SettingsManager` and `SettingsView` with `LoginItemManager` real system status, showing dynamic feedback, approval warnings, and actionable error messages.
+- [x] Implemented comprehensive unit tests: `Tests/ApplicationLifecycleTests.swift` (10 assertions) and `Tests/LoginItemManagerTests.swift` (10 assertions).
+- [x] Updated `Tests/TestRunner.swift` to execute all 22 test suites (198 passing assertions with 0 failures in 704 ms).
+- [x] Verified Universal Binary builds for Debug and Release containing `arm64` and `x86_64` slices.
+
+#### Deliverables Produced
+
+- Login item manager & providers: `ARRYNetworkCounter/Services/Lifecycle/LoginItemManager.swift`.
+- Updated application coordinator: `ARRYNetworkCounter/App/ApplicationCoordinator.swift`.
+- Updated path manager with sampling task: `ARRYNetworkCounter/Services/Network/NetworkPathManager.swift`.
+- Updated application delegate with controlled termination: `ARRYNetworkCounter/App/AppDelegate.swift`.
+- Updated settings manager & view: `ARRYNetworkCounter/Settings/SettingsManager.swift`, `ARRYNetworkCounter/Settings/SettingsView.swift`.
+- Lifecycle unit tests: `Tests/ApplicationLifecycleTests.swift` (10 assertions).
+- Login item unit tests: `Tests/LoginItemManagerTests.swift` (10 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (198 assertions passing across 22 test suites).
+
+#### Completion Verification
+
+- [x] Application startup coordinates services, loads preferences, starts menu bar, and activates monitoring.
+- [x] Monitoring starts automatically on launch.
+- [x] Single monitoring pipeline invariant enforced: repeated `start()` or `startMonitoring()` calls do not create duplicate monitors, tasks, or streams.
+- [x] Monitoring cancellation is safe, structured, and idempotent.
+- [x] Restarting monitoring re-establishes a fresh baseline without residual calculation state.
+- [x] Controlled asynchronous termination completes cleanly before macOS commits app termination.
+- [x] `SMAppService.mainApp` registration and unregistration work correctly via `LoginItemManager`.
+- [x] Settings Launch at Login toggle accurately reflects authoritative macOS registration status.
+- [x] Statuses `.requiresApproval` and `.notFound` and registration errors are handled safely without crashing.
+- [x] Application operates normally when login launch is disabled or unavailable.
+- [x] 100% of unit tests pass (198 assertions across 22 test suites with 0 failures).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
+
+**Next Step:** Proceed to Phase 12 — Documentation & About Section.
+
+---
+
+### Previous Phase: Phase 10 — Settings Interface & Preferences
 
 **Priority:** High  
 **Status:** Completed

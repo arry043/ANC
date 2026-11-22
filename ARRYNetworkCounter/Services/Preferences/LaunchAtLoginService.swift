@@ -1,11 +1,8 @@
 import Foundation
 
 /// Defines the contract for managing the application's macOS login-item lifecycle.
-///
-/// Phase 10 implements preference model persistence and provides this boundary contract.
-/// Full system service registration with `ServiceManagement` and `SMAppService` will be
-/// finalized in Phase 11 (Application Lifecycle & Launch at Login).
-public protocol LaunchAtLoginManaging: Sendable {
+@MainActor
+public protocol LaunchAtLoginManaging: AnyObject {
     /// Indicates whether launch-at-login is currently configured.
     var isEnabled: Bool { get }
 
@@ -15,30 +12,41 @@ public protocol LaunchAtLoginManaging: Sendable {
     func setEnabled(_ enabled: Bool) async throws
 }
 
-/// Service managing the launch-at-login preference state for Phase 10.
-///
-/// Delegates persistence to `PreferencesStore`. Actual macOS `SMAppService` login-item
-/// registration is formally scoped to Phase 11.
-public final class LaunchAtLoginService: LaunchAtLoginManaging, @unchecked Sendable {
+/// Service managing launch-at-login preference state and system registration.
+@MainActor
+public final class LaunchAtLoginService: LaunchAtLoginManaging {
     private let preferencesStore: PreferencesStore
+    private let loginItemManager: LoginItemManager?
 
     /// Creates a new `LaunchAtLoginService` instance.
     ///
-    /// - Parameter preferencesStore: Persistent storage provider.
-    public init(preferencesStore: PreferencesStore = PreferencesStore()) {
+    /// - Parameters:
+    ///   - preferencesStore: Persistent storage provider.
+    ///   - loginItemManager: Optional `LoginItemManager` for system registration.
+    public init(
+        preferencesStore: PreferencesStore = PreferencesStore(),
+        loginItemManager: LoginItemManager? = nil
+    ) {
         self.preferencesStore = preferencesStore
+        self.loginItemManager = loginItemManager
     }
 
-    /// Reflects the currently persisted preference.
+    /// Reflects the active configuration status.
     public var isEnabled: Bool {
-        preferencesStore.getLaunchAtLogin()
+        if let manager = loginItemManager {
+            return manager.isEnabled
+        }
+        return preferencesStore.getLaunchAtLogin()
     }
 
-    /// Sets the launch-at-login preference.
+    /// Sets the launch-at-login state and synchronizes with system registration.
     ///
     /// - Parameter enabled: Desired launch-at-login state.
     public func setEnabled(_ enabled: Bool) async throws {
-        preferencesStore.setLaunchAtLogin(enabled)
-        // Formal macOS SMAppService registration will be finalized in Phase 11.
+        if let manager = loginItemManager {
+            try await manager.setEnabled(enabled)
+        } else {
+            preferencesStore.setLaunchAtLogin(enabled)
+        }
     }
 }

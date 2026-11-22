@@ -13,6 +13,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     /// Settings manager responsible for native Settings window lifecycle and preference coordination.
     public private(set) var settingsManager: SettingsManager?
 
+    /// Login item manager responsible for macOS startup registration.
+    public private(set) var loginItemManager: LoginItemManager?
+
     public override init() {
         self.coordinator = ApplicationCoordinator()
         super.init()
@@ -24,7 +27,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let settings = SettingsManager(coordinator: coordinator)
+        let loginItem = LoginItemManager()
+        self.loginItemManager = loginItem
+
+        let settings = SettingsManager(coordinator: coordinator, loginItemManager: loginItem)
         self.settingsManager = settings
 
         let manager = MenuBarManager(coordinator: coordinator)
@@ -43,15 +49,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         settingsManager?.showSettingsWindow()
     }
 
+    func applicationShouldTerminate(_ sender: NSApplication) -> NSApplication.TerminateReply {
+        settingsManager?.closeSettingsWindow()
+        menuBarManager?.stop()
+
+        if coordinator.isRunning {
+            Task {
+                await coordinator.stop()
+                NSApp.reply(toApplicationShouldTerminate: true)
+            }
+            return .terminateLater
+        } else {
+            return .terminateNow
+        }
+    }
+
     func applicationWillTerminate(_ notification: Notification) {
         settingsManager?.closeSettingsWindow()
         settingsManager = nil
 
         menuBarManager?.stop()
         menuBarManager = nil
-
-        Task {
-            await coordinator.stop()
-        }
     }
 }

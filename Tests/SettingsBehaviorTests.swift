@@ -17,6 +17,11 @@ public enum SettingsBehaviorTests {
 
         let store = PreferencesStore(userDefaults: suite)
         let mockMonitor = MockNetworkMonitor()
+        let mockLoginProvider = MockLoginItemProvider(initialStatus: .notRegistered)
+        let loginItemManager = LoginItemManager(
+            provider: mockLoginProvider,
+            preferencesStore: store
+        )
         let coordinator = ApplicationCoordinator(
             preferencesStore: store,
             networkMonitor: mockMonitor
@@ -24,7 +29,8 @@ public enum SettingsBehaviorTests {
         let menuBarManager = MenuBarManager(coordinator: coordinator)
         let settingsManager = SettingsManager(
             coordinator: coordinator,
-            preferencesStore: store
+            preferencesStore: store,
+            loginItemManager: loginItemManager
         )
 
         // Connect menu bar settings action callback to settings manager
@@ -171,10 +177,13 @@ public enum SettingsBehaviorTests {
         // ---------------------------------------------------------------------
         // Test 8: Launch at login preference and placeholder service
         // ---------------------------------------------------------------------
-        let loginService = LaunchAtLoginService(preferencesStore: store)
+        let loginService = LaunchAtLoginService(
+            preferencesStore: store,
+            loginItemManager: loginItemManager
+        )
         assert(loginService.isEnabled == false, "Initial launchAtLogin service must be false")
 
-        settingsManager.updateLaunchAtLogin(true)
+        await settingsManager.updateLaunchAtLogin(true)
         assert(settingsManager.preferences.launchAtLogin == true, "SettingsManager launchAtLogin must be true")
         assert(store.getLaunchAtLogin() == true, "Persisted launchAtLogin must be true")
         assert(loginService.isEnabled == true, "LaunchAtLoginService must reflect true")
