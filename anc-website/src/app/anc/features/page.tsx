@@ -127,85 +127,43 @@ export default function FeaturesPage() {
             </div>
           </div>
 
-          {/* Mode 3: Single Direction Automatic & Hysteresis */}
+          {/* Mode 3: Single Direction Automatic */}
           <div className="p-8 rounded-3xl bg-[#0F0F14] border border-white/[0.08] space-y-6">
             <span className="px-3 py-1 rounded-full text-xs font-mono bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-              Display Mode 3 · Intelligent Engine
+              Display Mode 3 · Smart Direction
             </span>
 
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl font-bold text-white">
-                Single Direction — Automatic with 3-Factor Hysteresis
+                Single Direction — Automatic with Anti-Flicker Protection
               </h2>
               <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Dynamically displays the direction currently carrying the higher traffic rate. To eliminate rapid, distracting visual flickering in the menu bar during balanced connections, ANC enforces a deterministic 3-factor hysteresis engine.
+                Dynamically highlights whichever direction carries the higher throughput. Built-in stability filtering prevents rapid, distracting jumps in your menu bar when speeds are balanced.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-4 rounded-2xl bg-black/40 border border-white/[0.06] space-y-1.5">
-                <div className="text-xs font-semibold text-emerald-400 font-mono">10% Relative Margin</div>
+                <div className="text-xs font-semibold text-emerald-400">Automatic Switching</div>
                 <p className="text-[11px] text-neutral-400">
-                  Opposing direction must exceed active rate by at least 10%.
+                  Instantly adapts when you begin a heavy download or cloud upload.
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-black/40 border border-white/[0.06] space-y-1.5">
-                <div className="text-xs font-semibold text-emerald-400 font-mono">10 KB/s Noise Floor</div>
+                <div className="text-xs font-semibold text-emerald-400">Anti-Flicker Stability</div>
                 <p className="text-[11px] text-neutral-400">
-                  Absolute speed difference must exceed 10,000 bytes per second.
+                  Waits for sustained traffic before switching, eliminating menu-bar jitter.
                 </p>
               </div>
 
               <div className="p-4 rounded-2xl bg-black/40 border border-white/[0.06] space-y-1.5">
-                <div className="text-xs font-semibold text-emerald-400 font-mono">2 Consecutive Samples</div>
+                <div className="text-xs font-semibold text-emerald-400">Calm Baseline</div>
                 <p className="text-[11px] text-neutral-400">
-                  Qualifying dominance must persist across two 1-second sample intervals.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-black/40 border border-white/[0.06] space-y-1.5">
-                <div className="text-xs font-semibold text-emerald-400 font-mono">Flapping Protection</div>
-                <p className="text-[11px] text-neutral-400">
-                  Temporary spikes immediately discard pending candidate states.
+                  Clean 0 KB/s baseline display when your network connection is idle.
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* SI Decimal Units & Standards */}
-          <div className="p-8 rounded-3xl bg-[#0F0F14] border border-white/[0.08] space-y-6">
-            <span className="px-3 py-1 rounded-full text-xs font-mono bg-teal-500/10 border border-teal-500/30 text-teal-400">
-              Measurement Architecture
-            </span>
-
-            <div className="space-y-2">
-              <h2 className="text-xl sm:text-2xl font-bold text-white">
-                Standard SI Decimal Speed Formatting
-              </h2>
-              <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed">
-                Following standard macOS system conventions (ADR-014), ARRY Network Counter scales byte throughput using base-1000 decimal units:
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-mono">
-              <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                <div className="text-neutral-400">1 KB/s</div>
-                <div className="text-white font-bold">1,000 B/s</div>
-              </div>
-              <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                <div className="text-neutral-400">1 MB/s</div>
-                <div className="text-white font-bold">1,000,000 B/s</div>
-              </div>
-              <div className="p-4 rounded-xl bg-black/40 border border-white/5 space-y-1">
-                <div className="text-neutral-400">1 GB/s</div>
-                <div className="text-white font-bold">1,000,000,000 B/s</div>
-              </div>
-            </div>
-
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Speeds are displayed in Bytes per second with up to 2 decimal places and trailing zero trimming (e.g. 1.5 MB/s instead of 1.50 MB/s). Idle network state is formatted cleanly as <strong>0 KB/s</strong>.
-            </p>
           </div>
         </div>
 

@@ -42,12 +42,12 @@ export function Footer() {
 
             <div className="flex flex-wrap items-center gap-2 pt-2">
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] text-neutral-300">
-                <Cpu className="w-3 h-3 text-emerald-400" />
-                Universal Binary (arm64 + x86_64)
+                <Shield className="w-3 h-3 text-emerald-400" />
+                macOS Ventura or later
               </span>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-[11px] text-neutral-300">
-                <Shield className="w-3 h-3 text-sky-400" />
-                macOS 13.0+
+                <Cpu className="w-3 h-3 text-sky-400" />
+                Apple Silicon & Intel
               </span>
             </div>
           </div>
@@ -113,7 +113,7 @@ export function Footer() {
           {/* Legal & Governance */}
           <div className="space-y-3">
             <h4 className="text-xs font-semibold text-neutral-200 tracking-wider uppercase">
-              Legal & Disclosures
+              Legal
             </h4>
             <ul className="space-y-2">
               <li>
@@ -126,9 +126,6 @@ export function Footer() {
                   Terms and Conditions
                 </Link>
               </li>
-              <li className="pt-2 text-[11px] text-neutral-500 leading-relaxed">
-                Ad-hoc preview build. Apple Developer ID notarization in progress.
-              </li>
             </ul>
           </div>
         </div>
@@ -140,7 +137,6 @@ export function Footer() {
           </div>
           <div className="flex items-center gap-4">
             <span>Apple, macOS, and Finder are trademarks of Apple Inc.</span>
-            <span>Bundle: <code className="font-mono text-neutral-400">in.arrry.networkcounter</code></span>
           </div>
         </div>
       </div>

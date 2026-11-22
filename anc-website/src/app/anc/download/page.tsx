@@ -3,12 +3,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { DownloadCard } from "@/components/download/DownloadCard";
 import { latestRelease, previousReleases } from "@/data/releases";
-import { Shield, Cloud, Terminal, CheckCircle2, History, AlertCircle } from "lucide-react";
+import { History } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Download ARRY Network Counter",
   description:
-    "Download the latest release of ARRY Network Counter (ANC) for macOS. Universal Binary for Apple Silicon and Intel with direct Cloudflare R2 distribution.",
+    "Download the latest release of ARRY Network Counter (ANC) for macOS. Requires macOS Ventura or later.",
 };
 
 export default function DownloadPage() {
@@ -21,13 +21,13 @@ export default function DownloadPage() {
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-white/[0.08] text-xs font-mono text-neutral-300">
-            <span>OFFICIAL DISTRIBUTION PLATFORM</span>
+            <span>OFFICIAL DOWNLOADS</span>
           </div>
           <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white">
             Download Center
           </h1>
           <p className="text-sm sm:text-base text-neutral-400 leading-relaxed">
-            Download official, verified releases of ARRY Network Counter for macOS. Hosted with immutable versioning on Cloudflare R2.
+            Download the latest official release of ARRY Network Counter for macOS.
           </p>
         </div>
 
@@ -44,43 +44,6 @@ export default function DownloadPage() {
           </div>
 
           <DownloadCard release={latestRelease} isLatest={true} />
-        </div>
-
-        {/* Verification & Storage Information Card */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="p-6 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
-              <Terminal className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-semibold text-white">
-              Local Checksum Verification
-            </h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              Verify the integrity of your downloaded DMG using standard macOS Terminal utilities:
-            </p>
-            <div className="p-3 bg-black/60 rounded-xl border border-white/5 font-mono text-[11px] text-emerald-400 select-all">
-              shasum -a 256 ~/Downloads/ARRY-Network-Counter.dmg
-            </div>
-            <p className="text-[11px] text-neutral-500">
-              The output must match the SHA-256 hash displayed in the release card above.
-            </p>
-          </div>
-
-          <div className="p-6 rounded-2xl bg-[#0E0E14] border border-white/[0.08] space-y-3">
-            <div className="w-9 h-9 rounded-xl bg-sky-500/10 border border-sky-500/20 text-sky-400 flex items-center justify-center">
-              <Cloud className="w-4 h-4" />
-            </div>
-            <h3 className="text-sm font-semibold text-white">
-              Cloudflare R2 Distribution
-            </h3>
-            <p className="text-xs text-neutral-400 leading-relaxed">
-              DMG packages are delivered directly from our high-speed object storage at <code className="text-sky-300 font-mono">downloads.arrry.in</code> with edge caching and zero tracking.
-            </p>
-            <div className="pt-1 flex items-center gap-2 text-xs text-neutral-400">
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Immutable object storage with direct HTTPS download</span>
-            </div>
-          </div>
         </div>
 
         {/* Previous Versions Section */}
@@ -104,7 +67,7 @@ export default function DownloadPage() {
                 v1.0.0 is the Initial General Release
               </h3>
               <p className="text-xs text-neutral-400 max-w-md mx-auto leading-relaxed">
-                No older versions exist. When future updates (e.g., v1.0.1) are published to the release manifest, previous builds will automatically remain downloadable here with their respective checksums.
+                No older versions exist. When future updates are published, previous builds will automatically remain downloadable here.
               </p>
             </div>
           ) : (

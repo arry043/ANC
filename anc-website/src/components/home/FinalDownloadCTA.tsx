@@ -15,7 +15,7 @@ export function FinalDownloadCTA() {
         </h2>
 
         <p className="text-neutral-400 text-sm sm:text-base max-w-xl mx-auto leading-relaxed">
-          Download ARRY Network Counter for macOS. Lightweight, native, and local-first with universal Apple Silicon and Intel support.
+          Download ARRY Network Counter for macOS. Lightweight, native, and completely private.
         </p>
 
         <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -25,7 +25,7 @@ export function FinalDownloadCTA() {
             className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-2xl text-sm font-semibold text-white bg-gradient-to-b from-emerald-500 to-emerald-600 hover:from-emerald-400 hover:to-emerald-500 shadow-[0_4px_25px_rgba(48,184,107,0.45),inset_0_1px_0_0_rgba(255,255,255,0.25)] active:scale-95 transition-all duration-200"
           >
             <Download className="w-4 h-4" />
-            <span>Download {latestRelease.filename} ({latestRelease.formattedSize})</span>
+            <span>Download for macOS ({latestRelease.formattedSize})</span>
           </a>
 
           <Link
@@ -36,15 +36,9 @@ export function FinalDownloadCTA() {
           </Link>
         </div>
 
-        {/* Verification Metadata Footnote */}
-        <div className="pt-6 flex flex-wrap items-center justify-center gap-4 text-xs text-neutral-400 font-mono">
-          <span>Version {latestRelease.version}</span>
-          <span>•</span>
-          <span>DMG {latestRelease.formattedSize}</span>
-          <span>•</span>
-          <span>macOS {latestRelease.minimumMacOS}</span>
-          <span>•</span>
-          <span>Universal Binary (arm64 + x86_64)</span>
+        {/* Footnote */}
+        <div className="pt-6 text-xs text-neutral-400">
+          Requires macOS Ventura (13.0) or later · Compatible with Apple Silicon & Intel Macs
         </div>
       </div>
     </section>

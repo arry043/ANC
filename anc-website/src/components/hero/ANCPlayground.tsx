@@ -865,20 +865,16 @@ export function ANCPlayground() {
               </div>
             </div>
 
-            {/* Hysteresis Diagnostic Output */}
+            {/* Direction Status & Stability Output */}
             <div className="p-3 bg-black/40 rounded-xl border border-white/[0.06] text-[11px] space-y-1 font-mono">
               <div className="text-neutral-400 flex items-center justify-between">
-                <span>Dominant Direction:</span>
+                <span>Active Direction:</span>
                 <span className={`font-semibold capitalize ${dominantDirection === "download" ? "text-emerald-400" : "text-sky-400"}`}>
                   {dominantDirection} {dominantDirection === "download" ? "↓" : "↑"}
                 </span>
               </div>
-              <div className="text-neutral-500 flex items-center justify-between text-[10px]">
-                <span>Hysteresis Samples:</span>
-                <span>{consecutiveCount}/2 samples confirmed</span>
-              </div>
-              <div className="text-neutral-500 text-[10px] pt-1 border-t border-white/5">
-                Switch rule: Opposing rate must exceed active by &gt;= 10% and &gt;= 10 KB/s for 2 samples.
+              <div className="text-neutral-400 text-[10px] pt-1 border-t border-white/5 font-sans">
+                Smart anti-flicker stability ensures smooth direction switching without menu-bar jitter.
               </div>
             </div>
           </div>
