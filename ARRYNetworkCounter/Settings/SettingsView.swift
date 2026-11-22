@@ -289,23 +289,74 @@ public struct SettingsView: View {
     // MARK: - General Section (Launch at Login)
 
     private var generalSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
             Text("General")
                 .font(.headline)
 
-            Toggle("Launch at Login", isOn: Binding(
-                get: { settingsManager.preferences.launchAtLogin },
-                set: { settingsManager.updateLaunchAtLogin($0) }
-            ))
-            .toggleStyle(.checkbox)
+            HStack(spacing: 8) {
+                Toggle("Launch at Login", isOn: Binding(
+                    get: { settingsManager.loginItemManager.isEnabled },
+                    set: { settingsManager.updateLaunchAtLogin($0) }
+                ))
+                .toggleStyle(.checkbox)
+                .disabled(settingsManager.loginItemManager.isProcessing)
+
+                if settingsManager.loginItemManager.isProcessing {
+                    ProgressView()
+                        .controlSize(.small)
+                }
+            }
 
             Text("Automatically start ARRY Network Counter when you log in to macOS.")
                 .font(.caption)
                 .foregroundColor(.secondary)
 
-            Text("(Preference persisted. macOS system login-item registration will be activated in Phase 11)")
-                .font(.caption2)
-                .foregroundColor(.secondary)
+            // Dynamic macOS SMAppService registration feedback
+            switch settingsManager.loginItemManager.status {
+            case .enabled:
+                HStack(spacing: 5) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.caption)
+                    Text("Registered with macOS login items")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            case .requiresApproval:
+                VStack(alignment: .leading, spacing: 4) {
+                    HStack(spacing: 5) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                            .font(.caption)
+                        Text("macOS requires user approval in System Settings")
+                            .font(.caption2)
+                            .foregroundColor(.orange)
+                    }
+                    Button("Open Login Items Settings") {
+                        settingsManager.loginItemManager.openSystemSettings()
+                    }
+                    .buttonStyle(.link)
+                    .font(.caption2)
+                }
+            case .notFound:
+                HStack(spacing: 5) {
+                    Image(systemName: "info.circle")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                    Text("Login item not registered with current environment")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+            case .notRegistered:
+                EmptyView()
+            }
+
+            if let errorMsg = settingsManager.loginItemManager.lastErrorMessage,
+               settingsManager.loginItemManager.status != .requiresApproval {
+                Text(errorMsg)
+                    .font(.caption2)
+                    .foregroundColor(.red)
+            }
         }
     }
 

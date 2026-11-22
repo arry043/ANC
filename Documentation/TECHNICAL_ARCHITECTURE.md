@@ -899,20 +899,51 @@ Do not persist network speed samples or traffic counters.
 
 ---
 
-## 14. Launch at Login
+## 14. Launch at Login & Application Lifecycle Architecture
 
-Use Apple's `ServiceManagement` framework and `SMAppService` where supported by the selected deployment target.
+### 14.1 Application Lifecycle Coordination
 
-The feature should:
+The application lifecycle is orchestrated by `ApplicationCoordinator` on `@MainActor` with explicit lifecycle states:
+- `notStarted`: Initial state prior to launch.
+- `starting`: Loading preferences and initializing network path monitoring.
+- `running`: Active sampling task running and speed measurements emitted.
+- `stopping`: Halting sampling, cancelling path observation, resetting baselines.
+- `stopped`: Idle after clean termination.
+- `failed`: Recovery state if monitoring fails to initialize.
 
-- Be optional.
-- Be disabled by default.
-- Reflect the actual registration status where possible.
-- Allow users to enable or disable login launch.
-- Handle registration failures gracefully.
-- Respect macOS login item and user consent behavior.
+**Single Monitoring Pipeline Guarantee:**
+- Idempotent `start()` and `stop()` calls prevent duplicate monitors or subscriptions.
+- `NetworkPathManager` guarantees exactly one active `NWPathMonitor` provider and one active sampling task (`samplingTask: Task<Void, Never>?`).
+- Outdated callbacks from terminated sessions are rejected via monotonic session token (`currentSessionID`).
+- Restarting monitoring establishes a clean baseline without residual speed calculations.
 
-The application must continue working normally when Launch at Login is disabled.
+**Application Termination Handling:**
+- In `AppDelegate.applicationShouldTerminate(_:)`, the application returns `.terminateLater` and awaits `coordinator.stop()` before calling `NSApp.reply(toApplicationShouldTerminate: true)`, guaranteeing clean asynchronous resource release before macOS commits termination.
+
+### 14.2 Login-Item Architecture (ServiceManagement & SMAppService)
+
+Use Apple's native `ServiceManagement` framework and `SMAppService.mainApp` (macOS 13.0+):
+
+1. **`LoginItemProviding` Protocol:**
+   - Abstraction decoupling system registration from business logic:
+     - `var status: LoginItemStatus { get }`
+     - `func register() throws`
+     - `func unregister() throws`
+     - `func openSystemSettingsLoginItems()`
+   - `SystemLoginItemProvider`: Production implementation backed by `SMAppService.mainApp`.
+   - `MockLoginItemProvider`: Thread-safe mock provider enabling exhaustive unit test coverage of registration, unregistration, approval, and error states without touching user login items.
+
+2. **`LoginItemManager` (`LaunchAtLoginManaging`):**
+   - Authoritative manager isolated to `@MainActor`.
+   - Maps `SMAppService.Status` cases (`.enabled`, `.notRegistered`, `.requiresApproval`, `.notFound`).
+   - Prevents redundant registration and unregistration requests.
+   - Synchronizes actual macOS registration status directly with `PreferencesStore` and `SettingsManager`.
+   - Provides `openSystemSettings()` directing users to macOS Login Items settings when user approval is required.
+
+3. **Behavioral Invariants:**
+   - Disabled by default.
+   - Does not report false success if macOS rejects registration.
+   - Operates completely normally when Launch at Login is disabled or unsupported.
 
 ---
 

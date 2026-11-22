@@ -14,6 +14,9 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
     /// Persistent preferences storage provider.
     public let preferencesStore: PreferencesStore
 
+    /// Associated login item manager overseeing macOS registration.
+    public let loginItemManager: LoginItemManager
+
     /// Associated application coordinator.
     public weak var coordinator: ApplicationCoordinator?
 
@@ -31,12 +34,16 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
     /// - Parameters:
     ///   - coordinator: Optional injected application coordinator.
     ///   - preferencesStore: Injected persistent storage provider.
+    ///   - loginItemManager: Optional injected login item manager.
     public init(
         coordinator: ApplicationCoordinator? = nil,
-        preferencesStore: PreferencesStore = PreferencesStore()
+        preferencesStore: PreferencesStore = PreferencesStore(),
+        loginItemManager: LoginItemManager? = nil
     ) {
         self.coordinator = coordinator
         self.preferencesStore = preferencesStore
+        let lim = loginItemManager ?? LoginItemManager(preferencesStore: preferencesStore)
+        self.loginItemManager = lim
         self.preferences = coordinator?.preferences ?? preferencesStore.loadPreferences()
         super.init()
     }
@@ -118,12 +125,26 @@ public final class SettingsManager: NSObject, ObservableObject, NSWindowDelegate
         updatePreferences(updated)
     }
 
-    /// Updates the launch-at-login preference.
+    /// Updates the launch-at-login preference asynchronously, synchronizing with macOS SMAppService.
     ///
     /// - Parameter enabled: `true` to enable launch at login, `false` to disable.
+    public func updateLaunchAtLogin(_ enabled: Bool) async {
+        do {
+            try await loginItemManager.setEnabled(enabled)
+            var updated = preferences
+            updated.launchAtLogin = loginItemManager.isEnabled
+            updatePreferences(updated)
+        } catch {
+            var updated = preferences
+            updated.launchAtLogin = loginItemManager.isEnabled
+            updatePreferences(updated)
+        }
+    }
+
+    /// Synchronous convenience for updating launch-at-login.
     public func updateLaunchAtLogin(_ enabled: Bool) {
-        var updated = preferences
-        updated.launchAtLogin = enabled
-        updatePreferences(updated)
+        Task {
+            await updateLaunchAtLogin(enabled)
+        }
     }
 }
