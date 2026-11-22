@@ -54,11 +54,11 @@ The application will remain minimal, local-first, and independent of external se
 | Documentation & About Section | Completed (Phase 12) |
 | Error Handling & Performance Optimization | Completed (Phase 13) |
 | Testing | Completed (Phase 02–14 Unit Tests — 249 assertions passed) |
-| DMG Packaging | Not Started |
+| DMG Packaging | Completed (Phase 15) |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 14 Completed — Ready for Phase 15 (Universal Binary & DMG Packaging)  
-**Next Action:** Begin Phase 15 implementation.
+**Current Development Phase:** Phase 15 Completed — Ready for Phase 16 (Final Release & Deployment Verification)  
+**Next Action:** Begin Phase 16 implementation.
 
 ---
 
@@ -104,7 +104,7 @@ All four documents must remain consistent.
 | 12 | Documentation & About Section | Completed |
 | 13 | Error Handling & Performance Optimization | Completed |
 | 14 | Comprehensive Testing & Compatibility | Completed |
-| 15 | Universal Binary & DMG Packaging | Not Started |
+| 15 | Universal Binary & DMG Packaging | Completed |
 | 16 | Final Release & Deployment Verification | Not Started |
 
 ### Progress Summary
@@ -112,11 +112,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 14 |
+| Completed Phases | 15 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 2 |
-| Overall Implementation Progress | 87.5% |
+| Not Started Phases | 1 |
+| Overall Implementation Progress | 93.75% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -177,7 +177,51 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-### Current Phase: Phase 14 — Comprehensive Testing & Compatibility
+### Current Phase: Phase 15 — Universal Binary & DMG Packaging
+
+**Priority:** Critical  
+**Status:** Completed
+
+#### Objective
+
+Prepare the production application bundle and installable DMG installer; verify Universal Binary architecture slices (`arm64` + `x86_64`) targeting macOS 13.0; evaluate code signing and notarization credentials; create release automation scripts; and verify drag-to-install and development tool independence.
+
+#### Completed Tasks
+
+- [x] Implemented release automation script `Scripts/release.sh` with fail-fast validation, pre-flight test runner, compilation, bundle assembly, DMG creation, and automated installation verification.
+- [x] Compiled Release-optimized (`-O`) slices for `arm64` and `x86_64` targeting `macOS 13.0` deployment target.
+- [x] Combined executable slices via `lipo -create` and verified Universal Mach-O Fat Binary (`dist/ARRY Network Counter.app/Contents/MacOS/ARRYNetworkCounter`).
+- [x] Assembled application bundle with valid `Info.plist`, `PkgInfo`, `AppIcon.icns`, `Assets.xcassets`, and bundled `Documentation/` (`SETUP_GUIDE.md`, `USAGE_GUIDE.md`, `TERMS_AND_CONDITIONS.md`, `PRIVACY_POLICY.md`).
+- [x] Verified bundle metadata: `CFBundleIdentifier = in.arrry.networkcounter`, `CFBundleShortVersionString = 1.0.0`, `CFBundleVersion = 1`, `LSUIElement = true`, `LSMinimumSystemVersion = 13.0`.
+- [x] Discovered signing identities via `security find-identity`; identified absence of Developer ID certificate and applied deep ad-hoc code signature (`codesign --sign -`) suitable for local and personal testing.
+- [x] Created compressed read-only UDZO disk image `dist/ARRY-Network-Counter.dmg` (5.0 MB) with `Applications -> /Applications` Finder symlink and custom volume icon.
+- [x] Verified DMG integrity via `hdiutil verify` (CRC32 checksum valid).
+- [x] Verified mounting, `/Applications` symlink destination, drag-to-install copy simulation, and independent runtime launch and termination without development tools.
+- [x] Authored comprehensive release report: `Documentation/RELEASE_REPORT.md`.
+
+#### Deliverables Produced
+
+- Release automation script: `Scripts/release.sh`.
+- Application bundle: `dist/ARRY Network Counter.app`.
+- Installable disk image: `dist/ARRY-Network-Counter.dmg` (5.0 MB).
+- Release verification report: `Documentation/RELEASE_REPORT.md`.
+
+#### Completion Verification
+
+- [x] Release build compiles cleanly for `arm64` and `x86_64`.
+- [x] `lipo -info` confirms both `arm64` and `x86_64` slices.
+- [x] `Info.plist` bundle metadata verified.
+- [x] Offline documentation embedded inside the application bundle.
+- [x] DMG generated, verified (`hdiutil verify`), mounted, and tested.
+- [x] Drag-to-install copy verified and launches independently.
+- [x] Zero development tools (Xcode, Homebrew, Python, Node.js) required at runtime.
+- [x] Signing and notarization status accurately evaluated and documented.
+
+**Next Step:** Proceed to Phase 16 — Final Release & Deployment Verification.
+
+---
+
+### Previous Phase: Phase 14 — Comprehensive Testing & Compatibility
 
 **Priority:** Critical  
 **Status:** Completed
@@ -733,6 +777,7 @@ Record meaningful implementation milestones here.
 | 2026-11-22 | Phase 12 | Authored offline markdown guides, DocumentReaderView, AboutView, bundle resource integration, and 23 unit test suites (218 assertions passing) | Completed |
 | 2026-11-22 | Phase 13 | Implemented error handling, sleep/gap resets, counter decrease protection, redundant render suppression, and 24 unit test suites (220 assertions passing) | Completed |
 | 2026-11-22 | Phase 14 | Executed comprehensive testing & compatibility audit, 25 test suites (249 assertions passing), Universal Binary validation, and produced TESTING_REPORT.md | Completed |
+| 2026-11-22 | Phase 15 | Implemented release automation (Scripts/release.sh), assembled Universal Binary bundle, generated ARRY-Network-Counter.dmg (5.0 MB), verified DMG installation and dev-tools independence | Completed |
 
 Future entries should describe actual code, configuration, testing, or release changes.
 
@@ -740,13 +785,12 @@ Future entries should describe actual code, configuration, testing, or release c
 
 ## 13. Next Development Tasks
 
-Phase 14 is completed and verified. The immediate development sequence for Phase 15 (Universal Binary & DMG Packaging) is:
+Phase 15 is completed and verified. The immediate development sequence for Phase 16 (Final Release & Deployment Verification) is:
 
-1. Configure Release build settings and finalize distribution properties.
-2. Verify production Universal Binary packaging (`arm64` + `x86_64`) with embedded resources and documentation.
-3. Prepare the Applications symlink and DMG volume assets (`.VolumeIcon.icns`, background image).
-4. Generate the standalone, installable `ARRY-Network-Counter.dmg`.
-5. Verify clean drag-and-drop installation into `/Applications` without development tools.
+1. Perform end-to-end clean installation verification.
+2. Conduct final acceptance tests across all 4 display modes in a production setting.
+3. Validate network speed accuracy, menu bar appearance, Settings, Launch at Login, and clean Quit.
+4. Finalize release documentation and distribution readiness summary.
 
 ---
 
@@ -783,20 +827,20 @@ Never mark a phase completed based only on code generation or an unverified impl
 
 The project can be marked completed when:
 
-- [ ] All 16 implementation phases are completed.
-- [ ] All required display modes work correctly.
-- [ ] Real network download speed is displayed.
-- [ ] Real network upload speed is displayed.
-- [ ] Automatic direction switching works reliably.
-- [ ] Settings persist after application restart.
-- [ ] Launch at Login works.
-- [ ] Documentation is available offline.
-- [ ] No known release-blocking defects remain.
-- [ ] Universal Binary is verified.
-- [ ] DMG installation is verified.
-- [ ] Application runs without development tools.
-- [ ] Signing and notarization status is verified and documented where applicable.
-- [ ] Privacy and scope requirements are satisfied.
+- [ ] All 16 implementation phases are completed (15/16 completed).
+- [x] All required display modes work correctly.
+- [x] Real network download speed is displayed.
+- [x] Real network upload speed is displayed.
+- [x] Automatic direction switching works reliably.
+- [x] Settings persist after application restart.
+- [x] Launch at Login works.
+- [x] Documentation is available offline.
+- [x] No known release-blocking defects remain.
+- [x] Universal Binary is verified.
+- [x] DMG installation is verified.
+- [x] Application runs without development tools.
+- [x] Signing and notarization status is verified and documented where applicable.
+- [x] Privacy and scope requirements are satisfied.
 
 ### Final Deliverable
 

@@ -790,7 +790,7 @@ Perform complete unit, integration, manual, and compatibility testing.
 ## Phase 15 — Universal Binary & DMG Packaging
 
 **Priority:** Critical  
-**Status:** Not Started
+**Status:** Completed
 
 ### Objective
 
@@ -798,22 +798,22 @@ Prepare the production application and create an installable DMG that works on s
 
 ### Tasks
 
-- [ ] Configure Release build settings.
-- [ ] Build for `arm64`.
-- [ ] Build for `x86_64`.
-- [ ] Create the Universal Binary.
-- [ ] Verify architecture slices.
-- [ ] Configure application bundle metadata.
-- [ ] Configure application version.
-- [ ] Configure bundle identifier.
-- [ ] Verify bundled documentation.
-- [ ] Prepare the Applications shortcut.
-- [ ] Create the DMG.
-- [ ] Configure DMG presentation.
-- [ ] Verify the DMG opens.
-- [ ] Verify the app can be dragged into Applications.
-- [ ] Verify the installed app launches independently.
-- [ ] Confirm Xcode and development tools are not required on the destination Mac.
+- [x] Configure Release build settings.
+- [x] Build for `arm64`.
+- [x] Build for `x86_64`.
+- [x] Create the Universal Binary.
+- [x] Verify architecture slices.
+- [x] Configure application bundle metadata.
+- [x] Configure application version.
+- [x] Configure bundle identifier.
+- [x] Verify bundled documentation.
+- [x] Prepare the Applications shortcut.
+- [x] Create the DMG.
+- [x] Configure DMG presentation.
+- [x] Verify the DMG opens.
+- [x] Verify the app can be dragged into Applications.
+- [x] Verify the installed app launches independently.
+- [x] Confirm Xcode and development tools are not required on the destination Mac.
 
 ### Expected Output
 
@@ -827,30 +827,31 @@ dist/
 
 ### Code Signing & Notarization
 
-- [ ] Configure Developer ID signing when credentials are available.
-- [ ] Enable hardened runtime as required.
-- [ ] Sign the application.
-- [ ] Submit for Apple notarization.
-- [ ] Staple the notarization ticket.
-- [ ] Sign and verify the DMG as appropriate.
-- [ ] Verify Gatekeeper behavior.
+- [ ] Configure Developer ID signing when credentials are available. *(Apple Developer certificate absent in keychain)*
+- [x] Enable hardened runtime as required.
+- [x] Sign the application (ad-hoc signed for personal/developer testing).
+- [ ] Submit for Apple notarization. *(Apple Developer account credentials absent)*
+- [ ] Staple the notarization ticket. *(Apple Developer account credentials absent)*
+- [x] Sign and verify the DMG as appropriate.
+- [x] Verify Gatekeeper behavior and document security override instructions.
 
 If signing or notarization credentials are unavailable, document the limitation and produce a clearly identified personal-testing build. Do not claim that an unsigned build is notarized.
 
 ### Deliverables
 
-- Universal application bundle.
-- Installable DMG.
-- Build and verification scripts.
+- Universal application bundle (`dist/ARRY Network Counter.app`).
+- Installable DMG (`dist/ARRY-Network-Counter.dmg`).
+- Build and verification scripts (`Scripts/release.sh`).
+- Release verification report (`Documentation/RELEASE_REPORT.md`).
 
 ### Completion Criteria
 
-- [ ] DMG is generated successfully.
-- [ ] DMG installation works.
-- [ ] Application runs from Applications.
-- [ ] No development environment is required.
-- [ ] Intended architecture slices are verified.
-- [ ] Signing and notarization status is accurately documented.
+- [x] DMG is generated successfully.
+- [x] DMG installation works.
+- [x] Application runs from Applications.
+- [x] No development environment is required.
+- [x] Intended architecture slices are verified.
+- [x] Signing and notarization status is accurately documented.
 
 ---
 
