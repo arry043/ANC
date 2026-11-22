@@ -163,6 +163,21 @@ public final class ApplicationCoordinator: ObservableObject {
         isRunning = false
     }
 
+    /// Updates application preferences synchronously on MainActor, persisting to storage and updating published state.
+    ///
+    /// - Parameter newPreferences: The updated preferences.
+    public func applyPreferences(_ newPreferences: AppPreferences) {
+        if let store = preferencesStore as? PreferencesStore {
+            store.savePreferences(newPreferences)
+        } else {
+            Task { [weak self] in
+                guard let self = self else { return }
+                try? await self.preferencesStore.savePreferences(newPreferences)
+            }
+        }
+        self.preferences = newPreferences
+    }
+
     /// Updates application preferences, persisting them to storage and updating published state.
     ///
     /// - Parameter newPreferences: The updated preferences.

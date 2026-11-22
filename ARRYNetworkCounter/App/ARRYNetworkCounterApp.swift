@@ -11,7 +11,11 @@ struct ARRYNetworkCounterApp: App {
         // Menu bar utility runs primarily via NSStatusItem in AppDelegate.
         // A Settings scene is prepared here for Phase 10 implementation.
         Settings {
-            EmptyView()
+            if let settingsManager = appDelegate.settingsManager {
+                SettingsView(settingsManager: settingsManager)
+            } else {
+                SettingsView(settingsManager: SettingsManager(coordinator: appDelegate.coordinator))
+            }
         }
     }
 }

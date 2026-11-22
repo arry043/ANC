@@ -19,6 +19,9 @@ public final class MenuBarManager: NSObject {
     /// Indicates whether the manager is actively tracking coordinator updates.
     public private(set) var isRunning: Bool = false
 
+    /// Optional callback invoked when the Settings menu action is triggered.
+    public var onOpenSettings: (() -> Void)?
+
     /// Set of Combine subscriptions.
     private var cancellables: Set<AnyCancellable> = []
 
@@ -135,8 +138,12 @@ public final class MenuBarManager: NSObject {
     }
 
     @objc public func handleSettingsAction() {
-        NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-        NSApp.activate(ignoringOtherApps: true)
+        if let onOpenSettings = onOpenSettings {
+            onOpenSettings()
+        } else {
+            NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+            NSApp.activate(ignoringOtherApps: true)
+        }
     }
 
     @objc public func handleQuitAction() {

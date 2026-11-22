@@ -29,31 +29,5 @@ public actor InMemoryPreferencesStore: PreferencesStoring {
 }
 
 /// Standard `UserDefaults` backed implementation of `PreferencesStoring`.
-public actor UserDefaultsPreferencesStore: PreferencesStoring {
-    private let userDefaults: UserDefaults
-    private let key: String
+public typealias UserDefaultsPreferencesStore = PreferencesStore
 
-    public init(
-        userDefaults: UserDefaults = .standard,
-        key: String = AppConfiguration.PersistenceKeys.preferences
-    ) {
-        self.userDefaults = userDefaults
-        self.key = key
-    }
-
-    public func loadPreferences() async -> AppPreferences {
-        guard let data = userDefaults.data(forKey: key) else {
-            return .default
-        }
-        do {
-            return try JSONDecoder().decode(AppPreferences.self, from: data)
-        } catch {
-            return .default
-        }
-    }
-
-    public func savePreferences(_ preferences: AppPreferences) async throws {
-        let data = try JSONEncoder().encode(preferences)
-        userDefaults.set(data, forKey: key)
-    }
-}
