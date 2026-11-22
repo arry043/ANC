@@ -32,10 +32,16 @@ public enum AppConfiguration {
         public static let launchAtLogin = "in.arrry.networkcounter.launchAtLogin"
     }
 
-    /// Application version and build metadata.
+    /// Application version and build metadata read dynamically from bundle metadata.
     public enum Version {
-        public static let versionString = "1.0.0"
-        public static let buildNumber = "1"
-        public static let copyright = "Copyright © 2026 ARRRY. All rights reserved."
+        public static var versionString: String {
+            Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0.0"
+        }
+        public static var buildNumber: String {
+            Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
+        }
+        public static var copyright: String {
+            Bundle.main.object(forInfoDictionaryKey: "NSHumanReadableCopyright") as? String ?? "Copyright © 2026 ARRRY. All rights reserved."
+        }
     }
 }

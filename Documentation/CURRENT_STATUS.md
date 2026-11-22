@@ -51,12 +51,13 @@ The application will remain minimal, local-first, and independent of external se
 | Display Modes Implementation | Completed (Phase 09) |
 | Settings Interface | Completed (Phase 10) |
 | Application Lifecycle & Launch at Login | Completed (Phase 11) |
-| Testing | Completed (Phase 02–11 Unit Tests — 198 assertions passed) |
+| Documentation & About Section | Completed (Phase 12) |
+| Testing | Completed (Phase 02–12 Unit Tests — 208 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 11 Completed — Ready for Phase 12 (Documentation & About Section)  
-**Next Action:** Begin Phase 12 implementation.
+**Current Development Phase:** Phase 12 Completed — Ready for Phase 13 (Error Handling & Performance Optimization)  
+**Next Action:** Begin Phase 13 implementation.
 
 ---
 
@@ -99,7 +100,7 @@ All four documents must remain consistent.
 | 09 | Display Modes Implementation | Completed |
 | 10 | Settings Interface & Preferences | Completed |
 | 11 | Application Lifecycle & Launch at Login | Completed |
-| 12 | Documentation & About Section | Not Started |
+| 12 | Documentation & About Section | Completed |
 | 13 | Error Handling & Performance Optimization | Not Started |
 | 14 | Comprehensive Testing & Compatibility | Not Started |
 | 15 | Universal Binary & DMG Packaging | Not Started |
@@ -110,11 +111,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 9 |
+| Completed Phases | 12 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 7 |
-| Overall Implementation Progress | 56.25% |
+| Not Started Phases | 4 |
+| Overall Implementation Progress | 75.0% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -175,7 +176,58 @@ Implement and integrate all supported menu bar display modes (Both Directions: S
 - [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
 - [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
 
-### Current Phase: Phase 11 — Application Lifecycle & Launch at Login
+### Current Phase: Phase 12 — Documentation & About Section
+
+**Priority:** Medium  
+**Status:** Completed
+
+#### Objective
+
+Create complete, accurate, offline-accessible user documentation, bundle it within the application bundle, and integrate a polished native About section and markdown reader into the Settings interface.
+
+#### Completed Tasks
+
+- [x] Authored `SETUP_GUIDE.md` covering macOS 13.0+ requirements, Universal Binary support (arm64 & Intel), DMG installation steps, Gatekeeper security approval for ad-hoc preview builds, menu-bar utility behavior (`LSUIElement`), and `SMAppService` login launch configuration.
+- [x] Authored `USAGE_GUIDE.md` detailing real-time kernel counter monitoring (`getifaddrs`), all 4 display modes, 3-factor hysteresis direction switching rules (10% relative margin, 10,000 B/s threshold, 2 consecutive samples, idle download default), SI decimal units, Byte vs. bit distinction (8 bits = 1 Byte), and kernel measurement characteristics.
+- [x] Authored `TERMS_AND_CONDITIONS.md` providing standard license terms, permitted use, measurement accuracy disclaimers, no-warranty provisions ("as is"), Apple Inc. trademark disclaimers, ARRRY brand ownership, and limitation of liability.
+- [x] Authored `PRIVACY_POLICY.md` backed by comprehensive source-code audit confirming zero remote network activity, zero analytics/telemetry, in-memory volatile throughput calculation, and local storage strictly limited to 4 user preferences in `UserDefaults`.
+- [x] Implemented `DocumentationDocument` enum and `DocumentationLoader` provider with bundle resource and filesystem fallback search paths.
+- [x] Implemented `DocumentReaderView` rendering native scrollable markdown content with custom block parsing (H1-H4, dividers, code blocks, tables, blockquotes, paragraphs) and back navigation.
+- [x] Implemented `AboutView` featuring the official `AppLogo` asset, dynamic bundle versioning (`CFBundleShortVersionString`, `CFBundleVersion`, `NSHumanReadableCopyright`), ARRRY brand attribution, and quick links to legal documents.
+- [x] Restructured `SettingsView` with native segmented tab navigation (`Preferences`, `Documentation`, `About`) driven by `SettingsManager`.
+- [x] Updated `Scripts/build.sh` to package documentation markdown files into `$RESOURCES_DIR/Documentation/` for both Debug and Release bundles.
+- [x] Implemented comprehensive unit tests in `Tests/DocumentationTests.swift` (10 assertions).
+- [x] Updated `Tests/TestRunner.swift` with suite 23 (208 assertions passing across 23 test suites in ~699 ms).
+- [x] Verified Universal Binary builds for Debug and Release containing `arm64` and `x86_64` slices.
+
+#### Deliverables Produced
+
+- User guides: `Documentation/UserGuides/SETUP_GUIDE.md`, `Documentation/UserGuides/USAGE_GUIDE.md`.
+- Legal documents: `Documentation/Legal/TERMS_AND_CONDITIONS.md`, `Documentation/Legal/PRIVACY_POLICY.md`.
+- Bundled documentation resources: `ARRYNetworkCounter/Resources/Documentation/`.
+- Documentation provider & loader: `ARRYNetworkCounter/Services/Documentation/DocumentationProvider.swift`.
+- Native markdown reader: `ARRYNetworkCounter/Settings/DocumentReaderView.swift`.
+- About view: `ARRYNetworkCounter/Settings/AboutView.swift`.
+- Updated settings manager & view: `ARRYNetworkCounter/Settings/SettingsManager.swift`, `ARRYNetworkCounter/Settings/SettingsView.swift`.
+- Dynamic bundle metadata provider: `ARRYNetworkCounter/Core/Utilities/AppConfiguration.swift`.
+- Unit test suite: `Tests/DocumentationTests.swift` (10 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (208 assertions passing across 23 test suites).
+
+#### Completion Verification
+
+- [x] All 4 documentation markdown files exist, contain required sections, and are free of placeholders.
+- [x] Documentation is accessible offline and bundled in `Contents/Resources/Documentation/` in both Debug and Release `.app` bundles.
+- [x] Privacy statements strictly verified against source-code evidence (zero network requests, no telemetry, in-memory counters, 4 local preference keys).
+- [x] About section displays official logo, app name, short name, organization, version, build number, and copyright read dynamically from bundle metadata.
+- [x] Native document reader provides readable scrolling, headings, dividers, code blocks, tables, and back navigation to Settings.
+- [x] 100% of unit tests pass (208 assertions across 23 test suites with 0 failures).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly without warnings for Debug and Release.
+
+**Next Step:** Proceed to Phase 13 — Error Handling & Performance Optimization.
+
+---
+
+### Previous Phase: Phase 11 — Application Lifecycle & Launch at Login
 
 **Priority:** High  
 **Status:** Completed

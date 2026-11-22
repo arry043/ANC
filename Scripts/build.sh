@@ -63,6 +63,15 @@ if [ -d "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Assets.xcassets" ]; then
     cp -R "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Assets.xcassets" "$RESOURCES_DIR/"
 fi
 
+echo "Copying documentation resources..."
+mkdir -p "$RESOURCES_DIR/Documentation"
+if [ -d "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Documentation" ]; then
+    cp -R "$PROJECT_ROOT/ARRYNetworkCounter/Resources/Documentation/"* "$RESOURCES_DIR/Documentation/"
+elif [ -d "$PROJECT_ROOT/Documentation/UserGuides" ]; then
+    cp "$PROJECT_ROOT/Documentation/UserGuides/"*.md "$RESOURCES_DIR/Documentation/" 2>/dev/null || true
+    cp "$PROJECT_ROOT/Documentation/Legal/"*.md "$RESOURCES_DIR/Documentation/" 2>/dev/null || true
+fi
+
 # Ad-hoc code sign bundle for local execution
 codesign --force --deep --sign - "$APP_BUNDLE"
 

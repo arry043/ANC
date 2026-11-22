@@ -1,8 +1,28 @@
 import SwiftUI
 import AppKit
 
+/// Available navigation tabs in the native macOS Settings interface.
+public enum SettingsTab: String, CaseIterable, Identifiable {
+    case preferences = "Preferences"
+    case documentation = "Documentation"
+    case about = "About"
+
+    public var id: String { rawValue }
+
+    public var systemIcon: String {
+        switch self {
+        case .preferences:
+            return "slider.horizontal.3"
+        case .documentation:
+            return "book.pages"
+        case .about:
+            return "info.circle"
+        }
+    }
+}
+
 /// Native macOS Settings view providing compact, clean configuration of network display modes,
-/// startup preferences, and documentation resources.
+/// startup preferences, offline documentation reader, and polished application identity.
 public struct SettingsView: View {
     @ObservedObject public var settingsManager: SettingsManager
 
@@ -11,6 +31,63 @@ public struct SettingsView: View {
     }
 
     public var body: some View {
+        Group {
+            if let doc = settingsManager.viewingDocument {
+                DocumentReaderView(document: doc) {
+                    settingsManager.viewingDocument = nil
+                }
+            } else {
+                mainContentView
+            }
+        }
+        .frame(minWidth: 460, idealWidth: 480, minHeight: 500, idealHeight: 540)
+    }
+
+    // MARK: - Main Content with Tab Bar
+
+    private var mainContentView: some View {
+        VStack(spacing: 0) {
+            // Top Navigation Segmented Tab Bar
+            tabSelector
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+                .padding(.bottom, 12)
+
+            Divider()
+
+            // Active Tab View
+            Group {
+                switch settingsManager.selectedTab {
+                case .preferences:
+                    preferencesTab
+                case .documentation:
+                    documentationTab
+                case .about:
+                    aboutTab
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .background(Color(nsColor: .windowBackgroundColor))
+    }
+
+    private var tabSelector: some View {
+        Picker("", selection: Binding(
+            get: { settingsManager.selectedTab },
+            set: { settingsManager.selectedTab = $0 }
+        )) {
+            ForEach(SettingsTab.allCases) { tab in
+                Label(tab.rawValue, systemImage: tab.systemIcon)
+                    .tag(tab)
+            }
+        }
+        .pickerStyle(.segmented)
+        .labelsHidden()
+    }
+
+    // MARK: - Preferences Tab
+
+    private var preferencesTab: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading, spacing: 20) {
                 headerSection
@@ -23,23 +100,18 @@ public struct SettingsView: View {
 
                 generalSection
 
-                Divider()
-
-                documentationSection
-
                 Spacer(minLength: 10)
             }
             .padding(20)
         }
-        .frame(minWidth: 430, idealWidth: 460, minHeight: 480, idealHeight: 520)
     }
 
     // MARK: - Header Section
 
     private var headerSection: some View {
         HStack(spacing: 14) {
-            appLogoView
-                .frame(width: 44, height: 44)
+            appLogoThumbnail
+                .frame(width: 40, height: 40)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(AppConfiguration.appName)
@@ -55,12 +127,12 @@ public struct SettingsView: View {
     }
 
     @ViewBuilder
-    private var appLogoView: some View {
+    private var appLogoThumbnail: some View {
         if let image = loadLogoImage() {
             Image(nsImage: image)
                 .resizable()
                 .scaledToFit()
-                .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
                 .shadow(color: Color.black.opacity(0.12), radius: 2, x: 0, y: 1)
         } else {
             Image(systemName: "network")
@@ -360,79 +432,80 @@ public struct SettingsView: View {
         }
     }
 
-    // MARK: - Documentation Section
+    // MARK: - Documentation Tab
 
-    private var documentationSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Help & Resources")
-                .font(.headline)
+    private var documentationTab: some View {
+        ScrollView(.vertical, showsIndicators: true) {
+            VStack(alignment: .leading, spacing: 14) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Offline Documentation")
+                        .font(.headline)
 
-            VStack(spacing: 6) {
-                docRow(
-                    title: "User Guide & README",
-                    subtitle: "Setup instructions, features, and usage guide",
-                    icon: "book.pages",
-                    file: "README.md"
-                )
+                    Text("All guides and legal disclosures are bundled locally and fully accessible without an internet connection.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
 
-                docRow(
-                    title: "Technical Architecture",
-                    subtitle: "Subsystem designs, memory isolation, and performance rules",
-                    icon: "cpu",
-                    file: "Documentation/TECHNICAL_ARCHITECTURE.md"
-                )
+                VStack(spacing: 8) {
+                    ForEach(DocumentationDocument.allCases) { doc in
+                        docRow(document: doc)
+                    }
+                }
 
-                docRow(
-                    title: "Project Requirements",
-                    subtitle: "Specifications, precision rules, and acceptance criteria",
-                    icon: "checklist",
-                    file: "Documentation/PROJECT_REQUIREMENTS.md"
-                )
-
-                docRow(
-                    title: "Architecture Decisions (ADRs)",
-                    subtitle: "Codified decisions for display modes, hysteresis, and storage",
-                    icon: "doc.text",
-                    file: "Documentation/PROJECT_DECISIONS.md"
-                )
+                Spacer(minLength: 10)
             }
+            .padding(20)
         }
     }
 
-    private func docRow(title: String, subtitle: String, icon: String, file: String) -> some View {
+    private func docRow(document: DocumentationDocument) -> some View {
         Button {
-            openDocument(file)
+            settingsManager.viewingDocument = document
         } label: {
-            HStack(spacing: 10) {
-                Image(systemName: icon)
-                    .font(.system(size: 14))
+            HStack(spacing: 12) {
+                Image(systemName: document.systemIcon)
+                    .font(.system(size: 16))
                     .foregroundColor(.accentColor)
-                    .frame(width: 20)
+                    .frame(width: 24)
 
-                VStack(alignment: .leading, spacing: 1) {
-                    Text(title)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(document.title)
                         .font(.subheadline)
+                        .fontWeight(.medium)
                         .foregroundColor(.primary)
-                    Text(subtitle)
+
+                    Text(document.subtitle)
                         .font(.caption2)
                         .foregroundColor(.secondary)
                 }
 
                 Spacer()
 
-                Image(systemName: "arrow.up.forward.app")
+                Image(systemName: "chevron.forward")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .background(
-            RoundedRectangle(cornerRadius: 6, style: .continuous)
-                .fill(Color(nsColor: .controlBackgroundColor).opacity(0.6))
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .fill(Color(nsColor: .controlBackgroundColor))
         )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8, style: .continuous)
+                .stroke(Color(nsColor: .separatorColor), lineWidth: 0.5)
+        )
+    }
+
+    // MARK: - About Tab
+
+    private var aboutTab: some View {
+        AboutView { doc in
+            settingsManager.viewingDocument = doc
+        }
     }
 
     // MARK: - Helpers
@@ -442,17 +515,14 @@ public struct SettingsView: View {
             return direct
         }
 
-        // Try bundle resources
         if let url = Bundle.main.url(forResource: "AppLogo", withExtension: "png") {
             return NSImage(contentsOf: url)
         }
 
-        // Try subdirectory path in bundle
         if let url = Bundle.main.url(forResource: "AppLogo", withExtension: "png", subdirectory: "Assets.xcassets/AppLogo.imageset") {
             return NSImage(contentsOf: url)
         }
 
-        // Try repository relative path
         let fileManager = FileManager.default
         let currentDir = fileManager.currentDirectoryPath
         let repoAssetPath = URL(fileURLWithPath: currentDir).appendingPathComponent("ARRYNetworkCounter/Resources/Assets.xcassets/AppLogo.imageset/AppLogo.png")
@@ -461,35 +531,5 @@ public struct SettingsView: View {
         }
 
         return NSApp.applicationIconImage
-    }
-
-    private func openDocument(_ relativePath: String) {
-        let fileManager = FileManager.default
-        let currentDir = fileManager.currentDirectoryPath
-
-        // 1. Current working directory
-        let localURL = URL(fileURLWithPath: currentDir).appendingPathComponent(relativePath)
-        if fileManager.fileExists(atPath: localURL.path) {
-            NSWorkspace.shared.open(localURL)
-            return
-        }
-
-        // 2. Main bundle resources
-        let filename = (relativePath as NSString).lastPathComponent
-        if let bundleURL = Bundle.main.url(forResource: filename, withExtension: nil) {
-            NSWorkspace.shared.open(bundleURL)
-            return
-        }
-
-        // 3. Parent directory search
-        var searchURL = Bundle.main.bundleURL
-        for _ in 0..<5 {
-            searchURL = searchURL.deletingLastPathComponent()
-            let candidate = searchURL.appendingPathComponent(relativePath)
-            if fileManager.fileExists(atPath: candidate.path) {
-                NSWorkspace.shared.open(candidate)
-                return
-            }
-        }
     }
 }
