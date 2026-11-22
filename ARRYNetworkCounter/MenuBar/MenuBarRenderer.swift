@@ -29,11 +29,11 @@ public enum MenuBarRenderer {
                 appendSpeed(dominantSpeed, to: result)
 
             case .separateSpeeds:
-                // Format: "↓ <dlSpeed>  ↑ <ulSpeed>"
+                // Format: "↓ <dlSpeed>    ↑ <ulSpeed>"
                 appendArrow(MenuBarAppearance.downloadSymbol, color: MenuBarAppearance.downloadColor, to: result)
                 appendSpacer(" ", to: result)
                 appendSpeed(dlText, to: result)
-                appendSpacer("  ", to: result)
+                appendSpacer(MenuBarAppearance.separateSpeedsSpacer, to: result)
                 appendArrow(MenuBarAppearance.uploadSymbol, color: MenuBarAppearance.uploadColor, to: result)
                 appendSpacer(" ", to: result)
                 appendSpeed(ulText, to: result)

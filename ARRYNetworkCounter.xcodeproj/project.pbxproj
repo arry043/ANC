@@ -16,6 +16,8 @@
 		24E4BCF6B767306D10E0B31D /* NetworkInterfaceSelectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 25117C57A5F18D46018CC6B1 /* NetworkInterfaceSelectorTests.swift */; };
 		3208079173DD5551AF01921B /* NetworkSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93078FD1D1DCCFADCF93F269 /* NetworkSnapshot.swift */; };
 		37B7FB22A65D32112F29AC4E /* DominantDirectionEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDD7B73B9089C2605E00C3E6 /* DominantDirectionEngine.swift */; };
+		390FDF16F8434D55B1AEDCF1 /* MenuBarContentBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 288DA81FAEC1D8A912B77F57 /* MenuBarContentBuilderTests.swift */; };
+		439554B2EE2CD652EEA17A78 /* DisplayModeIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 330DE9FAF0C96F02D5200DEB /* DisplayModeIntegrationTests.swift */; };
 		462EAEE2C1CAA010FE7962F4 /* PreferencesStoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDD5E97B853363473C09353 /* PreferencesStoring.swift */; };
 		4829622905B53D70650CC6CE /* SpeedFormatterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 22ED1F14B95B0AF31150291D /* SpeedFormatterTests.swift */; };
 		491B24D97FB24A281A16E420 /* NetworkMonitoring.swift in Sources */ = {isa = PBXBuildFile; fileRef = D361A75CD63388E847EEF140 /* NetworkMonitoring.swift */; };
@@ -29,6 +31,7 @@
 		692BEE1C9CD3816DD58F0F37 /* NetworkInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C92F366D8567C6CE61CAB /* NetworkInterface.swift */; };
 		6DA384DA67DD172C7AE728F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE8DC3B7EAC86DEAD5A41BB6 /* AppDelegate.swift */; };
 		75813E3E5645B891DE6347F4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C424DD5BD282234FB7493AB0 /* Assets.xcassets */; };
+		7D6581EDD28F8D9E6890BBF6 /* MenuBarContentBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 580FEAF9115A550B013FC94C /* MenuBarContentBuilder.swift */; };
 		7E1F648C34A35CBA3F8D3D11 /* NetworkSpeedCalculatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3A6074823391665BF8CA5DA /* NetworkSpeedCalculatorTests.swift */; };
 		892AB3A34E37A93D6C1A8583 /* NetworkInterfaceSelector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 19AF767A3D2EB1E7F9CA07C6 /* NetworkInterfaceSelector.swift */; };
 		8C630910A54829A3FE79D923 /* ApplicationCoordinatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */; };
@@ -76,8 +79,10 @@
 		22710DF663CF2910A77DCC11 /* MenuBarRenderer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarRenderer.swift; sourceTree = "<group>"; };
 		22ED1F14B95B0AF31150291D /* SpeedFormatterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedFormatterTests.swift; sourceTree = "<group>"; };
 		25117C57A5F18D46018CC6B1 /* NetworkInterfaceSelectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceSelectorTests.swift; sourceTree = "<group>"; };
+		288DA81FAEC1D8A912B77F57 /* MenuBarContentBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentBuilderTests.swift; sourceTree = "<group>"; };
 		2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayConfigurationTests.swift; sourceTree = "<group>"; };
 		2F4B44B1AD9E972BC34D57A1 /* NetworkPathState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathState.swift; sourceTree = "<group>"; };
+		330DE9FAF0C96F02D5200DEB /* DisplayModeIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisplayModeIntegrationTests.swift; sourceTree = "<group>"; };
 		3BACA44F08785AC7E1394FFB /* ApplicationCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApplicationCoordinator.swift; sourceTree = "<group>"; };
 		3C89DDAAD0F80B9773C70CFD /* .gitkeep */ = {isa = PBXFileReference; path = .gitkeep; sourceTree = "<group>"; };
 		3D9A5044C4BB9A5136444896 /* NetworkPathManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkPathManager.swift; sourceTree = "<group>"; };
@@ -86,6 +91,7 @@
 		4167D1D467168490167EAE11 /* ARRYNetworkCounterApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ARRYNetworkCounterApp.swift; sourceTree = "<group>"; };
 		5428B1191BE0DA175AF5CC18 /* DominantDirectionEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DominantDirectionEngineTests.swift; sourceTree = "<group>"; };
 		5770202FBA9165990354A3A6 /* NetworkSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkSnapshotTests.swift; sourceTree = "<group>"; };
+		580FEAF9115A550B013FC94C /* MenuBarContentBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarContentBuilder.swift; sourceTree = "<group>"; };
 		5BC9280D875A80A60098F558 /* NetworkInterfaceStatistics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceStatistics.swift; sourceTree = "<group>"; };
 		6D6F16E2A6EB41B135FA50C1 /* NetworkInterfaceProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkInterfaceProvider.swift; sourceTree = "<group>"; };
 		7B511E8338A56296272F6046 /* NetworkDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkDirection.swift; sourceTree = "<group>"; };
@@ -161,7 +167,9 @@
 				F5F3BE74ADA57FD3B6B010BC /* ApplicationCoordinatorTests.swift */,
 				93387978ED83F555303198AC /* AppPreferencesTests.swift */,
 				2F2FA4BE2BF1A0590AAF4229 /* DisplayConfigurationTests.swift */,
+				330DE9FAF0C96F02D5200DEB /* DisplayModeIntegrationTests.swift */,
 				5428B1191BE0DA175AF5CC18 /* DominantDirectionEngineTests.swift */,
+				288DA81FAEC1D8A912B77F57 /* MenuBarContentBuilderTests.swift */,
 				048D1F140937C8721F8ED8AD /* MenuBarManagerTests.swift */,
 				9E47DAA1887AB0A3244E6391 /* MenuBarRendererTests.swift */,
 				3F5B83C0151B0B38A42874AF /* NetworkInterfaceProviderTests.swift */,
@@ -242,6 +250,7 @@
 				E4BA4EBD7F97F40241B45FD8 /* .gitkeep */,
 				0C0F5F20F8BFCF89E53031C4 /* MenuBarAppearance.swift */,
 				4104FF85CDD49D89FCFAB9C6 /* MenuBarContent.swift */,
+				580FEAF9115A550B013FC94C /* MenuBarContentBuilder.swift */,
 				FAF4E23407F9C616634F6F37 /* MenuBarManager.swift */,
 				EFC9C6CB7A9AD0DBCB36D263 /* MenuBarMenuBuilder.swift */,
 				22710DF663CF2910A77DCC11 /* MenuBarRenderer.swift */,
@@ -423,6 +432,7 @@
 				37B7FB22A65D32112F29AC4E /* DominantDirectionEngine.swift in Sources */,
 				65A372BE822C3DFBD0E9CC3F /* MenuBarAppearance.swift in Sources */,
 				0CA34AF832D20DBD3F935148 /* MenuBarContent.swift in Sources */,
+				7D6581EDD28F8D9E6890BBF6 /* MenuBarContentBuilder.swift in Sources */,
 				E5AA6A996C25D0F0EFDA2B87 /* MenuBarManager.swift in Sources */,
 				9E2E62008DC99AEC1C63F073 /* MenuBarMenuBuilder.swift in Sources */,
 				D4B5C6CDD323018BCD2EF6BD /* MenuBarRenderer.swift in Sources */,
@@ -449,7 +459,9 @@
 				D2D620915B02F380FACC6D02 /* AppPreferencesTests.swift in Sources */,
 				8C630910A54829A3FE79D923 /* ApplicationCoordinatorTests.swift in Sources */,
 				BF1FA5E6EDC55A857EC8998B /* DisplayConfigurationTests.swift in Sources */,
+				439554B2EE2CD652EEA17A78 /* DisplayModeIntegrationTests.swift in Sources */,
 				ABAF499D96013D9B35399EFB /* DominantDirectionEngineTests.swift in Sources */,
+				390FDF16F8434D55B1AEDCF1 /* MenuBarContentBuilderTests.swift in Sources */,
 				E7B9659E2A19DB2EFDFABB16 /* MenuBarManagerTests.swift in Sources */,
 				0A384F9D597D4F91112041F6 /* MenuBarRendererTests.swift in Sources */,
 				1FB75BC55B8080EF427975A7 /* NetworkInterfaceProviderTests.swift in Sources */,

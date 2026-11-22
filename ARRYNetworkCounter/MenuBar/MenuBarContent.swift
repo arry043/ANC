@@ -63,4 +63,27 @@ public struct MenuBarContent: Sendable, Equatable, Hashable {
         manualDirection: .download,
         isConnected: false
     )
+
+    /// Single displayed speed text for modes that render one speed value (nil for separate speeds mode).
+    public var singleDisplayedSpeedText: String? {
+        switch displayMode {
+        case .bothDirections:
+            switch bothDirectionsStyle {
+            case .combinedArrows:
+                return (dominantDirection == .download) ? downloadSpeedText : uploadSpeedText
+            case .separateSpeeds:
+                return nil
+            }
+        case .singleDirectionManual:
+            return (manualDirection == .download) ? downloadSpeedText : uploadSpeedText
+        case .singleDirectionAutomatic:
+            return (dominantDirection == .download) ? downloadSpeedText : uploadSpeedText
+        }
+    }
+
+    /// Indicates whether the content reflects zero or non-positive throughput across all displayed directions.
+    public var isIdle: Bool {
+        (downloadSpeedText == nil || downloadSpeedText == "0 KB/s") &&
+        (uploadSpeedText == nil || uploadSpeedText == "0 KB/s")
+    }
 }

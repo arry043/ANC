@@ -48,13 +48,14 @@ The application will remain minimal, local-first, and independent of external se
 | Core Implementation | Completed |
 | Network Monitoring | Completed |
 | Menu Bar Integration | Completed (Phase 08) |
+| Display Modes Implementation | Completed (Phase 09) |
 | Settings Interface | Not Started |
-| Testing | Completed (Phase 02–08 Unit Tests — 140 assertions passed) |
+| Testing | Completed (Phase 02–09 Unit Tests — 160 assertions passed) |
 | DMG Packaging | Not Started |
 | Production Release | Not Started |
 
-**Current Development Phase:** Phase 08 Completed — Ready for Phase 09 (Display Modes Implementation)  
-**Next Action:** Begin Phase 09 implementation.
+**Current Development Phase:** Phase 09 Completed — Ready for Phase 10 (Settings Interface & Preferences)  
+**Next Action:** Begin Phase 10 implementation.
 
 ---
 
@@ -94,7 +95,7 @@ All four documents must remain consistent.
 | 06 | Speed Formatting Engine | Completed |
 | 07 | Dominant Direction & Switching Logic | Completed |
 | 08 | Native Menu Bar Integration | Completed |
-| 09 | Display Modes Implementation | Not Started |
+| 09 | Display Modes Implementation | Completed |
 | 10 | Settings Interface & Preferences | Not Started |
 | 11 | Application Lifecycle & Launch at Login | Not Started |
 | 12 | Documentation & About Section | Not Started |
@@ -108,11 +109,11 @@ All four documents must remain consistent.
 | Metric | Current Value |
 |---|---:|
 | Total Phases | 16 |
-| Completed Phases | 8 |
+| Completed Phases | 9 |
 | In Progress Phases | 0 |
 | Blocked Phases | 0 |
-| Not Started Phases | 8 |
-| Overall Implementation Progress | 50.00% |
+| Not Started Phases | 7 |
+| Overall Implementation Progress | 56.25% |
 
 Documentation completion is tracked separately and does not count as implementation progress.
 
@@ -120,7 +121,64 @@ Documentation completion is tracked separately and does not count as implementat
 
 ## 5. Current Development Focus
 
-### Phase 08 — Native Menu Bar Integration
+### Phase 09 — Display Modes Implementation
+
+**Priority:** Critical  
+**Status:** Completed
+
+#### Objective
+
+Implement and integrate all supported menu bar display modes (Both Directions: Separate Speeds and Combined Arrows; Single Direction — Manual: Download and Upload; Single Direction — Automatic: Dominant Direction Switching) using the existing network monitoring, speed calculation, dominant-direction, formatting, and menu bar rendering architecture.
+
+#### Completed Tasks
+
+- [x] Configure 4-space horizontal spacer (`MenuBarAppearance.separateSpeedsSpacer = "    "`) for clean visual separation between download and upload in Separate Speeds mode.
+- [x] Extend `MenuBarContent` with `singleDisplayedSpeedText` and `isIdle` convenience properties for unified single-speed introspection.
+- [x] Implement `MenuBarContentBuilder` providing clean, centralized encapsulation of display mode business rules:
+  - Both Directions (Separate Speeds): Independent download and upload speeds with dual arrows (`↓ <dl>    ↑ <ul>`).
+  - Both Directions (Combined Arrows): Both arrows (`↓ ↑`) with single dominant speed, switching dynamically with hysteresis.
+  - Single Direction Manual (Download): Strictly down arrow (`↓ <dl>`), ignoring upload and dominant-direction state.
+  - Single Direction Manual (Upload): Strictly up arrow (`↑ <ul>`), ignoring download and dominant-direction state.
+  - Single Direction Automatic: Single arrow (`↓ <dl>` or `↑ <ul>`) tracking active dominant direction dynamically.
+  - Idle handling: Clean `0 KB/s` fallback per mode (`↓ 0 KB/s    ↑ 0 KB/s`, `↓ ↑ 0 KB/s`, `↓ 0 KB/s`, `↑ 0 KB/s`).
+  - Disconnected handling: Graceful fallback when path state is unsatisfied.
+- [x] Integrate `MenuBarContentBuilder` into `MenuBarManager.currentContentFromCoordinator()`.
+- [x] Update `MenuBarRenderer` to render `MenuBarAppearance.separateSpeedsSpacer` between download and upload.
+- [x] Ensure atomic coordinator state transitions: `dominantDirection` evaluated and published before `latestMeasurement`.
+- [x] Verify monitoring persistence: Mode switching never restarts network monitoring, recreates `NSStatusItem`, or resets `speedCalculator`.
+- [x] Implement 10 comprehensive unit tests in `Tests/MenuBarContentBuilderTests.swift`.
+- [x] Implement 10 comprehensive integration tests in `Tests/DisplayModeIntegrationTests.swift`.
+- [x] Update `Tests/TestRunner.swift` with Suite 17 and Suite 18 (160 assertions passing across 18 suites).
+
+#### Deliverables Produced
+
+- Display mode content builder: `ARRYNetworkCounter/MenuBar/MenuBarContentBuilder.swift`.
+- Extended menu bar display model: `ARRYNetworkCounter/MenuBar/MenuBarContent.swift`.
+- Updated appearance spacer: `ARRYNetworkCounter/MenuBar/MenuBarAppearance.swift`.
+- Updated menu bar renderer: `ARRYNetworkCounter/MenuBar/MenuBarRenderer.swift`.
+- Updated menu bar manager: `ARRYNetworkCounter/MenuBar/MenuBarManager.swift`.
+- Unit test suite: `Tests/MenuBarContentBuilderTests.swift` (10 assertions).
+- Integration test suite: `Tests/DisplayModeIntegrationTests.swift` (10 assertions).
+- Updated test runner: `Tests/TestRunner.swift` (160 assertions passing across 18 test suites).
+
+#### Completion Verification
+
+- [x] Both Directions — Separate Speeds renders `↓ <dl>    ↑ <ul>` with independent dynamic updates.
+- [x] Both Directions — Combined Arrows renders `↓ ↑ <dominantSpeed>` switching on dominance change.
+- [x] Both Directions — Combined Arrows displays `↓ ↑ 0 KB/s` when idle.
+- [x] Single Direction — Manual Download renders `↓ <dl>` and ignores upload rates.
+- [x] Single Direction — Manual Upload renders `↑ <ul>` and ignores download rates.
+- [x] Single Direction — Automatic renders single arrow (`↓` or `↑`) matching dominant direction.
+- [x] Single Direction — Automatic displays `↓ 0 KB/s` when idle.
+- [x] Mode transitions do not restart monitoring, recreate status item, or reset speed calculation.
+- [x] 100% of unit tests pass (160 assertions across 18 test suites with 0 failures in 407 ms).
+- [x] Universal Binary builds (`arm64` and `x86_64`) compile cleanly for Debug and Release.
+
+**Next Step:** Proceed to Phase 10 — Settings Interface & Preferences.
+
+---
+
+### Previous Phase: Phase 08 — Native Menu Bar Integration
 
 **Priority:** Critical  
 **Status:** Completed
@@ -220,14 +278,20 @@ This section must contain only features that have actually been implemented and 
 - Direction idle reversion: immediate transition to `.download` default when both traffic rates are idle ($\le 0$ B/s).
 - IEEE 754 micro-epsilon handling ($1\times 10^{-7}$ tolerance) preventing floating-point boundary representation errors.
 - Central coordinator dominant direction integration: `@Published public private(set) var dominantDirection: NetworkDirection` in `ApplicationCoordinator`.
-- Native menu bar appearance styling: `MenuBarAppearance` (green `#30B86B` for `↓`, blue `#3988E8` for `↑`, dynamic `headerTextColor`, monospaced digit typography `NSFont.monospacedDigitSystemFont`).
-- Menu bar display model: `MenuBarContent` (immutable `Sendable` representation of display modes, styles, speeds, and direction).
-- Menu bar renderer: `MenuBarRenderer` (stateless conversion of `MenuBarContent` to `NSAttributedString` and unadorned accessibility plain text).
+- Native menu bar appearance styling: `MenuBarAppearance` (green `#30B86B` for `↓`, blue `#3988E8` for `↑`, dynamic `headerTextColor`, monospaced digit typography `NSFont.monospacedDigitSystemFont`, 4-space horizontal spacer).
+- Menu bar display model: `MenuBarContent` (immutable `Sendable` representation of display modes, styles, speeds, direction, `singleDisplayedSpeedText`, and `isIdle`).
+- Menu bar content builder: `MenuBarContentBuilder` (stateless encapsulation of display mode rules, formatting delegation, dominant direction resolution, and idle/disconnected fallbacks).
+- Menu bar renderer: `MenuBarRenderer` (stateless conversion of `MenuBarContent` to `NSAttributedString` with custom spacers and unadorned accessibility plain text).
 - Menu bar menu builder: `MenuBarMenuBuilder` (native context menu with `Settings...`, separator, and `Quit ARRY Network Counter`).
 - Menu bar manager: `MenuBarManager` (`@MainActor` managing `NSStatusItem.variableLength` lifecycle, Combine observation, diff-based redraw suppression, button updates, and cleanup).
+- Display Mode 1: Both Directions — Separate Speeds (`↓ <dl>    ↑ <ul>`, idle `↓ 0 KB/s    ↑ 0 KB/s`).
+- Display Mode 1: Both Directions — Combined Arrows (`↓ ↑ <dominant>`, idle `↓ ↑ 0 KB/s`).
+- Display Mode 2: Single Direction — Manual Download (`↓ <dl>`, idle `↓ 0 KB/s`, ignores upload).
+- Display Mode 2: Single Direction — Manual Upload (`↑ <ul>`, idle `↑ 0 KB/s`, ignores download).
+- Display Mode 3: Single Direction — Automatic (`↓ <dl>` or `↑ <ul>` following dominant direction, idle `↓ 0 KB/s`).
 - Application delegate integration: `AppDelegate` (owning `MenuBarManager` and coordinating start/stop lifecycles).
 - Official ARRRY Network Counter application logo: `AppIcon.icns` (1024x1024 with all 10 standard resolutions), `Assets.xcassets/AppIcon.appiconset/`, and `Assets.xcassets/AppLogo.imageset/`.
-- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (140 assertion checks across 16 test suites).
+- Automated test suite and test runner: `Tests/`, `Scripts/test.sh` (160 assertion checks across 18 test suites).
 
 ### Verified Functionality
 
@@ -235,7 +299,7 @@ This section must contain only features that have actually been implemented and 
 - Universal Binary executable verified with `lipo -info` containing both `arm64` and `x86_64` architecture slices.
 - Menu bar utility configuration (`LSUIElement = true`) verified via `plutil`.
 - Application launch verified on macOS without crashing for both Debug and Release bundles.
-- Full Phase 02 through Phase 08 unit test suites pass: 140 assertions verified across 16 test suites with 0 failures in 195.66 ms.
+- Full Phase 02 through Phase 09 unit and integration test suites pass: 160 assertions verified across 18 test suites with 0 failures in 407 ms.
 - Empirical verification of `SystemNetworkInterfaceProvider` against live macOS `netstat -ib`: 100% byte-for-byte counter match on active Wi-Fi interface (`en0`).
 - Safe C memory deallocation verified with `freeifaddrs()` invoked on every code path via Swift `defer`.
 - Speed calculation verified across normal, fractional, irregular, small intervals, large counters, zero traffic, counter decreases, interface transitions, and disconnection lifecycles.
@@ -243,6 +307,7 @@ This section must contain only features that have actually been implemented and 
 - Dominant direction switching verified across clear download/upload dominance, relative margin thresholds, absolute noise floors, consecutive sample confirmation, streak interruption, idle reversion, near-equal oscillation stability, and coordinator lifecycle resets.
 - Menu bar rendering verified across all display modes, combined arrows, separate speeds, manual direction selection, automatic direction selection, idle fallback, and disconnected fallback.
 - Menu bar status item lifecycle verified: singleton creation, idempotent starts, menu configuration, button updates, and clean removal on stop.
+- Display mode switching verified: transitions between all modes and sub-styles update the status item dynamically without restarting network monitoring, recreating the `NSStatusItem`, or resetting the speed calculation engine.
 
 ### Important Rule
 

@@ -56,7 +56,7 @@ public enum MenuBarRendererTests {
             isConnected: true
         )
         let plain3 = MenuBarRenderer.renderPlainText(content: content3)
-        assert(plain3 == "↓ 2.45 MB/s  ↑ 120 KB/s", "Separate speeds must render '↓ 2.45 MB/s  ↑ 120 KB/s', got '\(plain3)'")
+        assert(plain3 == "↓ 2.45 MB/s    ↑ 120 KB/s", "Separate speeds must render '↓ 2.45 MB/s    ↑ 120 KB/s', got '\(plain3)'")
         count += 1
 
         // Test 4: Single direction manual (download selected)
